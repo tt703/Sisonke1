@@ -1,0 +1,21 @@
+# === Android/Gradle Build Files ===
+.gradle/
+build/
+**/build/
+*/build/
+*.imi
+local.properties
+.idea/
+captures/
+output.json
+
+# === Ketsroke Files (sensitive) ===
+*.jks
+*.keystore
+
+# === Gradle Deamon and wrapper ===
+.gradle/
+gradle-app.setting
+gradle.propeties
+.gradle-cache/
+gradle-wrapper

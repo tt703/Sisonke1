@@ -1,0 +1,7 @@
+<resources>
+    <string-array name="filter_options">
+        <item>All</item>
+        <item>Paid</item>
+        <item>Pending</item>
+    </string-array>
+</resources>
