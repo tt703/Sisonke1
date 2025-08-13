@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -13,42 +12,35 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TlotloTau"
         tools:replace="android:theme">
-
-        <!-- Main Activity -->
+        <activity
+            android:name=".HomeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Auth.LoginActivity"
+            android:exported="false" /> <!-- Main Activity -->
         <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <!-- Create Estimate Activity -->
-        <activity android:name=".CreateEstimateActivity"/>
-        <!-- Estimate Preview Activity -->
-        <activity android:name=".EstimatePreviewActivity"/>
-        <!-- Create Invoice Activity -->
-        <activity android:name=".CreateInvoiceActivity" />
-        <!-- Edit Company Info Activity -->
-        <activity android:name=".EditCompanyInfoActivity" />
-        <!-- Invoice Preview Activity -->
-        <activity android:name=".InvoicePreviewActivity"/>
-        <!-- Add Product Activity -->
-        <activity android:name=".AddProductActivity"/>
-        <!-- Sell Product Activity -->
-        <activity android:name=".SellProductActivity"/>
-        <!-- Edit Product Activity -->
-        <activity android:name=".EditProductActivity"/>
-        <!--Product List Activity -->
-        <activity android:name=".ProductListActivity"/>
-        <!--Manage Products Activity -->
-        <activity android:name=".ManageProductsActivity"/>
-        <!--Documents Activity -->
-        <activity android:name=".DocumentsActivity"/>
-        <!--Document Detail Activity -->
-        <activity android:name=".DocumentDetailActivity"/>
-
-        <!-- FileProvider for Sharing -->
+        </activity> <!-- Create Estimate Activity -->
+        <activity android:name=".Documents.CreateEstimateActivity" /> <!-- Estimate Preview Activity -->
+        <activity android:name=".Documents.EstimatePreviewActivity" /> <!-- Create Invoice Activity -->
+        <activity android:name=".Documents.CreateInvoiceActivity" /> <!-- Edit Company Info Activity -->
+        <activity android:name=".EditCompanyInfoActivity" /> <!-- Invoice Preview Activity -->
+        <activity android:name=".Documents.InvoicePreviewActivity" /> <!-- Add Product Activity -->
+        <activity android:name=".Inventory.AddProductActivity" /> <!-- Sell Product Activity -->
+        <activity android:name=".SellProductActivity" /> <!-- Edit Product Activity -->
+        <activity android:name=".Inventory.EditProductActivity" /> <!-- Product List Activity -->
+        <activity android:name=".Inventory.ProductListActivity" /> <!-- Manage Products Activity -->
+        <activity android:name=".Inventory.ManageProductsActivity" /> <!-- Documents Activity -->
+        <activity android:name=".Documents.DocumentsActivity" /> <!-- Document Detail Activity -->
+        <activity android:name=".Documents.DocumentDetailActivity" /> <!-- FileProvider for Sharing -->
+        <activity android:name=".Auth.RegisterActivity" /> <!-- Register Activity -->
+        <activity android:name=".Auth.ProfileActivity" /> <!-- User Profile Activity -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -56,9 +48,8 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths"/>
+                android:resource="@xml/file_paths" />
         </provider>
-
     </application>
 
 </manifest>

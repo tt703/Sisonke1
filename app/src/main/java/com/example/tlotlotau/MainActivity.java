@@ -8,8 +8,14 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.tlotlotau.Auth.LoginActivity;
+import com.example.tlotlotau.Documents.DocumentsActivity;
+import com.example.tlotlotau.Inventory.ManageProductsActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.button.MaterialButton;
+import com.example.tlotlotau.Auth.RegisterActivity;
+import com.google.firebase.auth.FirebaseAuth;
+import com.example.tlotlotau.Auth.ProfileActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -17,13 +23,25 @@ public class MainActivity extends AppCompatActivity {
     private Button btnManageProducts;
     private Button btnViewDocuments;
 
+    private Button btnRegister;
+    private Button btnProfile;
+    private Button btnLogin;
+
+    FirebaseAuth mAuth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        // Initialize Firebase Authentication
+        mAuth = FirebaseAuth.getInstance();
+        if(mAuth.getCurrentUser() == null){
+            Toast.makeText(getApplicationContext(), "No User Found", Toast.LENGTH_LONG).show();
+        }
 
 
 
+        //Bottom Navigation Logic
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
@@ -46,14 +64,30 @@ public class MainActivity extends AppCompatActivity {
         // Initialize buttons (make sure these IDs exist in your activity_main.xml)
         btnViewDocuments = findViewById(R.id.btn_manage_documents);
         btnSellProduct = findViewById(R.id.btn_sell_product);
-        btnManageProducts = findViewById(R.id.btn_manage_products); // Initialize if you're using this later
+        btnManageProducts = findViewById(R.id.btn_manage_products);
+        btnRegister = findViewById(R.id.btnRegister);
+        btnProfile = findViewById(R.id.btnProfile);
+        btnLogin = findViewById(R.id.btnLogin);
+
 
         // Set click listeners for each button
         btnViewDocuments.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, DocumentsActivity.class)));
         btnSellProduct.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, SellProductActivity.class)));
         btnManageProducts.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, ManageProductsActivity.class)));
-        // Set click listener for btnViewProducts if applicable
-
+        btnRegister.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, RegisterActivity.class)));
+        btnLogin.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, LoginActivity.class)));
+        // Profile Button checks if user exists first
+        btnProfile.setOnClickListener(v -> {
+            if (mAuth.getCurrentUser() == null)
+                {
+                    Toast.makeText(getApplicationContext(), "No User Found",Toast.LENGTH_LONG).show();
+                }
+                else
+                {
+                    Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+                    startActivity(intent);
+                }
+        });
         // Initialize the database
         DatabaseHelper dbHelper = new DatabaseHelper(this);
         SQLiteDatabase db = dbHelper.getWritableDatabase();

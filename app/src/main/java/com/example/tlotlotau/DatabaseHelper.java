@@ -6,6 +6,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.example.tlotlotau.Documents.CreateEstimateActivity;
+import com.example.tlotlotau.Documents.Invoice;
+import com.example.tlotlotau.Inventory.Product;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -228,13 +232,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return product;
     }
-    public List<Estimate> getAllEstimates() {
-        List<Estimate> estimates = new ArrayList<>();
+    public List<CreateEstimateActivity.Estimate> getAllEstimates() {
+        List<CreateEstimateActivity.Estimate> estimates = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         String orderBy = COLUMN_ESTIMATE_DATE_CREATED + " DESC";
         Cursor cursor = db.query(TABLE_ESTIMATES, null, null, null, null, null, orderBy);
         while (cursor.moveToNext()) {
-            Estimate estimate = new Estimate();
+            CreateEstimateActivity.Estimate estimate = new CreateEstimateActivity.Estimate();
             estimate.setId(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_INVOICE_ID)));
             estimate.setCustomerName(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_INVOICE_CUSTOMER_NAME)));
             estimate.setCustomerAddress(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_INVOICE_CUSTOMER_ADDRESS)));

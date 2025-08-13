@@ -1,8 +1,11 @@
+
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.google.gms)
     alias(libs.plugins.firebase.crashlytics.plugin)
+
 }
 
 android {
@@ -63,6 +66,12 @@ dependencies {
 
     // Firebase
     implementation(libs.firebase.crashlytics)
+    implementation ("com.google.firebase:firebase-bom:34.1.0")
+    implementation("com.google.firebase:firebase-auth-ktx:23.2.1")
+
+    //Image loading
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+
 
     // Test
     testImplementation(libs.junit)

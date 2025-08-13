@@ -8,9 +8,11 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.tlotlotau.Documents.DocumentsActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class EditCompanyInfoActivity extends AppCompatActivity {
+public class EditCompanyInfoActivity   extends AppCompatActivity {
 
     // SharedPreferences file name
     private static final String SHARED_PREFS_NAME = "CompanyInfo";

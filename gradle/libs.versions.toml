@@ -1,5 +1,6 @@
 [versions]
 agp = "8.12.0"
+firebaseBom = "34.1.0"
 kotlin = "1.9.24"
 annotation = "1.6.0"
 appcompat = "1.6.1"
@@ -28,6 +29,7 @@ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = 
 androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
 com-google-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 openpdf = { group = "com.github.librepdf", name = "openpdf", version.ref = "openpdf" }
 itextpdf = { group = "com.itextpdf", name = "itextpdf", version.ref = "itextpdf" }
 itext7-core = { group = "com.itextpdf", name = "itext7-core", version.ref = "itext7Core" }
