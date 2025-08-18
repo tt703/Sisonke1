@@ -47,50 +47,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_manage_products"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:padding="12dp"
-            android:gravity="center"
-            app:icon="@drawable/ic_products"
-            app:iconGravity="top"
-            app:iconSize="25dp"
-            app:iconTint="@color/white"
-            android:text="Manage Products"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:background="@drawable/button_background"
-            app:backgroundTint="@color/gold"
-            app:layout_constraintWidth_percent="0.48"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/btn_sell_product"/>
 
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_sell_product"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginStart="8dp"
-            android:padding="12dp"
-            android:gravity="center"
-            app:icon="@drawable/ic_products"
-            app:iconGravity="top"
-            app:iconSize="25dp"
-            app:iconTint="@color/white"
-            android:text="Sell Product"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:background="@drawable/button_background"
-            app:backgroundTint="@color/gold"
-            app:layout_constraintWidth_percent="0.48"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toEndOf="@id/btn_manage_products"
-            app:layout_constraintEnd_toEndOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -104,69 +62,32 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_manage_documents"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:padding="12dp"
-            android:gravity="center"
-            app:icon="@drawable/ic_invoices"
-            app:iconGravity="top"
-            app:iconSize="25dp"
-            app:iconTint="@color/white"
-            android:text="Manage Documents"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:background="@drawable/button_background"
-            app:backgroundTint="@color/gold"
-            app:layout_constraintWidth_percent="0.48"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-    <Button
+
+
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnRegister"
-        android:layout_width="150dp"
-        android:layout_height="50dp"
-        android:text="REGISTER"
-        app:layout_constraintTop_toBottomOf="@id/buttonGroupCreate"
-        />
-    <Button
-        android:id="@+id/btnProfile"
-        android:layout_width="150dp"
-        android:layout_height="50dp"
-        android:text="View Profile"
-        app:layout_constraintTop_toBottomOf="@id/btnRegister"
-        />
-
-
-    <!-- Bottom Navigation -->
-    <Button
-        android:id="@+id/btnLogin"
-        android:layout_width="150dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginBottom="12dp"
-        android:text="Login"
-        app:layout_constraintBottom_toTopOf="@id/bottomNavigationView"
-        app:layout_constraintRight_toRightOf="@id/btnProfile"
-        app:layout_constraintStart_toEndOf="@id/btnProfile" />
-
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNavigationView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="159dp"
+        android:layout_height="53dp"
         android:layout_marginTop="16dp"
-        android:background="@drawable/button_background"
-        android:elevation="8dp"
-        app:itemIconTint="@color/black"
-        app:itemTextColor="@color/black"
-        app:menu="@menu/navigation_menu"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:text="register"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/buttonGroupCreate" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnLogin"
+        android:layout_width="134dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="16dp"
+        android:text="login"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.844"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/buttonGroupCreate" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

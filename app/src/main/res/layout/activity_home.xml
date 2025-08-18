@@ -9,25 +9,114 @@
 
     <TextView
         android:id="@+id/tv_main_title"
-        android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:text="Builderstown Hyper Midrand"
-        android:textSize="19sp"
+        android:layout_height="match_parent"
+        android:text=" Builderstown Hyper Midrand"
         android:textColor="@color/black"
+        android:textSize="19sp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+
+    <!-- Bottom Navigation -->
+
     <ImageButton
         android:id="@+id/btn_profile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_profie_foreground"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.541"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription" />
 
+
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigationView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/button_background"
+        android:elevation="8dp"
+        app:itemIconTint="@color/black"
+        app:itemTextColor="@color/black"
+        app:menu="@menu/navigation_menu"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_manage_documents"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="480dp"
+        android:background="@drawable/button_background"
+        android:gravity="center"
+        android:padding="12dp"
+        android:text="Manage Documents"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:backgroundTint="@color/gold"
+        app:icon="@drawable/ic_invoices"
+        app:iconGravity="top"
+        app:iconSize="25dp"
+        app:iconTint="@color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.48" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_manage_products"
+        android:layout_width="180dp"
+        android:layout_height="98dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="164dp"
+        android:background="@drawable/button_background"
+        android:gravity="center"
+        android:padding="12dp"
+        android:text="Manage Products"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:backgroundTint="@color/gold"
+        app:icon="@drawable/ic_products"
+        app:iconGravity="top"
+        app:iconSize="25dp"
+        app:iconTint="@color/white"
+        app:layout_constraintEnd_toStartOf="@+id/btn_sell_product"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.48" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_sell_product"
+        android:layout_width="173dp"
+        android:layout_height="94dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="164dp"
+        android:background="@drawable/button_background"
+        android:gravity="center"
+        android:padding="12dp"
+        android:text="Sell Product"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:backgroundTint="@color/gold"
+        app:icon="@drawable/ic_products"
+        app:iconGravity="top"
+        app:iconSize="25dp"
+        app:iconTint="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/btn_manage_products"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.48" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
