@@ -34,5 +34,9 @@
     <string name="manage_products">Manage Products</string>
     <string name="manage_documents">Manage Documents</string>
     <string name="sell_product">Sell Product</string>
+    <string name="company_profile">Company profile icon</string>
+    <string name="person_profile">Person Profile</string>
+    <string name="img_main">Image_Main</string>
+
 
 </resources>

@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".Documents.SettingsActivity">
+
+    <LinearLayout
+        android:id="@+id/backHeader"
+        android:layout_width="405dp"
+        android:layout_height="87dp"
+        android:background="#F9F9F9"
+        android:elevation="2dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingTop="20dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/back"
+            android:src="@drawable/ic_arrow_back"
+            app:tint="@color/black" />
+
+        <TextView
+            android:id="@+id/titleText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:text="Settings"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText" />
+
+        <FrameLayout
+            android:id="@+id/Profile_Container"
+            android:layout_width="234dp"
+            android:layout_height="71dp"
+            android:layout_margin="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.282">   <!-- square -->
+
+
+            <ImageButton
+                android:id="@+id/btnPerson2"
+                android:layout_width="90dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="right"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/person_profile"
+                android:src="@drawable/your_profile"
+                app:tint="@color/black" />
+        </FrameLayout>
+    </LinearLayout>
+    <FrameLayout
+        android:id="@+id/imageContainer1"
+        android:layout_width="382dp"
+        android:layout_height="86dp"
+        android:layout_margin="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.282">   <!-- square -->
+
+
+        <TextView
+            android:id="@+id/itemHeading"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginStart="12dp"
+            android:text="Company Profile"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/content"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="12dp"
+            android:text="Business details and branding"
+            android:textColor="@color/grey"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText,SmallSp"
+            android:layout_marginTop="10dp"/>
+
+        <ImageButton
+            android:id="@+id/btnForward1"
+            android:layout_width="76dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="right"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/back"
+            android:src="@drawable/baseline_arrow_forward_ios_24" />
+
+        <ImageView
+            android:id="@+id/centerImage1"
+            android:layout_width="85dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="left"
+            android:adjustViewBounds="true"
+            android:contentDescription="company_profile"
+            android:src="@drawable/company_profile"
+            tools:ignore="HardcodedText"/>
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/imageContainer2"
+        android:layout_width="382dp"
+        android:layout_height="86dp"
+        android:layout_margin="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.471">   <!-- square -->
+
+        <TextView
+            android:id="@+id/content2"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="12dp"
+            android:text="Manage cards and bank accounts"
+            android:textColor="@color/grey"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText,SmallSp"
+            android:layout_marginTop="10dp"/>
+
+        <TextView
+            android:id="@+id/itemHeading2"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginStart="12dp"
+            android:text="Payment Methods"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText" />
+        <ImageButton
+            android:id="@+id/btnForward"
+            android:layout_width="76dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="right"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/back"
+            android:src="@drawable/baseline_arrow_forward_ios_24" />
+
+        <ImageView
+            android:id="@+id/centerImage2"
+            android:layout_width="86dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="left"
+            android:adjustViewBounds="true"
+            android:contentDescription="payment_methods"
+
+            android:src="@drawable/payment_methods"
+            tools:ignore="HardcodedText" />
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/imageContainer3"
+        android:layout_width="382dp"
+        android:layout_height="86dp"
+        android:layout_margin="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.669">   <!-- square -->
+
+        <TextView
+            android:id="@+id/content3"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="12dp"
+            android:text="Customise employee design"
+            android:textColor="@color/grey"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText,SmallSp"
+            android:layout_marginTop="10dp"/>
+
+        <TextView
+            android:id="@+id/itemHeading3"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginStart="12dp"
+            android:text="Manage Employees"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText" />
+
+        <ImageButton
+            android:id="@+id/btnForward2"
+            android:layout_width="76dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="right"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/back"
+            android:src="@drawable/baseline_arrow_forward_ios_24" />
+
+        <ImageView
+            android:id="@+id/centerImage3"
+            android:layout_width="87dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:adjustViewBounds="true"
+            android:contentDescription="manage_employees"
+            android:src="@drawable/manage_employees"
+            tools:layout_editor_absoluteX="15dp"
+            tools:layout_editor_absoluteY="412dp"
+            tools:ignore="HardcodedText" />
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/HeadingSettings"
+        android:layout_width="384dp"
+        android:layout_height="68dp"
+        android:layout_margin="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.827"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.141">   <!-- square -->
+
+        <TextView
+            android:id="@+id/AccountSettings"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="12dp"
+            android:text="Account Settings"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText" />
+
+    </FrameLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
