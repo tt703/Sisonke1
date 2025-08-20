@@ -38,8 +38,8 @@
 
     <FrameLayout
         android:id="@+id/Text_Container"
-        android:layout_width="288dp"
-        android:layout_height="63dp"
+        android:layout_width="377dp"
+        android:layout_height="75dp"
         android:layout_margin="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="1:1"
@@ -52,13 +52,25 @@
             android:id="@+id/AccountSettings"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_gravity="start|center"
             android:layout_marginStart="12dp"
             android:text="Welcome Username"
             android:textColor="@color/black"
             android:textSize="20sp"
             android:textStyle="bold"
             tools:ignore="HardcodedText" />
+
+        <ImageButton
+            android:id="@+id/btnForward1"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/person_profile"
+            android:src="@drawable/account_profile" />
+
+
+
 
     </FrameLayout>
 
@@ -113,7 +125,8 @@
         app:iconTint="@color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_percent="0.48" />
+        app:layout_constraintWidth_percent="0.48"
+        tools:ignore="HardcodedText"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_manage_products"
@@ -122,7 +135,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="336dp"
         android:background="@drawable/button_background"
-        android:gravity="left"
+        android:gravity="center_horizontal"
         android:padding="12dp"
         android:text="Manage Products"
         android:textSize="12sp"
@@ -135,7 +148,8 @@
         app:layout_constraintEnd_toStartOf="@+id/btn_sell_product"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_percent="0.48" />
+        app:layout_constraintWidth_percent="0.48"
+        tools:ignore="HardcodedText"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_sell_product"
@@ -158,7 +172,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/btn_manage_products"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_percent="0.48" />
+        app:layout_constraintWidth_percent="0.48"
+        tools:ignore="HardcodedText"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
