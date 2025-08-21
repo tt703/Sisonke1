@@ -233,7 +233,8 @@
             android:layout_gravity="right"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/back"
-            android:src="@drawable/baseline_arrow_forward_ios_24" />
+            android:src="@drawable/baseline_arrow_forward_ios_24"
+            tools:ignore="HardcodedText" />
 
         <ImageView
             android:id="@+id/centerImage3"
@@ -276,5 +277,31 @@
 
     </FrameLayout>
 
+    <FrameLayout
+        android:id="@+id/btn_logout"
+        android:layout_width="174dp"
+        android:layout_height="67dp"
+        android:layout_margin="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.898">   <!-- square -->
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnLogin"
+            android:layout_width="134dp"
+            android:layout_height="52dp"
+            android:layout_marginTop="16dp"
+            android:text="logout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.844"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/buttonGroupCreate"
+            tools:ignore="HardcodedText" />
+
+
+    </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
