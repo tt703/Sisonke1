@@ -1,18 +1,25 @@
 package com.example.tlotlotau.Auth;
 
 import android.app.Dialog;
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar; // Import ActionBar
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.example.tlotlotau.MainActivity;
 import com.example.tlotlotau.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -24,8 +31,9 @@ import com.google.firebase.auth.FirebaseUser; // Import FirebaseUser
 public class ProfileActivity extends AppCompatActivity {
     ImageView profileImage;
     EditText displayName;
-    Button btnUpdatePass;
+    Button btnUpdatePass,btnDeleteUser;
     FirebaseAuth mAuth;
+    private ImageButton btnBack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +53,17 @@ public class ProfileActivity extends AppCompatActivity {
         profileImage = findViewById(R.id.profileImage);
         displayName = findViewById(R.id.displayName);
         btnUpdatePass = findViewById(R.id.btnUpdatePass);
+        btnDeleteUser = findViewById(R.id.btn_delete_user);
+        btnBack = findViewById(R.id.btnBack);
+
+        // Set up the back button
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
@@ -76,6 +95,16 @@ public class ProfileActivity extends AppCompatActivity {
         EditText et_password = dialog.findViewById(R.id.et_password);
         EditText et_new_password = dialog.findViewById(R.id.et_new_password);
         Button btnUpdate = dialog.findViewById(R.id.btnUpdate);
+        ImageButton finish = dialog.findViewById(R.id.finish);
+
+        // Set up the back button
+        finish.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
 
         btnUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -143,6 +172,90 @@ public class ProfileActivity extends AppCompatActivity {
                 });
             }
         });
+        btnDeleteUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                delete_user();
+            }
+        });
+
+
+        getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                finishAffinity();
+
+            }
+
+        });
         dialog.show();
+
     }
+    void delete_user()
+    {
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.delete_user);
+
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().setLayout(ActionBar.LayoutParams.MATCH_PARENT, 2000);
+
+        EditText  del_email = dialog.findViewById(R.id.del_email);
+        EditText  del_password = dialog.findViewById(R.id.del_password);
+        Button btn_delete_user = dialog.findViewById(R.id.btn_delete_user);
+        ImageButton finish = dialog.findViewById(R.id.finish);
+
+        // Set up the back button
+        finish.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+
+        btn_delete_user.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (del_email.getText().toString().isEmpty()) {
+                    del_email.setError("Please Enter your Email");
+                    return;
+                } else if (del_password.getText().toString().isEmpty()) {
+                    del_password.setError("Please Enter your Password");
+                    return;
+
+                } else {
+                    AuthCredential credential =
+                            EmailAuthProvider.getCredential(del_email.getText().toString(), del_password.getText().toString());
+                    mAuth.getCurrentUser().reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                mAuth.getCurrentUser().delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            Intent intent = new Intent(ProfileActivity.this, MainActivity.class);
+                                            startActivity(intent);
+                                            finish();
+                                        } else {
+                                            Toast.makeText(ProfileActivity.this, task.getException().getMessage().toString(), Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
+                            } else {
+                                Toast.makeText(ProfileActivity.this, task.getException().getMessage().toString(), Toast.LENGTH_SHORT).show();
+                            }
+
+                        }
+                    });
+                }
+            }
+        });
+
+        dialog.show();
+
+
+    }
+
+
 }

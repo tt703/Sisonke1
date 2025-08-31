@@ -1,16 +1,21 @@
 package com.example.tlotlotau.Auth;
 
+
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.tlotlotau.MainActivity;
 import com.example.tlotlotau.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -25,6 +30,11 @@ public class RegisterActivity extends AppCompatActivity {
 
     EditText name,email, Password;
     Button btnRegisterUser;
+    ImageButton btnBack;
+    TextView login;
+
+    String EmailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
+    String PasswordPattern = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{4,}$";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,12 +42,42 @@ public class RegisterActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_register);
 
+        //back header
+        btnBack = findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(v -> startActivity(new Intent(RegisterActivity.this, MainActivity.class)));
+
+
         mAuth = FirebaseAuth.getInstance();
         name = findViewById(R.id.name);
         email = findViewById(R.id.email);
         Password = findViewById(R.id.password);
+        login = findViewById(R.id.login);
+        login.setOnClickListener(v -> startActivity(new Intent(RegisterActivity.this, LoginActivity.class)));
 
         btnRegisterUser = findViewById(R.id.btnRegisterUser);
+
+        //Email format validation
+        email.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if(!b && !email.getText().toString().matches(EmailPattern)){
+                    email.setError("Invalid Email");
+                }
+            }
+        });
+
+        //Password format validation
+        Password.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if(!b && !Password.getText().toString().matches(PasswordPattern)){
+                    Password.setError("Invalid Password");
+                }
+            }
+        });
+
+
+
 
         btnRegisterUser.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,6 +113,7 @@ public class RegisterActivity extends AppCompatActivity {
                                     }
                                 }
                             });
+                    startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
 
                 }
             }

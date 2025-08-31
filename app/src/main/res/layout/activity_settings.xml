@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".Documents.SettingsActivity">
+    tools:context="Settings">
 
     <LinearLayout
         android:id="@+id/backHeader"
@@ -59,7 +58,7 @@
 
 
             <ImageButton
-                android:id="@+id/btnPerson2"
+                android:id="@+id/btnProfile"
                 android:layout_width="90dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="right"
@@ -109,7 +108,7 @@
             android:layout_marginTop="10dp"/>
 
         <ImageButton
-            android:id="@+id/btnForward1"
+            android:id="@+id/btnEditCompany"
             android:layout_width="76dp"
             android:layout_height="match_parent"
             android:layout_gravity="right"
@@ -167,7 +166,7 @@
             android:textStyle="bold"
             tools:ignore="HardcodedText" />
         <ImageButton
-            android:id="@+id/btnForward"
+            android:id="@+id/btnPayment"
             android:layout_width="76dp"
             android:layout_height="match_parent"
             android:layout_gravity="right"
@@ -227,7 +226,7 @@
             tools:ignore="HardcodedText" />
 
         <ImageButton
-            android:id="@+id/btnForward2"
+            android:id="@+id/btnEmployees"
             android:layout_width="76dp"
             android:layout_height="match_parent"
             android:layout_gravity="right"

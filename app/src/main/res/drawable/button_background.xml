@@ -4,7 +4,6 @@
     <item android:state_pressed="true">
         <shape android:shape="rectangle">
             <solid android:color="#FFD700" /> <!-- Gold for pressed state -->
-            <corners android:radius="12dp" /> <!-- Rounded corners -->
         </shape>
     </item>
 
@@ -13,9 +12,8 @@
         <shape android:shape="rectangle">
             <gradient
                 android:startColor="#FFD700"
-                android:endColor="#FFA500"
+                android:endColor="#FFD400"
                android:angle="90" />
-            <corners android:radius="12dp" /> <!-- Rounded corners -->
             <stroke
                 android:width="2dp"
                 android:color="#FFD700" /> <!-- Border -->

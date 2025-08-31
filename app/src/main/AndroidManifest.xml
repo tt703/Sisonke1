@@ -41,6 +41,7 @@
         <activity android:name=".Documents.DocumentDetailActivity" /> <!-- FileProvider for Sharing -->
         <activity android:name=".Auth.RegisterActivity" /> <!-- Register Activity -->
         <activity android:name=".Auth.ProfileActivity" /> <!-- User Profile Activity -->
+        <activity android:name=".Settings"/><!-- Settings Activity -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
