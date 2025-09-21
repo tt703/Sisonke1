@@ -68,6 +68,10 @@
                 android:src="@drawable/your_profile"
                 app:tint="@color/black" />
         </FrameLayout>
+
+
+
+
     </LinearLayout>
     <FrameLayout
         android:id="@+id/imageContainer1"
