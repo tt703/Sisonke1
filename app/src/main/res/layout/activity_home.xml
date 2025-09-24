@@ -71,6 +71,7 @@
             android:textColor="@color/black"
             android:textAlignment="center"
             android:textSize="20sp" />
+
     </LinearLayout>
     <TextView
         android:id="@+id/quick_link"

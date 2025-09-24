@@ -25,7 +25,7 @@ import androidx.core.content.FileProvider;
 
 import com.example.tlotlotau.Customer;
 import com.example.tlotlotau.DatabaseHelper;
-import com.example.tlotlotau.EditCompanyInfoActivity;
+import com.example.tlotlotau.Settings.EditCompanyInfoActivity;
 import com.example.tlotlotau.MainActivity;
 import com.example.tlotlotau.R;
 import com.example.tlotlotau.databinding.EstimatePreviewBinding;

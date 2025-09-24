@@ -9,7 +9,6 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
-import androidx.activity.OnBackPressedDispatcherOwner;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -18,8 +17,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.tlotlotau.Auth.ProfileActivity;
 import com.example.tlotlotau.Documents.DocumentsActivity;
 import com.example.tlotlotau.Inventory.ManageProductsActivity;
-import com.example.tlotlotau.SellProductActivity;
-import com.example.tlotlotau.EditCompanyInfoActivity;
+import com.example.tlotlotau.Settings.Settings;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;

@@ -66,8 +66,14 @@ dependencies {
 
     // Firebase
     implementation(libs.firebase.crashlytics)
-    implementation ("com.google.firebase:firebase-bom:34.1.0")
+    implementation (platform(libs.firebase.bom))
     implementation("com.google.firebase:firebase-auth-ktx:23.2.1")
+    // Firebase Functions client
+    implementation("com.google.firebase:firebase-functions:22.0.1")
+    //Firebase Firestore
+    implementation(libs.firebase.firestore)
+
+
 
     //Image loading
     implementation("com.github.bumptech.glide:glide:4.16.0")

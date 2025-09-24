@@ -1,49 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="12dp">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical">
-
-        <ImageButton
-            android:id="@+id/btnBack"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/back"
-            android:src="@drawable/ic_arrow_back"
-            app:tint="@color/black" />
-
-        <TextView
-            android:id="@+id/titleText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="Payment Methods"
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            tools:ignore="HardcodedText" />
-    </LinearLayout>
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:fillViewport="true">
-
         <LinearLayout
+            android:id="@+id/backHeader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="12dp"
+            android:background="#F9F9F9"
+            android:elevation="2dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <ImageButton
+                android:id="@+id/btnBack"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/back"
+                android:src="@drawable/ic_arrow_back"
+                app:tint="@color/black" />
+
+            <TextView
+                android:id="@+id/titleText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:text="Payment Methods"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/top_level"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/backHeader"
+            >
 
             <TextView
                 android:id="@+id/content2"
@@ -51,26 +57,41 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="6dp"
-                android:text="Banking details"
+                android:text="Card Details"
                 android:textColor="@color/black"
                 android:textSize="18sp"
                 android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.065"
+                app:layout_constraintStart_toStartOf="parent"
                 tools:ignore="HardcodedText,SmallSp" />
 
             <ImageView
                 android:id="@+id/centerImage1"
-                android:layout_width="48dp"
+                android:layout_width="wrap_content"
                 android:layout_height="32dp"
                 android:layout_gravity="end"
                 android:contentDescription="company_profile"
                 android:src="@drawable/visa"
+                app:layout_constraintHorizontal_bias="0.065"
                 tools:ignore="HardcodedText" />
+        </LinearLayout>
 
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/secondLevel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="2dp"
+            android:background="#F9F9F9"
+            app:layout_constraintTop_toBottomOf="@id/top_level">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginTop="6dp">
+                android:padding="12dp"
+                >
 
                 <TextView
                     android:id="@+id/tvCardNumberLabel"
@@ -82,28 +103,23 @@
                     android:textColor="@color/black"
                     android:layout_marginBottom="2dp"/>
 
-                <com.google.android.material.textfield.TextInputLayout
+                <EditText
+                    android:id="@+id/etCardNumber"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etCardNumber"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:autofillHints="creditCardNumber"
-                        android:importantForAutofill="yes"
-                        android:inputType="number"
-                        android:maxLength="19"/>
-                </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_height="wrap_content"
+                    android:autofillHints="creditCardNumber"
+                    android:background="@drawable/item_row_background"
+                    android:importantForAutofill="yes"
+                    android:inputType="number"
+                    android:maxLength="19"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
                     android:orientation="horizontal">
 
                     <LinearLayout
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:orientation="vertical"
@@ -118,24 +134,19 @@
                             android:textStyle="bold"
                             android:textColor="@color/black"
                             android:layout_marginBottom="2dp"/>
-
-                        <com.google.android.material.textfield.TextInputLayout
+                        <EditText
+                            android:id="@+id/etExpiry"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
-
-                            <com.google.android.material.textfield.TextInputEditText
-                                android:id="@+id/etExpiry"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:autofillHints="creditCardExpirationDate"
-                                android:importantForAutofill="yes"
-                                android:inputType="number"
-                                android:maxLength="5"/>
-                        </com.google.android.material.textfield.TextInputLayout>
+                            android:layout_height="wrap_content"
+                            android:autofillHints="creditCardExpirationDate"
+                            android:importantForAutofill="yes"
+                            android:background="@drawable/item_row_background"
+                            android:inputType="number"
+                            android:maxLength="5"/>
                     </LinearLayout>
 
                     <LinearLayout
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:orientation="vertical"
@@ -150,123 +161,127 @@
                             android:textStyle="bold"
                             android:textColor="@color/black"
                             android:layout_marginBottom="2dp"/>
-
-                        <com.google.android.material.textfield.TextInputLayout
+                        <EditText
+                            android:id="@+id/etCvc"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
-
-                            <com.google.android.material.textfield.TextInputEditText
-                                android:id="@+id/etCvc"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:autofillHints="creditCardSecurityCode"
-                                android:importantForAutofill="yes"
-                                android:inputType="numberPassword"
-                                android:maxLength="4"/>
-                        </com.google.android.material.textfield.TextInputLayout>
+                            android:layout_height="wrap_content"
+                            android:autofillHints="creditCardSecurityCode"
+                            android:importantForAutofill="yes"
+                            android:inputType="numberPassword"
+                            android:background="@drawable/item_row_background"
+                            android:maxLength="4"/>
                     </LinearLayout>
                 </LinearLayout>
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnPay"
+                <Button
+                    android:id="@+id/btnSaveCard"
                     style="@style/Widget.MaterialComponents.Button"
                     android:layout_width="match_parent"
                     android:layout_height="44dp"
                     android:layout_marginTop="10dp"
+                    android:backgroundTint="@color/black"
                     android:text="Save Card"
                     android:textAllCaps="false"/>
             </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+        <LinearLayout
+            android:id="@+id/fourth_level"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/secondLevel"
+            >
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="10dp"
-                android:background="#DDDDDD"/>
+            <TextView
+                android:id="@+id/content4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="6dp"
+                android:text="Banking Details"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.065"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:ignore="HardcodedText,SmallSp" />
 
+            <ImageView
+                android:id="@+id/centerImage4"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_gravity="end"
+                android:contentDescription="company_profile"
+                android:src="@drawable/visa"
+                app:layout_constraintHorizontal_bias="0.065"
+                tools:ignore="HardcodedText" />
+        </LinearLayout>
 
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/main"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="2dp"
+            android:background="#F9F9F9"
+            app:layout_constraintTop_toBottomOf="@id/fourth_level">
 
-            <com.google.android.material.card.MaterialCardView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                app:cardCornerRadius="10dp"
-                app:cardElevation="2dp"
-                app:strokeWidth="1dp"
-                app:strokeColor="#DDDDDD">
+                android:orientation="vertical"
+                android:padding="12dp">
 
-                <LinearLayout
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Account Holder"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="2dp"/>
+
+                <EditText
+                    android:id="@+id/etFullName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="12dp">
+                    android:textSize="20sp"
+                    android:hint="Enter Name of Account"
+                    android:background="@drawable/item_row_background"
+                    android:inputType="textPersonName" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Account Holder"
-                        android:textColor="@color/black"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Account Number"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="2dp"/>
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                <EditText
+                    android:id="@+id/etAccountNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Enter Account Number"
+                    android:inputType="number"
+                    android:maxLength="20"
+                    android:background="@drawable/item_row_background"
+                    android:textSize="20sp" />
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etFullName"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="textPersonName" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Account Number"
-                        android:textColor="@color/black"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etAccountNumber"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="number"
-                            android:maxLength="20" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnSaveInfo"
-                        style="@style/Widget.MaterialComponents.Button"
-                        android:layout_width="match_parent"
-                        android:layout_height="44dp"
-                        android:layout_marginTop="10dp"
-                        android:text="Save Information"
-                        android:textAllCaps="false" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-        </LinearLayout>
-    </ScrollView>
-
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNavigationView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/button_background"
-        android:elevation="8dp"
-        app:itemIconTint="@color/black"
-        app:itemTextColor="@color/black"
-        app:menu="@menu/navigation_menu"/>
-</LinearLayout>
+                <Button
+                    android:id="@+id/btnSaveInfo"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:layout_marginTop="10dp"
+                    android:backgroundTint="@color/black"
+                    android:text="Save Information"
+                    android:textAllCaps="false" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+</androidx.constraintlayout.widget.ConstraintLayout>
