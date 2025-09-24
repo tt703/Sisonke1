@@ -19,56 +19,146 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Estimate Details -->
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="694dp"
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Customer Name -->
-            <TextView
-                android:id="@+id/customerName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Customer Name"
-                android:textColor="@color/black"
-                android:textSize="16sp"
-                android:textStyle="bold"/>
 
-            <!-- Estimated Total Amount -->
-            <TextView
-                android:id="@+id/totalAmount"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="Estimated Total"
-                android:textColor="@color/grey"
-                android:textSize="16sp"
-                android:textStyle="bold"/>
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:background="@drawable/border_lines">
 
-            <!-- Date/Time -->
-            <TextView
-                android:id="@+id/timestamp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="Timestamp"
-                android:textColor="@color/grey"
-                android:textSize="14sp"
-                android:textStyle="italic"/>
+
+
+
+                <!-- Employee Name -->
+                <TextView
+                    android:id="@+id/customerName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Employee Name"
+                    android:layout_gravity="center_horizontal"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/errorIcon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="right"
+                    android:layout_marginEnd="8dp"
+                    android:src="@drawable/ic_error" />
+
+            </LinearLayout>
+
+
+            <FrameLayout
+                android:id="@+id/NameOne"
+                android:layout_width="match_parent"
+                android:layout_height="69dp"
+                android:layout_margin="16dp"
+                android:background="@drawable/border_lines">
+
+                <ImageView
+                    android:id="@+id/profileImage"
+                    android:layout_width="44dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="left|center_vertical"
+                    android:background="@drawable/account_profile"
+                    android:contentDescription="@string/profile_picture"
+                    android:scaleType="centerCrop" />
+
+
+                <EditText
+                    android:id="@+id/nameOfPerson"
+                    android:layout_width="159dp"
+                    android:layout_height="48dp"
+                    android:layout_gravity="top|center_horizontal"
+                    android:layout_marginTop="5dp"
+                    android:gravity="top|center_horizontal"
+                    android:hint="Enter your name"
+                    android:inputType="textPersonName"
+                    android:maxLength="40"
+                    android:paddingTop="6dp"
+                    android:textSize="10sp"
+                    android:textStyle="normal" />
+
+                <ImageButton
+                    android:id="@+id/info2"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:background="@drawable/border_lines"
+                    android:contentDescription="@string/back"
+                    android:padding="8dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_more"
+                    app:tint="@color/black" />
+
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/NameTwo"
+                android:layout_width="match_parent"
+                android:layout_height="68dp"
+                android:layout_margin="16dp"
+                android:background="@drawable/border_lines">
+
+                <EditText
+                    android:id="@+id/nameOfPersonTwo"
+                    android:layout_width="159dp"
+                    android:layout_height="48dp"
+                    android:layout_gravity="top|center_horizontal"
+                    android:layout_marginTop="5dp"
+                    android:gravity="center"
+                    android:hint="Enter your name"
+                    android:inputType="textPersonName"
+                    android:maxLength="40"
+                    android:textSize="10sp"
+                    android:textStyle="normal" />
+
+                <ImageButton
+                    android:id="@+id/Info2"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:background="@drawable/border_lines"
+                    android:contentDescription="@string/back"
+                    android:padding="8dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_more"
+                    app:tint="@color/black" />
+
+                <ImageView
+                    android:id="@+id/profileImage2"
+                    android:layout_width="47dp"
+                    android:layout_height="41dp"
+                    android:layout_gravity="left|center_vertical"
+                    android:background="@drawable/account_profile"
+                    android:contentDescription="@string/profile_picture"
+                    android:scaleType="centerCrop"/>
+
+            </FrameLayout>
+
+
+
+
+
         </LinearLayout>
+
+
+
     </com.google.android.material.card.MaterialCardView>
 
     <!-- Optional Error/Status Icon -->
-    <ImageView
-        android:id="@+id/errorIcon"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginEnd="8dp"
-        android:src="@drawable/ic_error"
-        app:layout_constraintTop_toTopOf="@id/materialCard"
-        app:layout_constraintBottom_toBottomOf="@id/materialCard"
-        app:layout_constraintEnd_toEndOf="@id/materialCard"
-        app:layout_constraintVertical_bias="0.5"/>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

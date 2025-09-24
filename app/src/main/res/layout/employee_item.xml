@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp">
+
+    <!-- Invoice Item Card -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/materialCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="6dp"
+        app:cardBackgroundColor="@android:color/white"
+        android:foreground="?attr/selectableItemBackground"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Content Container -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="122dp"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Customer Name -->
+            <TextView
+                android:id="@+id/employeeName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Employee Name"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="normal" />
+
+
+            <LinearLayout
+                android:layout_width="377dp"
+                android:layout_height="25dp"
+                android:orientation="horizontal">
+
+                <!-- Email of employee -->
+                <TextView
+                    android:id="@+id/email"
+                    android:layout_width="239dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Email"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:textStyle="normal" />
+
+                <!-- Icon aligned to the right -->
+                <ImageView
+                    android:id="@+id/moreIcon"
+                    android:layout_width="35dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_more"
+                    android:layout_gravity="center_vertical"/>
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="377dp"
+                android:layout_height="37dp"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="68dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center"
+                    android:text="Role"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    android:textStyle="normal" />
+
+
+                <View
+                    android:layout_width="22dp"
+                    android:layout_height="11dp" />
+
+
+                <TextView
+                    android:layout_width="68dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center"
+                    android:text="Status"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    android:textStyle="normal" />
+            </LinearLayout>
+
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Floating Error Icon (optional) -->
+</androidx.constraintlayout.widget.ConstraintLayout>

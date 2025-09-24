@@ -39,6 +39,7 @@
     <string name="img_main">Image_Main</string>
     <string name="mastercard">Mastercard</string>
     <string name="payment">Visa_Payment</string>
+    <string name="profile_picture">profile</string>
 
 
 </resources>
