@@ -10,6 +10,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.tlotlotau.Auth.LoginActivity;
+import com.example.tlotlotau.DatabaseHelper;
+
 
 import com.example.tlotlotau.Auth.RegisterActivity;
 import com.google.firebase.auth.FirebaseAuth;
@@ -33,21 +35,9 @@ public class MainActivity extends AppCompatActivity {
         if(mAuth.getCurrentUser() == null){
             Toast.makeText(getApplicationContext(), "No User Found", Toast.LENGTH_LONG).show();
         }
-
-
-
-        //Bottom Navigation Logic
-
-
-        // Initialize buttons (make sure these IDs exist in your activity_main.xml)
-
+        //Initialize Buttons
         btnRegister = findViewById(R.id.btnRegister);
-
         btnLogin = findViewById(R.id.btnLogin);
-
-
-        // Set click listeners for each button
-
         btnRegister.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, RegisterActivity.class)));
         btnLogin.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, LoginActivity.class)));
         // Profile Button checks if user exists first

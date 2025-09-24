@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,6 +15,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class EditCompanyInfoActivity   extends AppCompatActivity {
 
+    private ImageButton btnBack;
+
     // SharedPreferences file name
     private static final String SHARED_PREFS_NAME = "CompanyInfo";
 
@@ -21,6 +24,12 @@ public class EditCompanyInfoActivity   extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edit_company_info);
+        // Set up the back button
+        btnBack = findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(v -> {
+            onBackPressed();
+        });
+
 
         // Initialize UI elements
         EditText companyName = findViewById(R.id.editCompanyName);
@@ -65,7 +74,7 @@ public class EditCompanyInfoActivity   extends AppCompatActivity {
                 startActivity(new Intent(this, MainActivity.class));
                 return true;
             } else if (itemId == R.id.nav_settings) {
-                startActivity(new Intent(this, EditCompanyInfoActivity.class));
+                startActivity(new Intent(this, Settings.class));
                 return true;
             } else if (itemId == R.id.nav_invoices) {
                 startActivity(new Intent(this, DocumentsActivity.class));
@@ -102,7 +111,7 @@ public class EditCompanyInfoActivity   extends AppCompatActivity {
                                  EditText branchCode) {
         SharedPreferences preferences = getSharedPreferences(SHARED_PREFS_NAME, MODE_PRIVATE);
 
-        companyName.setText(preferences.getString("CompanyName", "LESKARATSHEPO")); // Default: LESKARATSHEPO
+        companyName.setText(preferences.getString("CompanyName", "BUILDERSTOWN HYPER MIDRAND")); // Default
         companyAddress.setText(preferences.getString("CompanyAddress", " "));
         vatNumber.setText(preferences.getString("VATNumber", ""));
         registrationNumber.setText(preferences.getString("RegistrationNumber", ""));

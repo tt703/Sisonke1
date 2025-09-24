@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "926763373232",
+    "project_id": "lesekaratshepo-0f694381",
+    "storage_bucket": "lesekaratshepo-0f694381.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:926763373232:android:c12bfe92d0fcac382c6175",
+        "android_client_info": {
+          "package_name": "com.example.tlotlotau"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "926763373232-lao1m3b04he9a4k88gn479d3769irmc9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDoq7QWQWWDsatmAbHJkrrGrH8HRutIXs8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "926763373232-lao1m3b04he9a4k88gn479d3769irmc9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

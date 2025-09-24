@@ -25,7 +25,7 @@ import androidx.core.content.FileProvider;
 
 import com.example.tlotlotau.Customer;
 import com.example.tlotlotau.DatabaseHelper;
-import com.example.tlotlotau.EditCompanyInfoActivity;
+import com.example.tlotlotau.Settings.EditCompanyInfoActivity;
 import com.example.tlotlotau.MainActivity;
 import com.example.tlotlotau.R;
 import com.example.tlotlotau.databinding.EstimatePreviewBinding;
@@ -161,7 +161,7 @@ public class EstimatePreviewActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1) {
-            Intent intent = new Intent(EstimatePreviewActivity.this, MainActivity.class);
+            Intent intent = new Intent(EstimatePreviewActivity.this, DocumentsActivity.class);
             startActivity(intent);
             finish();
         }

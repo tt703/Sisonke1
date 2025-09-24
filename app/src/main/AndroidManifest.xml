@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -30,7 +30,7 @@
         <activity android:name=".Documents.CreateEstimateActivity" /> <!-- Estimate Preview Activity -->
         <activity android:name=".Documents.EstimatePreviewActivity" /> <!-- Create Invoice Activity -->
         <activity android:name=".Documents.CreateInvoiceActivity" /> <!-- Edit Company Info Activity -->
-        <activity android:name=".EditCompanyInfoActivity" /> <!-- Invoice Preview Activity -->
+        <activity android:name=".Settings.EditCompanyInfoActivity" /> <!-- Invoice Preview Activity -->
         <activity android:name=".Documents.InvoicePreviewActivity" /> <!-- Add Product Activity -->
         <activity android:name=".Inventory.AddProductActivity" /> <!-- Sell Product Activity -->
         <activity android:name=".SellProductActivity" /> <!-- Edit Product Activity -->
@@ -41,6 +41,9 @@
         <activity android:name=".Documents.DocumentDetailActivity" /> <!-- FileProvider for Sharing -->
         <activity android:name=".Auth.RegisterActivity" /> <!-- Register Activity -->
         <activity android:name=".Auth.ProfileActivity" /> <!-- User Profile Activity -->
+        <activity android:name=".Settings.Settings"/><!-- Settings Activity -->
+        <activity android:name=".Settings.PaymentMethod" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -51,5 +54,6 @@
                 android:resource="@xml/file_paths" />
         </provider>
     </application>
+
 
 </manifest>

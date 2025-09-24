@@ -47,6 +47,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_PRODUCT_DATE_CREATED = "date_created";
     private static final String COLUMN_PRODUCT_QR_CODE = "qr_code";
 
+    private static final String TABLE_BUSINESSES= "business";
+    private static final String COLUMN_BUSINESS_ID = "businessId";
+    private static final String COLUMN_BUSINESS_NAME = "name";
+    private static final String COLUMN_BUSINESS_ADDRESS = "address";
+    private static final String COLUMN_BUSINESS_VAT_NUMBER = "vatNumber";
+    private static final String COLUMN_BUSINESS_REGISTRATION_NUMBER = "registrationNumber";
+    private static final String COLUMN_BUSINESS_BANK_NAME = "bankName";
+    private static final String COLUMN_BUSINESS_ACCOUNT_NUMBER = "accountNumber";
+    private static final String COLUMN_BUSINESS_BRANCH_CODE = "branchCode";
+    private static final String COLUMN_BUSINESS_OWNER_ID = "ownerId";
+    private static final String COLUMN_BUSINESS_UPDATED_AT = "updatedAt";
+    private static final String COLUMN_BUSINESS_SYNCED = "synced";
+
+
     private static final String CREATE_TABLE_INVOICES = "CREATE TABLE " + TABLE_INVOICES + " (" +
             COLUMN_INVOICE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
             COLUMN_INVOICE_CUSTOMER_NAME + " TEXT, " +
@@ -76,6 +90,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             COLUMN_PRODUCT_DATE_CREATED + " TEXT, " +
             COLUMN_PRODUCT_QR_CODE + " TEXT)";
 
+    private static final String CREATE_TABLE_BUSINESSES = "CREATE TABLE " + TABLE_BUSINESSES + " (" +
+            COLUMN_BUSINESS_ID + " TEXT PRIMARY KEY, " +
+            COLUMN_BUSINESS_NAME + " TEXT, " +
+            COLUMN_BUSINESS_ADDRESS + " TEXT, " +
+            COLUMN_BUSINESS_VAT_NUMBER + " TEXT, " +
+            COLUMN_BUSINESS_REGISTRATION_NUMBER + " TEXT, " +
+            COLUMN_BUSINESS_BANK_NAME + " TEXT, " +
+            COLUMN_BUSINESS_ACCOUNT_NUMBER + " TEXT, " +
+            COLUMN_BUSINESS_BRANCH_CODE + " TEXT, " +
+            COLUMN_BUSINESS_OWNER_ID + " TEXT, " +
+            COLUMN_BUSINESS_UPDATED_AT + " TEXT, " +
+            COLUMN_BUSINESS_SYNCED + " INTEGER DEFAULT 0)";
+
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -85,6 +112,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_INVOICES);
         db.execSQL(CREATE_TABLE_PRODUCTS);
         db.execSQL(CREATE_TABLE_ESTIMATES);
+        db.execSQL(CREATE_TABLE_BUSINESSES);
     }
 
     @Override
@@ -92,6 +120,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_INVOICES);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_PRODUCTS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_ESTIMATES);
+        if(oldVersion<15){
+            db.execSQL(CREATE_TABLE_BUSINESSES);
+        }
         onCreate(db);
     }
 
@@ -268,4 +299,29 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         return db.delete(TABLE_PRODUCTS, COLUMN_PRODUCT_ID + " = ?", new String[]{String.valueOf(productId)});
     }
+    public boolean upsertBusinessLocal(String businessId, String name, String address, String vatNumber, String registrationNumber,
+                                        String bankName, String accountNumber, String branchCode, String ownerUid, long updatedAt, int synced) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_BUSINESS_ID, businessId);
+        values.put(COLUMN_BUSINESS_NAME, name);
+        values.put(COLUMN_BUSINESS_ADDRESS, address);
+        values.put(COLUMN_BUSINESS_VAT_NUMBER, vatNumber);
+        values.put(COLUMN_BUSINESS_REGISTRATION_NUMBER, registrationNumber);
+        values.put(COLUMN_BUSINESS_BANK_NAME, bankName);
+        values.put(COLUMN_BUSINESS_ACCOUNT_NUMBER, accountNumber);
+        values.put(COLUMN_BUSINESS_BRANCH_CODE, branchCode);
+        values.put(COLUMN_BUSINESS_OWNER_ID, ownerUid);
+        values.put(COLUMN_BUSINESS_UPDATED_AT, updatedAt);
+        values.put(COLUMN_BUSINESS_SYNCED, synced);
+
+        long result = db.insertWithOnConflict(TABLE_BUSINESSES, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+        db.close();
+        return result != -1;
+    }
+
+
+
+
+
 }
