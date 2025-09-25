@@ -43,6 +43,11 @@
         <activity android:name=".Auth.ProfileActivity" /> <!-- User Profile Activity -->
         <activity android:name=".Settings.Settings"/><!-- Settings Activity -->
         <activity android:name=".Settings.PaymentMethod" />
+        <activity android:name=".Employees.AddEmployeeActivity" />
+        <activity android:name=".Employees.EditEmployeeActivity" />
+        <activity android:name=".Employees.ManageEmployeesActivity"/>
+
+
 
         <provider
             android:name="androidx.core.content.FileProvider"

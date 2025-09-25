@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <!-- Header / Back -->
+    <LinearLayout
+        android:id="@+id/backHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="12dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="#F9F9F9"
+        android:elevation="2dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_arrow_back"
+            android:contentDescription="@string/back"
+            app:tint="@color/black"/>
+
+        <TextView
+            android:id="@+id/titleText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:text="Edit Employee"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+    <!-- Form container -->
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/backHeader"
+        app:layout_constraintBottom_toTopOf="@+id/saveSection"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="16dp"
+            android:padding="10dp"
+            android:paddingBottom="24dp">
+
+            <!-- Employee Name -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Employee Name"
+                android:textSize="14sp"
+                android:textColor="@color/black"/>
+
+            <EditText
+                android:id="@+id/etEmpName"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="6dp"
+                android:padding="10dp"
+                android:background="@drawable/item_row_background"
+                android:hint="Full name"
+                android:inputType="textPersonName"/>
+
+            <!-- Employee Email (readonly) -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Employee Email"
+                android:textSize="14sp"
+                android:textColor="@color/black"/>
+
+            <EditText
+                android:id="@+id/etEmpEmail"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="6dp"
+                android:padding="10dp"
+                android:background="@drawable/item_row_background"
+                android:hint="email@example.com"
+                android:inputType="textEmailAddress"
+                android:enabled="false"
+                android:focusable="false"/>
+
+            <!-- Role -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Role"
+                android:textSize="14sp"
+                android:textColor="@color/black"/>
+
+            <EditText
+                android:id="@+id/etEmpRole"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="6dp"
+                android:padding="10dp"
+                android:background="@drawable/item_row_background"
+                android:hint="e.g. Sales, Stock Control, Supervisor"
+                android:inputType="text"/>
+
+            <!-- Active checkbox -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="12dp"
+                android:gravity="center_vertical">
+
+                <CheckBox
+                    android:id="@+id/cbEmpActive"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Active"
+                    android:layout_marginStart="8dp"
+                    android:textSize="14sp"
+                    android:textColor="@color/black"/>
+            </LinearLayout>
+
+            <!-- Optional extra info -->
+            <TextView
+                android:id="@+id/tvInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Activate or deactivate the employee. Changes are synced to the server."
+                android:textSize="12sp"
+                android:textColor="@color/black"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Employee Phone"
+                android:textSize="14sp"
+                android:textColor="@color/black"/>
+
+            <EditText
+                android:id="@+id/etEmpPhone"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="6dp"
+                android:padding="10dp"
+                android:background="@drawable/item_row_background"
+                android:hint="Phone number"
+                android:inputType="phone"/>
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Save area fixed to bottom -->
+    <LinearLayout
+        android:id="@+id/saveSection"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        android:padding="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <Button
+            android:id="@+id/btnSave"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="Save"
+            android:textColor="@color/black"
+            android:backgroundTint="#FFD700"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

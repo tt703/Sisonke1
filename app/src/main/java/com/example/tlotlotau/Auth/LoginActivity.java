@@ -51,10 +51,7 @@ public class LoginActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        String username = getIntent().getStringExtra("USERNAME_KEY");
-        if (username != null) {
-            // Pre-fill the username field
-        }
+
         btnBack = findViewById(R.id.btnBack);
         btnBack.setOnClickListener(v -> startActivity(new Intent(LoginActivity.this, MainActivity.class)));
 

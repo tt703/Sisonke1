@@ -73,7 +73,7 @@
                 android:layout_marginBottom="12dp"/>
 
             <EditText
-                android:id="@+id/etPhoneNumber"
+                android:id="@+id/etEmployeePhone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Enter Phone Number"
@@ -94,17 +94,25 @@
                 android:background="@drawable/item_row_background"
                 android:layout_marginBottom="12dp"/>
 
-            <EditText
-                android:id="@+id/etProductDescription"
+            <Spinner
+                android:id="@+id/etEmployeeRole"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Product Description"
+                android:hint="Select Employee Role"
+                android:background="@drawable/item_row_background"
+                android:textSize="16sp"
+                android:layout_marginBottom="12dp"/>
+            <EditText
+                android:id="@+id/etEmployeePass"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter Temp Employee Pass"
                 android:background="@drawable/item_row_background"
                 android:textSize="16sp"
                 android:layout_marginBottom="12dp"/>
 
             <Button
-                android:id="@+id/btnSaveProduct"
+                android:id="@+id/btnSaveEmployee"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:backgroundTint="#FFD700"
