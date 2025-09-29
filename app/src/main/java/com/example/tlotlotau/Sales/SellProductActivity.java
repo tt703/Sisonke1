@@ -1,4 +1,4 @@
-package com.example.tlotlotau;
+package com.example.tlotlotau.Sales;
 
 import android.os.Bundle;
 import android.content.Intent;
@@ -9,7 +9,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.tlotlotau.Database.DatabaseHelper;
 import com.example.tlotlotau.Inventory.Product;
+import com.example.tlotlotau.R;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 

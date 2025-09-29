@@ -80,7 +80,6 @@
                 android:hint="Full name"
                 android:inputType="textPersonName"/>
 
-            <!-- Employee Email (readonly) -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -101,7 +100,6 @@
                 android:enabled="false"
                 android:focusable="false"/>
 
-            <!-- Role -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -110,15 +108,16 @@
                 android:textSize="14sp"
                 android:textColor="@color/black"/>
 
-            <EditText
-                android:id="@+id/etEmpRole"
+            <Spinner
+                android:id="@+id/spinnerRole"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginTop="6dp"
-                android:padding="10dp"
+                android:layout_height="wrap_content"
                 android:background="@drawable/item_row_background"
-                android:hint="e.g. Sales, Stock Control, Supervisor"
-                android:inputType="text"/>
+                android:entries="@array/employee_role"
+                android:minHeight="48dp"
+                android:padding="8dp"
+                android:spinnerMode="dropdown" />
+
 
             <!-- Active checkbox -->
             <LinearLayout
@@ -134,15 +133,14 @@
                     android:layout_height="wrap_content"/>
 
                 <TextView
+                    android:id="@+id/etStatus"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Active"
                     android:layout_marginStart="8dp"
                     android:textSize="14sp"
                     android:textColor="@color/black"/>
             </LinearLayout>
 
-            <!-- Optional extra info -->
             <TextView
                 android:id="@+id/tvInfo"
                 android:layout_width="match_parent"

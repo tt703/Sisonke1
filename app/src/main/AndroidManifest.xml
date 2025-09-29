@@ -13,13 +13,13 @@
         android:theme="@style/Theme.TlotloTau"
         tools:replace="android:theme">
         <activity
-            android:name=".HomeActivity"
+            android:name=".Main.HomeActivity"
             android:exported="false" />
         <activity
             android:name=".Auth.LoginActivity"
             android:exported="false" /> <!-- Main Activity -->
         <activity
-            android:name=".MainActivity"
+            android:name=".Main.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,7 +33,7 @@
         <activity android:name=".Settings.EditCompanyInfoActivity" /> <!-- Invoice Preview Activity -->
         <activity android:name=".Documents.InvoicePreviewActivity" /> <!-- Add Product Activity -->
         <activity android:name=".Inventory.AddProductActivity" /> <!-- Sell Product Activity -->
-        <activity android:name=".SellProductActivity" /> <!-- Edit Product Activity -->
+        <activity android:name=".Sales.SellProductActivity" /> <!-- Edit Product Activity -->
         <activity android:name=".Inventory.EditProductActivity" /> <!-- Product List Activity -->
         <activity android:name=".Inventory.ProductListActivity" /> <!-- Manage Products Activity -->
         <activity android:name=".Inventory.ManageProductsActivity" /> <!-- Documents Activity -->

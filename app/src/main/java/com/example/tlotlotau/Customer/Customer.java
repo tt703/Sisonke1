@@ -1,4 +1,4 @@
-package com.example.tlotlotau;
+package com.example.tlotlotau.Customer;
 
 import android.os.Parcel;
 import android.os.Parcelable;

@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.tlotlotau.DatabaseHelper;
+import com.example.tlotlotau.Database.DatabaseHelper;
 import com.example.tlotlotau.R;
 
 import java.util.List;

@@ -19,7 +19,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.tlotlotau.Customer;
+import com.example.tlotlotau.Customer.Customer;
 import com.example.tlotlotau.R;
 import com.google.android.material.snackbar.Snackbar;
 

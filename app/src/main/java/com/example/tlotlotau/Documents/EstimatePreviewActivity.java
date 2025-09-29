@@ -23,10 +23,10 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
-import com.example.tlotlotau.Customer;
-import com.example.tlotlotau.DatabaseHelper;
+import com.example.tlotlotau.Customer.Customer;
+import com.example.tlotlotau.Database.DatabaseHelper;
 import com.example.tlotlotau.Settings.EditCompanyInfoActivity;
-import com.example.tlotlotau.MainActivity;
+import com.example.tlotlotau.Main.MainActivity;
 import com.example.tlotlotau.R;
 import com.example.tlotlotau.databinding.EstimatePreviewBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;

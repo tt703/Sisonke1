@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -35,6 +36,7 @@ public class AddEmployeeActivity extends AppCompatActivity {
     private EditText etEmployeeName, etEmployeePhone, etEmployeeEmail, etEmployeePass;
     private Spinner etEmployeeRole;
     private Button btnSaveEmployee;
+    private ImageButton btnback;
 
     private FirebaseAuth primaryAuth;
     private FirebaseFirestore db;
@@ -60,8 +62,11 @@ public class AddEmployeeActivity extends AppCompatActivity {
         etEmployeePass = findViewById(R.id.etEmployeePass);
         btnSaveEmployee = findViewById(R.id.btnSaveEmployee);
 
-        // roles
-        String[] roles = new String[]{"Sales", "Stock Control", "Supervisor"};
+        btnback = findViewById(R.id.btnBack);
+        btnback.setOnClickListener(v -> onBackPressed());
+
+        // preselect employee roles
+        String[] roles = getResources().getStringArray(R.array.employee_role);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, roles);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         etEmployeeRole.setAdapter(adapter);

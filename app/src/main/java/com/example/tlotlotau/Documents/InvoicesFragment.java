@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import androidx.fragment.app.Fragment;
 
-import com.example.tlotlotau.DatabaseHelper;
+import com.example.tlotlotau.Database.DatabaseHelper;
 import com.example.tlotlotau.R;
 
 import java.util.List;

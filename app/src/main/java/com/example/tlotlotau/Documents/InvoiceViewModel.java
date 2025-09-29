@@ -3,7 +3,7 @@ package com.example.tlotlotau.Documents;
 import  androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.tlotlotau.Customer;
+import com.example.tlotlotau.Customer.Customer;
 
 import java.util.ArrayList;
 public class InvoiceViewModel extends ViewModel {

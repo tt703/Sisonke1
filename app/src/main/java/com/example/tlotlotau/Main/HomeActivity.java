@@ -1,4 +1,4 @@
-package com.example.tlotlotau;
+package com.example.tlotlotau.Main;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,10 +17,13 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.tlotlotau.Auth.ProfileActivity;
 import com.example.tlotlotau.Documents.DocumentsActivity;
 import com.example.tlotlotau.Inventory.ManageProductsActivity;
+import com.example.tlotlotau.R;
+import com.example.tlotlotau.Sales.SellProductActivity;
 import com.example.tlotlotau.Settings.Settings;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -104,6 +107,8 @@ public class HomeActivity extends AppCompatActivity {
             }
 
         });
+        //check shared preference is not empty if user is Owner
+
 
 
 

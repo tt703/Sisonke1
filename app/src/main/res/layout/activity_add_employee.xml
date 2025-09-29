@@ -8,7 +8,6 @@
     android:background="@color/white"
     tools:context=".Inventory.AddProductActivity">
 
-    <!-- Back Header -->
     <LinearLayout
         android:id="@+id/backHeader"
         android:layout_width="match_parent"
@@ -29,9 +28,9 @@
             android:id="@+id/btnBack"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@drawable/border_lines"
-            android:contentDescription="@string/back"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_arrow_back"
+            android:contentDescription="@string/back"
             app:tint="@color/black" />
 
         <TextView
@@ -63,6 +62,14 @@
             android:layout_marginTop="24dp"
             android:padding="16dp">
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="25dp"
+                android:text="Employee Name"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:layout_marginBottom="2dp"/>
+
             <EditText
                 android:id="@+id/etEmployeeName"
                 android:layout_width="match_parent"
@@ -71,6 +78,13 @@
                 android:textSize="16sp"
                 android:background="@drawable/item_row_background"
                 android:layout_marginBottom="12dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="25dp"
+                android:text="Employee Phone"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:layout_marginBottom="2dp"/>
 
             <EditText
                 android:id="@+id/etEmployeePhone"
@@ -82,6 +96,13 @@
                 android:inputType="number"
                 android:textSize="16sp"
                 android:layout_marginBottom="12dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="25dp"
+                android:text="Employee Email"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:layout_marginBottom="2dp"/>
 
 
             <EditText
@@ -93,6 +114,13 @@
                 android:textSize="16sp"
                 android:background="@drawable/item_row_background"
                 android:layout_marginBottom="12dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="25dp"
+                android:text="Select Employee Role"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:layout_marginBottom="2dp"/>
 
             <Spinner
                 android:id="@+id/etEmployeeRole"
@@ -102,6 +130,13 @@
                 android:background="@drawable/item_row_background"
                 android:textSize="16sp"
                 android:layout_marginBottom="12dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="25dp"
+                android:text="Employee Temporary Password"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:layout_marginBottom="2dp"/>
             <EditText
                 android:id="@+id/etEmployeePass"
                 android:layout_width="match_parent"
@@ -111,15 +146,26 @@
                 android:textSize="16sp"
                 android:layout_marginBottom="12dp"/>
 
-            <Button
-                android:id="@+id/btnSaveEmployee"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:backgroundTint="#FFD700"
-                android:textColor="@color/black"
-                android:textStyle="bold"
-                android:textSize="19sp"
-                android:text="Save Details"/>
         </LinearLayout>
     </ScrollView>
+    <LinearLayout
+        android:id="@+id/saveSection"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        android:padding="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <Button
+            android:id="@+id/btnSaveEmployee"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="Create Employee"
+            android:textColor="@color/black"
+            android:backgroundTint="#FFD700"
+            android:textStyle="bold"/>
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

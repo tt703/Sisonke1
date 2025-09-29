@@ -7,51 +7,54 @@ import android.widget.TextView;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.tlotlotau.R;
 
 import java.util.List;
-public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.VH> {
+
+public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.EmployeeViewHolder> {
 
     public interface OnItemClickListener {
         void onItemClick(Employee employee);
-
     }
 
-    private final List<Employee> items;
+    private final List<Employee> employees;
     private final OnItemClickListener listener;
 
-    public EmployeeAdapter(List<Employee> items, OnItemClickListener listener) {
-        this.items = items;
+    public EmployeeAdapter(List<Employee> employees, OnItemClickListener listener) {
+        this.employees = employees;
         this.listener = listener;
     }
+
     @NonNull
     @Override
-    public VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.employee_item, parent, false);
-        return new VH(v);
+    public EmployeeViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.employee_item, parent, false);
+        return new EmployeeViewHolder(view);
     }
-    @Override
-    public void onBindViewHolder(@NonNull VH holder, int position) {
-        Employee e = items.get(position);
-        holder.employeeName.setText(e.name != null ? e.name : e.email);
-        holder.email.setText(e.email != null ? e.email : "");
-        holder.role.setText(e.role != null ? e.role : "");
-        holder.status.setText(e.isActive ? "Active" : "Disabled");
 
-        holder.itemView.setOnClickListener(v -> {
-            if(listener != null) listener.onItemClick(e);
-        });
+    @Override
+    public void onBindViewHolder(@NonNull EmployeeViewHolder holder, int position) {
+        Employee employee = employees.get(position);
+        holder.bind(employee, listener);
     }
+
     @Override
     public int getItemCount() {
-        return items.size();
+        return employees.size();
     }
 
-    static class VH extends RecyclerView.ViewHolder {
-        TextView employeeName, email, role, status;
-        ImageView moreIcon;
-        VH(@NonNull View itemView) {
+    static class EmployeeViewHolder extends RecyclerView.ViewHolder {
+        private final TextView employeeName;
+        private final TextView email;
+        private final TextView role;
+        private final TextView status;
+        private final ImageView moreIcon;
+
+        EmployeeViewHolder(@NonNull View itemView) {
             super(itemView);
             employeeName = itemView.findViewById(R.id.employeeName);
             email = itemView.findViewById(R.id.email);
@@ -59,6 +62,24 @@ public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.VH> {
             status = itemView.findViewById(R.id.status);
             moreIcon = itemView.findViewById(R.id.moreIcon);
         }
-    }
 
+        void bind(Employee employee, OnItemClickListener listener) {
+            employeeName.setText(getSafeText(employee.name, employee.email));
+            email.setText(getSafeText(employee.email, ""));
+            role.setText(getSafeText(employee.role, ""));
+
+            boolean isActive = employee != null && employee.isActive;
+            status.setText(isActive ? "Active" : "Disabled");
+            int colorRes = isActive ? R.color.green : R.color.red;
+            status.setTextColor(ContextCompat.getColor(itemView.getContext(), colorRes));
+
+            itemView.setOnClickListener(v -> {
+                if (listener != null) listener.onItemClick(employee);
+            });
+        }
+
+        private String getSafeText(String primary, String fallback) {
+            return (primary != null && !primary.isEmpty()) ? primary : fallback;
+        }
+    }
 }

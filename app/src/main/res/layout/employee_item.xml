@@ -71,7 +71,7 @@
 
                 <TextView
                     android:id="@+id/role"
-                    android:layout_width="68dp"
+                    android:layout_width="120dp"
                     android:layout_height="30dp"
                     android:layout_gravity="center_vertical"
                     android:gravity="center"
@@ -81,9 +81,7 @@
                     android:textStyle="normal" />
 
 
-                <View
-                    android:layout_width="22dp"
-                    android:layout_height="11dp" />
+
 
 
                 <TextView

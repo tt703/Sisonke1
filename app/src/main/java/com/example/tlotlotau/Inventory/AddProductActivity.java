@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.tlotlotau.DatabaseHelper;
+import com.example.tlotlotau.Database.DatabaseHelper;
 import com.example.tlotlotau.R;
 
 public class AddProductActivity extends AppCompatActivity {

@@ -1,4 +1,4 @@
-package com.example.tlotlotau;
+package com.example.tlotlotau.Main;
 
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
@@ -10,10 +10,11 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.tlotlotau.Auth.LoginActivity;
-import com.example.tlotlotau.DatabaseHelper;
+import com.example.tlotlotau.Database.DatabaseHelper;
 
 
 import com.example.tlotlotau.Auth.RegisterActivity;
+import com.example.tlotlotau.R;
 import com.google.firebase.auth.FirebaseAuth;
 
 

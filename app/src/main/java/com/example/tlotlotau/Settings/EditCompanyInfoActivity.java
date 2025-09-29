@@ -11,7 +11,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.tlotlotau.DatabaseHelper;
+import com.example.tlotlotau.Database.DatabaseHelper;
 import com.example.tlotlotau.R;
 import com.example.tlotlotau.Auth.LoginActivity;
 import com.google.firebase.Timestamp;
@@ -69,7 +69,7 @@ public class EditCompanyInfoActivity extends AppCompatActivity {
 
         btnBack.setOnClickListener(v -> onBackPressed());
 
-        // Init Firebase + local DB + prefs
+        // Init Firebase/local DB/prefs
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         localDb = new DatabaseHelper(getApplicationContext());

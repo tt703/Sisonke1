@@ -1,4 +1,4 @@
-package com.example.tlotlotau;
+package com.example.tlotlotau.Database;
 
 import android.content.ContentValues;
 import android.content.Context;
