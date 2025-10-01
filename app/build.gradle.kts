@@ -73,6 +73,7 @@ dependencies {
     //Firebase Firestore
     implementation(libs.firebase.firestore)
 
+    //Stripe Card details Integration
 
 
     //Image loading
