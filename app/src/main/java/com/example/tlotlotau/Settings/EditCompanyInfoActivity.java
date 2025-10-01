@@ -23,12 +23,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * EditCompanyInfoActivity
- * - Loads company info from Firestore (if present) into the UI
- * - Saves to Firestore, SharedPreferences and local SQLite (DatabaseHelper)
- * - Only accessible by owner role (users/{uid}.role must be "owner")
- */
 public class EditCompanyInfoActivity extends AppCompatActivity {
 
     private ImageButton btnBack;

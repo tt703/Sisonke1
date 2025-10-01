@@ -12,7 +12,6 @@ import com.example.tlotlotau.Auth.LoginActivity;
 import com.example.tlotlotau.Auth.ProfileActivity;
 import com.example.tlotlotau.Employees.ManageEmployeesActivity;
 import com.example.tlotlotau.Main.HomeActivity;
-import com.example.tlotlotau.Settings.PaymentMethod;
 import com.example.tlotlotau.R;
 import com.google.firebase.auth.FirebaseAuth;
 
