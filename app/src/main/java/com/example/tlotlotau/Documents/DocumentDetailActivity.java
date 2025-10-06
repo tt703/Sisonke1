@@ -13,6 +13,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.tlotlotau.Documents.Estimate.EstimatePreviewActivity;
+import com.example.tlotlotau.Documents.Invoice.InvoicePreviewActivity;
 import com.example.tlotlotau.R;
 
 import java.io.File;

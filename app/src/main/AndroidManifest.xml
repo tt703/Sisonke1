@@ -27,11 +27,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity> <!-- Create Estimate Activity -->
-        <activity android:name=".Documents.CreateEstimateActivity" /> <!-- Estimate Preview Activity -->
-        <activity android:name=".Documents.EstimatePreviewActivity" /> <!-- Create Invoice Activity -->
-        <activity android:name=".Documents.CreateInvoiceActivity" /> <!-- Edit Company Info Activity -->
+        <activity android:name=".Documents.Estimate.CreateEstimateActivity" /> <!-- Estimate Preview Activity -->
+        <activity android:name=".Documents.Estimate.EstimatePreviewActivity" /> <!-- Create Invoice Activity -->
+        <activity android:name=".Documents.Invoice.CreateInvoiceActivity" /> <!-- Edit Company Info Activity -->
         <activity android:name=".Settings.EditCompanyInfoActivity" /> <!-- Invoice Preview Activity -->
-        <activity android:name=".Documents.InvoicePreviewActivity" /> <!-- Add Product Activity -->
+        <activity android:name=".Documents.Invoice.InvoicePreviewActivity" /> <!-- Add Product Activity -->
         <activity android:name=".Inventory.AddProductActivity" /> <!-- Sell Product Activity -->
         <activity android:name=".Sales.SellProductActivity" /> <!-- Edit Product Activity -->
         <activity android:name=".Inventory.EditProductActivity" /> <!-- Product List Activity -->

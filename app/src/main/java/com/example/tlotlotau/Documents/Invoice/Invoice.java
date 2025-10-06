@@ -1,4 +1,4 @@
-package com.example.tlotlotau.Documents;
+package com.example.tlotlotau.Documents.Invoice;
 
 public class Invoice {
     private int id;

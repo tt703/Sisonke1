@@ -1,5 +1,6 @@
 package com.example.tlotlotau.Employees;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -41,6 +42,8 @@ public class AddEmployeeActivity extends AppCompatActivity {
     private FirebaseAuth primaryAuth;
     private FirebaseFirestore db;
     private String businessId;
+    private AlertDialog loadingDialog;
+
 
 
     private static final long LOCK_TIMEOUT_MS = 60_000L; // 60s lock timeout

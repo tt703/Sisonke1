@@ -1,7 +1,6 @@
-package com.example.tlotlotau.Documents;
+package com.example.tlotlotau.Documents.Invoice;
 
 import static android.content.ContentValues.TAG;
-
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -10,38 +9,36 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.text.InputType;
 import android.util.Log;
+import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.tlotlotau.Customer.Customer;
-import com.example.tlotlotau.Database.DatabaseHelper;
+import com.example.tlotlotau.Documents.Item;
 import com.example.tlotlotau.R;
 import com.google.android.material.snackbar.Snackbar;
 
-import java.io.File;
 import java.util.ArrayList;
 
-public class CreateEstimateActivity extends AppCompatActivity {
+public class CreateInvoiceActivity extends AppCompatActivity {
     private InvoiceViewModel viewModel;
     private EditText customerNameField, customerAddressField, customerContactField;
     private Customer customer;
     private ArrayList<Item> items;
     private TextView tvTitle;
+    private ViewGroup createInvoiceLayout;
     private ImageButton btnBack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.create_estimate);
-
+        setContentView(R.layout.create_invoice);
         btnBack = findViewById(R.id.btnBack);
 
         btnBack.setOnClickListener(v -> finish());
@@ -52,10 +49,13 @@ public class CreateEstimateActivity extends AppCompatActivity {
         customerAddressField = findViewById(R.id.editCustomerAddress);
         customerContactField = findViewById(R.id.editCustomerContact);
 
+        createInvoiceLayout = findViewById(R.id.createInvoiceLayout);
+
 
 
         retrieveIntentData();
         populateCustomerDetails();
+
 
 
         // Initialize the ViewModel
@@ -83,7 +83,8 @@ public class CreateEstimateActivity extends AppCompatActivity {
 
                 viewModel.setCustomer(customer);
                 viewModel.getItems().setValue(items);
-                Intent previewIntent = new Intent(CreateEstimateActivity.this, EstimatePreviewActivity.class);
+
+                Intent previewIntent = new Intent(CreateInvoiceActivity.this, InvoicePreviewActivity.class);
                 previewIntent.putExtra("customer", (Parcelable) customer);
                 previewIntent.putParcelableArrayListExtra("items", items);
                 startActivity(previewIntent);
@@ -113,7 +114,8 @@ public class CreateEstimateActivity extends AppCompatActivity {
                 items = extras.getParcelableArrayList("items");
                 customer = extras.getParcelable("customer");
             }
-
+            String actionType = extras.getString("actionType", "Create Invoice");
+            Log.d(TAG, "retrieveIntentData: actionType = " + actionType);
         } else {
             items = new ArrayList<>();
             customer = new Customer("", "", "");
@@ -132,7 +134,6 @@ public class CreateEstimateActivity extends AppCompatActivity {
             addItemToContainer(itemsContainer, item);
         }
     }
-
     private void addItemRow(LinearLayout itemsContainer) {
         LinearLayout itemLayout = new LinearLayout(this);
         itemLayout.setOrientation(LinearLayout.HORIZONTAL);
@@ -181,11 +182,12 @@ public class CreateEstimateActivity extends AppCompatActivity {
         itemsContainer.addView(itemLayout);
     }
 
+
     private void addItemToContainer(LinearLayout itemsContainer, Item item) {
         addItemRow(itemsContainer);
         LinearLayout itemLayout = (LinearLayout) itemsContainer.getChildAt(itemsContainer.getChildCount() - 1);
 
-        EditText itemName = (EditText) itemLayout.getChildAt(0);
+        EditText itemName = (EditText) itemLayout.getChildAt(0); // No TextInputLayout
         EditText itemPrice = (EditText) itemLayout.getChildAt(1);
         EditText itemQuantity = (EditText) itemLayout.getChildAt(2);
 
@@ -193,6 +195,7 @@ public class CreateEstimateActivity extends AppCompatActivity {
         itemPrice.setText(String.valueOf(item.getPrice()));
         itemQuantity.setText(String.valueOf(item.getQuantity()));
     }
+
 
     private boolean validateCustomerDetails() {
         if (customerNameField.getText().toString().trim().isEmpty() ||
@@ -203,14 +206,13 @@ public class CreateEstimateActivity extends AppCompatActivity {
         }
         return true;
     }
-
     private ArrayList<Item> extractItems(LinearLayout itemsContainer) {
         ArrayList<Item> items = new ArrayList<>();
 
         for (int i = 0; i < itemsContainer.getChildCount(); i++) {
             LinearLayout itemLayout = (LinearLayout) itemsContainer.getChildAt(i);
 
-            EditText itemName = (EditText) itemLayout.getChildAt(0);
+            EditText itemName = (EditText) itemLayout.getChildAt(0); // No TextInputLayout
             EditText itemPrice = (EditText) itemLayout.getChildAt(1);
             EditText itemQuantity = (EditText) itemLayout.getChildAt(2);
 
@@ -231,107 +233,12 @@ public class CreateEstimateActivity extends AppCompatActivity {
 
         return items;
     }
-    private String formatItemDetails(ArrayList<Item> items) {
-        StringBuilder itemDetails = new StringBuilder();
-        for (Item item : items) {
-            itemDetails.append(item.getName()).append(" - ").append(item.getQuantity()).append(" @ ").append(item.getPrice()).append("\n");
-        }
-        return itemDetails.toString();
-    }
-    private double calculateTotalAmount(ArrayList<Item> items) {
-        double total = 0;
-        for (Item item : items) {
-            total += item.getPrice() * item.getQuantity();
-        }
-        return total;
-    }
-    private void saveEstimateDetails(File pdfFile) {
-        String customerName = customer.getName();
-        String customerAddress = customer.getAddress();
-        String customerContact = customer.getContactInfo();
-        String itemDetails = formatItemDetails(items);
-        double totalAmount = calculateTotalAmount(items);
-        String filePath = pdfFile.getAbsolutePath();
-        Log.d(TAG, "saveEstimateDetails: started");
 
-        try (DatabaseHelper dbHelper = new DatabaseHelper(this)) {
-            boolean isInserted = dbHelper.insertEstimate(customerName, customerAddress, customerContact, itemDetails, totalAmount, filePath);
-            if (isInserted) {
-                Toast.makeText(this, "Estimate saved successfully.", Toast.LENGTH_SHORT).show();
-                Log.d(TAG, "saveEstimateDetails: invoice saved successfully");
-            } else {
-                Toast.makeText(this, "Failed to save estimate.", Toast.LENGTH_SHORT).show();
-                Log.d(TAG, "saveInvoiceDetails: failed to save invoice");
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "saveEstimateDetails: failed to save estimate", e);
-            Toast.makeText(this, "Failed to save estimate.", Toast.LENGTH_SHORT).show();
-        }
-    }
 
 
     private void displaySnackbar(String message) {
-        Snackbar snackbar = Snackbar.make(findViewById(R.id.createEstimateLayout), message, Snackbar.LENGTH_SHORT);
+        Snackbar snackbar = Snackbar.make(findViewById(R.id.createInvoiceLayout), message, Snackbar.LENGTH_SHORT);
         snackbar.setAction("OK", v -> snackbar.dismiss());
         snackbar.show();
-    }
-
-    public static class Estimate {
-        private int id;
-        private String customerName;
-        private String customerAddress;
-        private String customerContact;
-        private String itemDetails;
-        private double totalAmount;
-        private String timestamp;
-        private String status;
-        private String filePath; // Add this line
-
-        @Override
-        public String toString() {
-            return "Invoice{" +
-                    "id=" + id +
-                    ", customerName='" + customerName + '\'' +
-                    ", customerAddress='" + customerAddress + '\'' +
-                    ", customerContact='" + customerContact + '\'' +
-                    ", itemDetails='" + itemDetails + '\'' +
-                    ", totalAmount=" + totalAmount +
-                    ", filePath='" + filePath + '\'' +
-                    ", timestamp='" + timestamp + '\'' +
-                    '}';
-
-        }
-
-        public int getId() {return id;}
-
-        public void setId(int id) {this.id = id;}
-
-        public String getCustomerName() {return customerName;}
-
-        public void setCustomerName(String customerName) {this.customerName = customerName;}
-
-        public void setCustomerAddress(String customerAddress) {this.customerAddress = customerAddress;}
-
-        public void setItemDetails(String itemDetails) {this.itemDetails = itemDetails;}
-
-        public double getTotalAmount() {return totalAmount;}
-        public void setTotalAmount(double totalAmount) {this.totalAmount = totalAmount;}
-        public String getFilePath() {return filePath;}
-
-        public void setFilePath(String filePath) {
-            this.filePath = filePath;
-        }
-
-        public String getTimestamp() {
-            return timestamp;
-        }
-
-        public void setTimestamp(String timestamp) {
-            this.timestamp = timestamp;
-        }
-
-        public void setCustomerContact(String customerContact) {
-            this.customerContact = customerContact;
-        }
     }
 }

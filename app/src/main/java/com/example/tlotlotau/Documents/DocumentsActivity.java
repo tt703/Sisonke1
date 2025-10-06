@@ -7,6 +7,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.example.tlotlotau.Documents.Estimate.CreateEstimateActivity;
+import com.example.tlotlotau.Documents.Invoice.CreateInvoiceActivity;
 import com.example.tlotlotau.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;

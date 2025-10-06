@@ -6,8 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.example.tlotlotau.Documents.CreateEstimateActivity;
-import com.example.tlotlotau.Documents.Invoice;
+import com.example.tlotlotau.Documents.Estimate.CreateEstimateActivity;
+import com.example.tlotlotau.Documents.Invoice.Invoice;
 import com.example.tlotlotau.Inventory.Product;
 
 import java.util.ArrayList;

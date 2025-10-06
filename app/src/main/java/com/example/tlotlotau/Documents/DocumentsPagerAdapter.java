@@ -5,6 +5,9 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
+import com.example.tlotlotau.Documents.Estimate.EstimatesFragment;
+import com.example.tlotlotau.Documents.Invoice.InvoicesFragment;
+
 public class DocumentsPagerAdapter extends FragmentStateAdapter {
 
     public DocumentsPagerAdapter(@NonNull FragmentActivity fragmentActivity){

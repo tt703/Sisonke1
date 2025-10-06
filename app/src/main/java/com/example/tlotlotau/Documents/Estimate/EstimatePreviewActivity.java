@@ -1,4 +1,4 @@
-package com.example.tlotlotau.Documents;
+package com.example.tlotlotau.Documents.Estimate;
 
 import static android.content.ContentValues.TAG;
 
@@ -25,6 +25,8 @@ import androidx.core.content.FileProvider;
 
 import com.example.tlotlotau.Customer.Customer;
 import com.example.tlotlotau.Database.DatabaseHelper;
+import com.example.tlotlotau.Documents.DocumentsActivity;
+import com.example.tlotlotau.Documents.Item;
 import com.example.tlotlotau.Settings.EditCompanyInfoActivity;
 import com.example.tlotlotau.Main.MainActivity;
 import com.example.tlotlotau.R;

@@ -1,4 +1,4 @@
-package com.example.tlotlotau.Documents;
+package com.example.tlotlotau.Documents.Invoice;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.tlotlotau.Documents.Item;
 import com.example.tlotlotau.R;
 
 import java.util.ArrayList;

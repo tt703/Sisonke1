@@ -65,6 +65,13 @@ public class ProfileActivity extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences("app_prefs", MODE_PRIVATE);
         businessId = prefs.getString("businessId", null);
 
+        boolean force = getIntent().getBooleanExtra("forceChange", false);
+        if (force) {
+            // show update dialog immediately and prevent skipping
+            updatePasswordDialog();
+        }
+
+
         // current user
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null) {
