@@ -55,7 +55,7 @@ dependencies {
     // PDF viewer
     implementation("com.github.barteksc:PdfiumAndroid:pdfium-android-1.9.0")
 
-    // Optional PDF generation libraries
+    // PDF generation libraries
     implementation(libs.openpdf)
     implementation(libs.itextpdf)
     implementation(libs.itext7.core)
@@ -63,6 +63,8 @@ dependencies {
     // QR/Barcode
     implementation(libs.zxing.core)
     implementation(libs.zxing.android.embedded)
+
+
 
     // Firebase
     implementation(libs.firebase.crashlytics)
@@ -73,11 +75,12 @@ dependencies {
     //Firebase Firestore
     implementation(libs.firebase.firestore)
 
-    //Stripe Card details Integration
-
+    //PieChart
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 
     //Image loading
     implementation("com.github.bumptech.glide:glide:4.16.0")
+    implementation(libs.androidx.recyclerview)
 
 
     // Test

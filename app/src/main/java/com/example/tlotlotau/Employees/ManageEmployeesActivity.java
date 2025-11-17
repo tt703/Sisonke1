@@ -57,7 +57,7 @@ public class ManageEmployeesActivity extends AppCompatActivity implements Employ
 
         // roles horizontal list
         rvRoles.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        initCategories(); // builds categories list and adapter
+        initCategories();
         categoryAdapter = new CategoryAdapter(categories, role -> {
             applyFilter(role);
         });

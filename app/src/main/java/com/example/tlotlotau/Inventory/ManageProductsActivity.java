@@ -10,7 +10,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.print.PrintHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.tlotlotau.Database.DatabaseHelper;
 import com.example.tlotlotau.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -19,19 +18,22 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ManageProductsActivity extends AppCompatActivity {
 
-    private RecyclerView rvManageProducts;
+    private RecyclerView rvManageProducts, rvCategories;
     private FloatingActionButton fabAddProduct;
     private ProductAdapter productAdapter;
     private DatabaseHelper dbHelper;
     private ImageButton btnBack;
+    private ImageButton btnManageCategories;
+    private CategoryAdapter2 categoryAdapter2;
+    private long currentCategoryFilter = -1L;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,25 +46,110 @@ public class ManageProductsActivity extends AppCompatActivity {
         }
 
         dbHelper = new DatabaseHelper(this);
+
+        // find views
+        rvCategories = findViewById(R.id.rvCategories);
+        btnManageCategories = findViewById(R.id.btnManageCategories);
         rvManageProducts = findViewById(R.id.rvManageProducts);
         fabAddProduct = findViewById(R.id.fabAddProduct);
         btnBack = findViewById(R.id.btnBack);
 
+        // set layout managers
+        rvCategories.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        rvCategories.setHasFixedSize(true);
+        rvManageProducts.setLayoutManager(new LinearLayoutManager(this));
+        rvManageProducts.setHasFixedSize(true);
+
         btnBack.setOnClickListener(v -> finish());
 
-        rvManageProducts.setLayoutManager(new LinearLayoutManager(this));
+        // IMPORTANT: create adapter first (with an empty mutable list) and attach it
+        categoryAdapter2 = new CategoryAdapter2(new ArrayList<>(), c -> {
+            // category clicked
+            currentCategoryFilter = (c == null) ? -1L : c.getId();
+            categoryAdapter2.setSelectedCategoryId(currentCategoryFilter);
+            loadProducts();
+        });
+        rvCategories.setAdapter(categoryAdapter2);
 
+        // now load data into adapter and products
+        loadCategories();
         loadProducts();
 
+        btnManageCategories.setOnClickListener(v -> {
+            Intent intent = new Intent(ManageProductsActivity.this, CategoryManagerActivity.class);
+            startActivity(intent);
+        });
+
         fabAddProduct.setOnClickListener(v -> {
+            List<CategoryC> cats = dbHelper.getAllCategories();
+            if (cats == null || cats.isEmpty()) {
+                Toast.makeText(this, "Please add a category first", Toast.LENGTH_LONG).show();
+                return;
+            }
             Intent intent = new Intent(ManageProductsActivity.this, AddProductActivity.class);
             startActivity(intent);
         });
     }
 
+    private void loadCategories() {
+        // defensive: if adapter somehow null, create & attach to avoid NPE
+        if (categoryAdapter2 == null) {
+            categoryAdapter2 = new CategoryAdapter2(new ArrayList<>(), c -> {
+                currentCategoryFilter = (c == null) ? -1L : c.getId();
+                if (categoryAdapter2 != null) categoryAdapter2.setSelectedCategoryId(currentCategoryFilter);
+                loadProducts();
+            });
+            rvCategories.setAdapter(categoryAdapter2);
+        }
+
+        List<CategoryC> categories = dbHelper.getAllCategories();
+        CategoryC allCategory = new CategoryC(-1L, "All", String.valueOf(System.currentTimeMillis()));
+
+        List<CategoryC> displayList = new ArrayList<>();
+        displayList.add(allCategory);
+        if (categories != null) displayList.addAll(categories);
+
+        // update adapter data (CategoryAdapter2 must implement updateData)
+        categoryAdapter2.updateData(displayList);
+        categoryAdapter2.setSelectedCategoryId(currentCategoryFilter);
+    }
+
+    private void loadProducts() {
+        List<Product> products;
+        if (currentCategoryFilter == -1L) {
+            products = dbHelper.getAllProducts();
+        } else {
+            products = dbHelper.getProductsByCategory(currentCategoryFilter);
+        }
+
+        productAdapter = new ProductAdapter(this, products, new ProductAdapter.OnProductActionListener() {
+            @Override
+            public void onEditProduct(Product product) {
+                Intent intent = new Intent(ManageProductsActivity.this, EditProductActivity.class);
+                intent.putExtra("product", product.getProductId());
+                startActivity(intent);
+            }
+            @Override
+            public void onDeleteProduct(Product product) {
+                int rowsAffected = dbHelper.deleteProduct(product.getProductId());
+                if (rowsAffected > 0) {
+                    Toast.makeText(ManageProductsActivity.this, "Product deleted successfully", Toast.LENGTH_SHORT).show();
+                    loadProducts();
+                } else {
+                    Toast.makeText(ManageProductsActivity.this, "Failed to delete product", Toast.LENGTH_SHORT).show();
+                }
+            }
+            @Override
+            public void onPrintQrCode(Product product) {
+                printQrCode(ManageProductsActivity.this, product.getQrCodeByHelper());
+            }
+        });
+
+        rvManageProducts.setAdapter(productAdapter);
+    }
+
     public void printQrCode(Context context, String qrCodeContent) {
         Product product = dbHelper.getProductByQRCode(qrCodeContent);
-
         if (product == null) {
             Toast.makeText(ManageProductsActivity.this, "Product not found", Toast.LENGTH_SHORT).show();
             return;
@@ -74,8 +161,7 @@ public class ManageProductsActivity extends AppCompatActivity {
             Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
 
             File directory = new File(ManageProductsActivity.this.getExternalFilesDir(null), "qr_codes");
-            if (!directory.exists())
-                directory.mkdirs();
+            if (!directory.exists()) directory.mkdirs();
 
             File file = new File(directory, product.getProductName().replace(" ", "_") + "_QRCode.png");
             FileOutputStream outputStream = new FileOutputStream(file);
@@ -94,38 +180,11 @@ public class ManageProductsActivity extends AppCompatActivity {
         }
     }
 
-    private void loadProducts() {
-        List<Product> products = dbHelper.getAllProducts();
-        productAdapter = new ProductAdapter(this, products, new ProductAdapter.OnProductActionListener() {
-            @Override
-            public void onEditProduct(Product product) {
-                Intent intent = new Intent(ManageProductsActivity.this, EditProductActivity.class);
-                intent.putExtra("product", product.getProductId());
-                startActivity(intent);
-            }
-
-            @Override
-            public void onDeleteProduct(Product product) {
-                int rowsAffected = dbHelper.deleteProduct(product.getProductId());
-                if (rowsAffected > 0) {
-                    Toast.makeText(ManageProductsActivity.this, "Product deleted successfully", Toast.LENGTH_SHORT).show();
-                    loadProducts();
-                } else {
-                    Toast.makeText(ManageProductsActivity.this, "Failed to delete product", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onPrintQrCode(Product product) {
-                printQrCode(ManageProductsActivity.this, product.getQrCodeByHelper());
-            }
-        });
-        rvManageProducts.setAdapter(productAdapter);
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
+        // reload categories and products in case manager changed anything
+        loadCategories();
         loadProducts();
     }
 

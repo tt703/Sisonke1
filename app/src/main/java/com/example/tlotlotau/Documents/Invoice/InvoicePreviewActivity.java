@@ -2,6 +2,7 @@ package com.example.tlotlotau.Documents.Invoice;
 
 import static android.content.ContentValues.TAG;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -11,20 +12,21 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ProgressBar;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
-
 
 import com.example.tlotlotau.Customer.Customer;
 import com.example.tlotlotau.Database.DatabaseHelper;
@@ -49,8 +51,6 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
-
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -67,9 +67,12 @@ public class InvoicePreviewActivity extends AppCompatActivity {
 
     private InvoicePreviewBinding binding;
     private ArrayList<Item> items;
-    private Customer customer;
+    private Customer customer,useCustomer;
     private ExecutorService executorService;
     private ActivityResultLauncher<Intent> activityResultLauncher;
+    private ImageButton btnBack;
+
+    private AlertDialog loadingDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,69 +80,74 @@ public class InvoicePreviewActivity extends AppCompatActivity {
         binding = InvoicePreviewBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        // init loading dialog
+        initLoadingDialog();
+
+        btnBack = findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(v -> onBackPressed());
+
         activityResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result ->{
-
+                    // optional: handle returned result
                 }
         );
-
 
         executorService = Executors.newSingleThreadExecutor();
 
         binding.previewInvoiceButton.setOnClickListener(v -> {
-            executorService.execute(() -> {
-                runOnUiThread(() -> {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(InvoicePreviewActivity.this);
-                    MaterialCardView customLayout = (MaterialCardView) getLayoutInflater().inflate(R.layout.custome_alert_dialog, null);
-                    builder.setView(customLayout);
+            // show confirmation dialog on UI thread
+            runOnUiThread(() -> {
+                AlertDialog.Builder builder = new AlertDialog.Builder(InvoicePreviewActivity.this);
+                MaterialCardView customLayout = (MaterialCardView) getLayoutInflater().inflate(R.layout.custome_alert_dialog, null);
+                builder.setView(customLayout);
 
-                    AlertDialog alertDialog = builder.create();
+                AlertDialog alertDialog = builder.create();
 
-                    TextView title = customLayout.findViewById(R.id.alertTitle);
-                    TextView message = customLayout.findViewById(R.id.alertMessage);
-                    Button positiveButton = customLayout.findViewById(R.id.positiveButton);
-                    Button negativeButton = customLayout.findViewById(R.id.negativeButton);
+                TextView title = customLayout.findViewById(R.id.alertTitle);
+                TextView message = customLayout.findViewById(R.id.alertMessage);
+                Button positiveButton = customLayout.findViewById(R.id.positiveButton);
+                Button negativeButton = customLayout.findViewById(R.id.negativeButton);
 
-                    title.setText("Preview Invoice PDF");
-                    message.setText("You have requested to preview the invoice PDF. Please note that if you proceed, the invoice will be saved and you will not be able to edit it.");
+                title.setText("Preview Invoice PDF");
+                message.setText("You have requested to preview the invoice PDF. Please note that if you proceed, the invoice will be saved and you will not be able to edit it.");
 
-                    positiveButton.setOnClickListener(v1 -> {
-                        alertDialog.dismiss();
-                        executorService.execute(() -> {
-                            File pdfFile = createInvoicePDF();
-                            runOnUiThread(() -> {
-                                if (pdfFile != null) {
-                                    saveInvoiceDetails(pdfFile);
-                                    previewInvoice(pdfFile);
-                                } else {
-                                    Toast.makeText(InvoicePreviewActivity.this, "Failed to generate PDF", Toast.LENGTH_SHORT).show();
-                                }
-                            });
+                positiveButton.setOnClickListener(v1 -> {
+                    alertDialog.dismiss();
+
+                    // Show loading UI
+                    showLoading(true);
+
+                    // Generate PDF on background thread
+                    executorService.execute(() -> {
+                        File pdfFile = createInvoicePDF();
+
+                        // Save and preview on UI thread
+                        runOnUiThread(() -> {
+                            showLoading(false);
+                            if (pdfFile != null) {
+                                saveInvoiceDetails(pdfFile);
+                                previewInvoice(pdfFile);
+                            } else {
+                                Toast.makeText(InvoicePreviewActivity.this, "Failed to generate PDF", Toast.LENGTH_SHORT).show();
+                            }
                         });
                     });
-
-                    negativeButton.setOnClickListener(v12 -> alertDialog.dismiss());
-
-                    alertDialog.show();
                 });
+
+                negativeButton.setOnClickListener(v12 -> alertDialog.dismiss());
+
+                alertDialog.show();
             });
         });
+
         initializeUI();
         retrieveIntentData();
         populateCompanyDetails();
         populateCustomerDetails();
         populateInvoiceTable();
-        setupButtonListeners();
-        setupBottomNavigation();
     }
-    @Override
-    public void onBackPressed(){
-        super.onBackPressed();
-        Intent intent = new Intent(InvoicePreviewActivity.this, MainActivity.class);
-        startActivity(intent);
-        finish();
-    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode, resultCode, data);
@@ -149,17 +157,38 @@ public class InvoicePreviewActivity extends AppCompatActivity {
             finish();
         }
     }
+
+
+    private void initLoadingDialog() {
+        ProgressBar pb = new ProgressBar(this);
+        pb.setIndeterminate(true);
+        AlertDialog.Builder b = new AlertDialog.Builder(this)
+                .setView(pb)
+                .setCancelable(false);
+        loadingDialog = b.create();
+    }
+
+    private void showLoading(boolean show) {
+        if (loadingDialog == null) return;
+        if (show) {
+            if (!loadingDialog.isShowing()) loadingDialog.show();
+        } else {
+            if (loadingDialog.isShowing()) loadingDialog.dismiss();
+        }
+    }
+
     private void saveInvoiceDetails(File pdfFile) {
-        String customerName = customer.getName();
-        String customerAddress = customer.getAddress();
-        String customerContact = customer.getContactInfo();
+        String customerName = customer != null ? customer.getName() : "";
+        String customerAddress = customer != null ? customer.getAddress() : "";
+        String customerContact = customer != null ? customer.getPhone() : "";
+        String customerEmail = customer != null ? customer.getEmail() : "";
         String itemDetails = formatItemDetails(items);
         double totalAmount = calculateTotalAmount(items);
         String filePath = pdfFile.getAbsolutePath();
         Log.d(TAG, "saveInvoiceDetails: started");
 
         try (DatabaseHelper dbHelper = new DatabaseHelper(this)) {
-            boolean isInserted = dbHelper.insertInvoice(customerName, customerAddress, customerContact, itemDetails, totalAmount, filePath);
+            boolean isInserted = dbHelper.insertInvoice(customerName, customerAddress, customerContact,customerEmail, itemDetails, totalAmount, filePath);
             if (isInserted) {
                 Toast.makeText(this, "Invoice saved successfully.", Toast.LENGTH_SHORT).show();
                 Log.d(TAG, "saveInvoiceDetails: invoice saved successfully");
@@ -175,11 +204,12 @@ public class InvoicePreviewActivity extends AppCompatActivity {
 
     private String formatItemDetails(ArrayList<Item> items) {
         StringBuilder itemDetails = new StringBuilder();
+        if (items == null) return "";
         for (Item item : items) {
             itemDetails.append(item.getName())
-                    .append(" - Quantity")
+                    .append(" - Quantity ")
                     .append(item.getQuantity())
-                    .append(" - Price:")
+                    .append(" - Price: ")
                     .append(item.getPrice())
                     .append("\n");
         }
@@ -188,6 +218,7 @@ public class InvoicePreviewActivity extends AppCompatActivity {
 
     private double calculateTotalAmount(ArrayList<Item> items) {
         double totalAmount = 0.0;
+        if (items == null) return 0.0;
         for (Item item : items) {
             totalAmount += item.getQuantity() * item.getPrice();
         }
@@ -198,30 +229,8 @@ public class InvoicePreviewActivity extends AppCompatActivity {
         int buttonBackgroundColor = Color.parseColor("#FFD700"); // Gold
         int buttonTextColor = Color.parseColor("#FFFFFF"); // White
 
-        binding.editInvoiceButton.setBackgroundColor(buttonBackgroundColor);
-        binding.editInvoiceButton.setTextColor(buttonTextColor);
-
         binding.previewInvoiceButton.setBackgroundColor(buttonBackgroundColor);
         binding.previewInvoiceButton.setTextColor(buttonTextColor);
-    }
-
-    private void setupBottomNavigation() {
-        BottomNavigationView bottomNavigationView = binding.bottomNavigationView;
-        bottomNavigationView.setSelectedItemId(R.id.nav_invoices);
-
-        bottomNavigationView.setOnItemSelectedListener(item -> {
-            int itemId = item.getItemId();
-            if (itemId == R.id.nav_home) {
-                startActivity(new Intent(InvoicePreviewActivity.this, MainActivity.class));
-                return true;
-            } else if (itemId == R.id.nav_invoices) {
-                return true;
-            } else if (itemId == R.id.nav_settings) {
-                startActivity(new Intent(InvoicePreviewActivity.this, EditCompanyInfoActivity.class));
-                return true;
-            }
-            return false;
-        });
     }
 
     private void retrieveIntentData() {
@@ -258,7 +267,7 @@ public class InvoicePreviewActivity extends AppCompatActivity {
         Log.d("InvoiceGenerator", "Company Details: " + companyName + ", " + companyAddress + ", " + vatNumber + ", " + regNumber);
         Log.d("InvoiceGenerator", "Bank Details: " + bankName + ", " + accountNumber + ", " + branchCode);
 
-        binding.invoiceCompanyName.setText(preferences.getString("CompanyName", "LESKARATSHEPO"));
+        binding.invoiceCompanyName.setText(preferences.getString("CompanyName", ""));
         binding.invoiceCompanyAddress.setText(preferences.getString("CompanyAddress", ""));
         binding.invoiceVATNumber.setText(preferences.getString("VATNumber", ""));
         binding.invoiceRegistrationNumber.setText(preferences.getString("RegistrationNumber", ""));
@@ -273,7 +282,7 @@ public class InvoicePreviewActivity extends AppCompatActivity {
             binding.invoiceBillTo.setText(String.format(Locale.getDefault(), "Bill To: %s\n%s\n%s",
                     customer.getName(),
                     customer.getAddress(),
-                    customer.getContactInfo()));
+                    customer.getPhone()));
         } else {
             binding.invoiceBillTo.setText(getString(R.string.bill_to_not_available));
         }
@@ -314,18 +323,6 @@ public class InvoicePreviewActivity extends AppCompatActivity {
         binding.invoiceTotal.setTypeface(Typeface.DEFAULT_BOLD);
         binding.invoiceTotal.setTextColor(Color.parseColor("#000000"));
     }
-
-    private void setupButtonListeners() {
-        binding.editInvoiceButton.setOnClickListener(v -> navigateToCreateInvoice());
-    }
-
-    private void navigateToCreateInvoice() {
-        Intent editIntent = new Intent(this, CreateInvoiceActivity.class);
-        editIntent.putParcelableArrayListExtra("items", items);
-        editIntent.putParcelableArrayListExtra("customer", customer);
-        startActivity(editIntent);
-    }
-
 
     private File createInvoicePDF() {
 
@@ -407,7 +404,8 @@ public class InvoicePreviewActivity extends AppCompatActivity {
                 customerDetails.setPadding(10);
                 customerDetails.addElement(new Phrase("Customer Name:  " + customer.getName(), contentFont));
                 customerDetails.addElement(new Phrase("Address:  " + customer.getAddress(), contentFont));
-                customerDetails.addElement(new Phrase("Contact No:  " + customer.getContactInfo(), contentFont));
+                customerDetails.addElement(new Phrase("Contact No:  " + customer.getPhone(), contentFont));
+                customerDetails.addElement(new Phrase("Email:  " + customer.getEmail(), contentFont));
                 billToTable.addCell(customerDetails);
             }
             document.add(billToTable);
@@ -432,12 +430,14 @@ public class InvoicePreviewActivity extends AppCompatActivity {
             // Table Content
             double totalAmount = 0.0;
             int rowsAdded = 0;
-            for (Item item : items) {
-                itemsTable.addCell(new PdfPCell(new Phrase(item.getName(), contentFont)));
-                itemsTable.addCell(new PdfPCell(new Phrase(String.valueOf(item.getQuantity()), contentFont)));
-                itemsTable.addCell(new PdfPCell(new Phrase(String.format(Locale.getDefault(), "R%.2f", item.getPrice()), contentFont)));
-                totalAmount += item.getQuantity() * item.getPrice();
-                rowsAdded++;
+            if (items != null) {
+                for (Item item : items) {
+                    itemsTable.addCell(new PdfPCell(new Phrase(item.getName(), contentFont)));
+                    itemsTable.addCell(new PdfPCell(new Phrase(String.valueOf(item.getQuantity()), contentFont)));
+                    itemsTable.addCell(new PdfPCell(new Phrase(String.format(Locale.getDefault(), "R%.2f", item.getPrice()), contentFont)));
+                    totalAmount += item.getQuantity() * item.getPrice();
+                    rowsAdded++;
+                }
             }
 
             // Fill remaining rows to ensure table has 10 rows
@@ -521,10 +521,15 @@ public class InvoicePreviewActivity extends AppCompatActivity {
         return currentDate;
     }
 
-    private String generateInvoiceID() {
-        return "INV" + (int) (Math.random() * 10000);
-    }
 
+    private synchronized String generateInvoiceID() {
+        SharedPreferences sp = getSharedPreferences("invoice_prefs", MODE_PRIVATE);
+        int last = sp.getInt("last_invoice_number", 0); // 0 means none yet
+        int next = last + 1;
+        sp.edit().putInt("last_invoice_number", next).apply();
+        // format with leading zeros
+        return String.format(Locale.getDefault(), "INV%04d", next);
+    }
 
     private void previewInvoice(File pdfFile) {
         Uri uri = FileProvider.getUriForFile(this, getPackageName() + ".provider", pdfFile);

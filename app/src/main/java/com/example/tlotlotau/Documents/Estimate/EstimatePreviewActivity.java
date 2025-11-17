@@ -2,6 +2,7 @@ package com.example.tlotlotau.Documents.Estimate;
 
 import static android.content.ContentValues.TAG;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -13,25 +14,28 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ProgressBar;
 
-import androidx.appcompat.app.AlertDialog;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
+import androidx.appcompat.app.AlertDialog.Builder;
 
 import com.example.tlotlotau.Customer.Customer;
 import com.example.tlotlotau.Database.DatabaseHelper;
 import com.example.tlotlotau.Documents.DocumentsActivity;
 import com.example.tlotlotau.Documents.Item;
-import com.example.tlotlotau.Settings.EditCompanyInfoActivity;
 import com.example.tlotlotau.Main.MainActivity;
 import com.example.tlotlotau.R;
 import com.example.tlotlotau.databinding.EstimatePreviewBinding;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.card.MaterialCardView;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
@@ -56,6 +60,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.Calendar;
 
 public class EstimatePreviewActivity extends AppCompatActivity {
 
@@ -63,6 +68,11 @@ public class EstimatePreviewActivity extends AppCompatActivity {
     private ArrayList<Item> items;
     private Customer customer;
     private ExecutorService executorService;
+    private ImageButton btnBack;
+    private ActivityResultLauncher<Intent> activityResultLauncher;
+
+    // Loading dialog
+    private AlertDialog loadingDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,93 +80,67 @@ public class EstimatePreviewActivity extends AppCompatActivity {
         binding = EstimatePreviewBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        initLoadingDialog();
+
+        btnBack = findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(v -> onBackPressed());
+
+        activityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                }
+        );
+
         executorService = Executors.newSingleThreadExecutor();
 
         binding.previewInvoiceButton.setOnClickListener(v -> {
-            executorService.execute(() -> {
-                runOnUiThread(() -> {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(EstimatePreviewActivity.this);
-                    MaterialCardView customLayout = (MaterialCardView) getLayoutInflater().inflate(R.layout.custome_alert_dialog, null);
-                    builder.setView(customLayout);
+            runOnUiThread(() -> {
+                AlertDialog.Builder builder = new AlertDialog.Builder(EstimatePreviewActivity.this);
+                MaterialCardView customLayout = (MaterialCardView) getLayoutInflater().inflate(R.layout.custome_alert_dialog, null);
+                builder.setView(customLayout);
 
-                    AlertDialog alertDialog = builder.create();
+                AlertDialog alertDialog = builder.create();
 
-                    TextView title = customLayout.findViewById(R.id.alertTitle);
-                    TextView message = customLayout.findViewById(R.id.alertMessage);
-                    Button positiveButton = customLayout.findViewById(R.id.positiveButton);
-                    Button negativeButton = customLayout.findViewById(R.id.negativeButton);
+                TextView title = customLayout.findViewById(R.id.alertTitle);
+                TextView message = customLayout.findViewById(R.id.alertMessage);
+                Button positiveButton = customLayout.findViewById(R.id.positiveButton);
+                Button negativeButton = customLayout.findViewById(R.id.negativeButton);
 
-                    title.setText("Preview Estimates  PDF");
-                    message.setText("You have requested to preview the Estimate PDF. Please note that if you proceed, the invoice will be saved and you will not be able to edit it.");
+                title.setText("Preview Estimate PDF");
+                message.setText("You have requested to preview the Estimate PDF. Please note that if you proceed, the estimate will be saved and you will not be able to edit it.");
 
-                    positiveButton.setOnClickListener(v1 -> {
-                        alertDialog.dismiss();
-                        executorService.execute(() -> {
-                            File pdfFile = createEstimatePDF();
-                            runOnUiThread(() -> {
+                positiveButton.setOnClickListener(v1 -> {
+                    alertDialog.dismiss();
+
+                    // show loading
+                    showLoading(true);
+
+                    // generate PDF on background thread
+                    executorService.execute(() -> {
+                        File pdfFile = createEstimatePDF();
+                        runOnUiThread(() -> {
+                            showLoading(false);
+                            if (pdfFile != null) {
                                 saveEstimateDetails(pdfFile);
                                 previewEstimate(pdfFile);
-                            });
+                            } else {
+                                Toast.makeText(EstimatePreviewActivity.this, "Failed to generate PDF", Toast.LENGTH_SHORT).show();
+                            }
                         });
                     });
-
-                    negativeButton.setOnClickListener(v12 -> alertDialog.dismiss());
-
-                    alertDialog.show();
                 });
+
+                negativeButton.setOnClickListener(v12 -> alertDialog.dismiss());
+
+                alertDialog.show();
             });
         });
 
-        setupButtonListeners();
         initializeUI();
         retrieveIntentData();
         populateCustomerDetails();
         populateInvoiceTable();
-        setupBottomNavigation();
         populateCompanyDetails();
-    }
-
-    private void showPreviewDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(EstimatePreviewActivity.this);
-        MaterialCardView customLayout = (MaterialCardView) getLayoutInflater().inflate(R.layout.custome_alert_dialog, null);
-        builder.setView(customLayout);
-
-        AlertDialog alertDialog = builder.create();
-
-        TextView title = customLayout.findViewById(R.id.alertTitle);
-        TextView message = customLayout.findViewById(R.id.alertMessage);
-        Button positiveButton = customLayout.findViewById(R.id.positiveButton);
-        Button negativeButton = customLayout.findViewById(R.id.negativeButton);
-
-        title.setText("Preview Estimate PDF");
-        message.setText("You have requested to preview the invoice PDF. Please note that if you proceed, the invoice will be saved and you will not be able to edit it.");
-
-        positiveButton.setOnClickListener(v1 -> {
-            alertDialog.dismiss();
-            executorService.execute(() -> {
-                File filePath = createEstimatePDF();
-                runOnUiThread(() -> {
-                    if (filePath != null) {
-                        saveEstimateDetails(filePath);
-                        previewEstimate(filePath);
-                    } else {
-                        Toast.makeText(EstimatePreviewActivity.this, "Failed to generate PDF", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            });
-        });
-
-        negativeButton.setOnClickListener(v12 -> alertDialog.dismiss());
-
-        alertDialog.show();
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        Intent intent = new Intent(EstimatePreviewActivity.this, MainActivity.class);
-        startActivity(intent);
-        finish();
     }
 
     @Override
@@ -169,17 +153,37 @@ public class EstimatePreviewActivity extends AppCompatActivity {
         }
     }
 
+    private void initLoadingDialog() {
+        ProgressBar pb = new ProgressBar(this);
+        pb.setIndeterminate(true);
+        AlertDialog.Builder b = new AlertDialog.Builder(this)
+                .setView(pb)
+                .setCancelable(false);
+        loadingDialog = b.create();
+    }
+
+    private void showLoading(boolean show) {
+        if (loadingDialog == null) return;
+        if (show) {
+            if (!loadingDialog.isShowing()) loadingDialog.show();
+        } else {
+            if (loadingDialog.isShowing()) loadingDialog.dismiss();
+        }
+    }
+
+
     private void saveEstimateDetails(File pdfFile) {
-        String customerName = customer.getName();
-        String customerAddress = customer.getAddress();
-        String customerContact = customer.getContactInfo();
+        String customerName = customer != null ? customer.getName() : "";
+        String customerAddress = customer != null ? customer.getAddress() : "";
+        String customerContact = customer != null ? customer.getPhone() : "";
+        String customerEmail = customer != null ? customer.getEmail() : "";
         String itemDetails = formatItemDetails(items);
         double totalAmount = calculateTotalAmount(items);
         String filePath = pdfFile.getAbsolutePath();
         Log.d(TAG, "saveEstimateDetails: started");
 
         try (DatabaseHelper dbHelper = new DatabaseHelper(this)) {
-            boolean isInserted = dbHelper.insertEstimate(customerName, customerAddress, customerContact, itemDetails, totalAmount, filePath);
+            boolean isInserted = dbHelper.insertEstimate(customerName, customerAddress, customerContact, customerEmail, itemDetails, totalAmount, filePath);
             if (isInserted) {
                 Toast.makeText(this, "Estimate saved successfully.", Toast.LENGTH_SHORT).show();
                 Log.d(TAG, "saveEstimateDetails: estimate saved successfully");
@@ -192,19 +196,9 @@ public class EstimatePreviewActivity extends AppCompatActivity {
             Toast.makeText(this, "Failed to save estimate.", Toast.LENGTH_SHORT).show();
         }
     }
+
     private void populateCompanyDetails() {
         SharedPreferences preferences = getSharedPreferences("CompanyInfo", MODE_PRIVATE);
-
-        String companyName = preferences.getString("CompanyName", "");
-        String companyAddress = preferences.getString("CompanyAddress", "");
-        String vatNumber = preferences.getString("VATNumber", "");
-        String regNumber = preferences.getString("RegistrationNumber", "");
-        String bankName = preferences.getString("BankName", "");
-        String accountNumber = preferences.getString("AccountNumber", "");
-        String branchCode = preferences.getString("BranchCode", "");
-
-        Log.d("InvoiceGenerator", "Company Details: " + companyName + ", " + companyAddress + ", " + vatNumber + ", " + regNumber);
-        Log.d("InvoiceGenerator", "Bank Details: " + bankName + ", " + accountNumber + ", " + branchCode);
 
         binding.invoiceCompanyName.setText(preferences.getString("CompanyName", "LESKARATSHEPO"));
         binding.invoiceCompanyAddress.setText(preferences.getString("CompanyAddress", ""));
@@ -216,14 +210,14 @@ public class EstimatePreviewActivity extends AppCompatActivity {
                 preferences.getString("BranchCode", "")));
     }
 
-
     private String formatItemDetails(ArrayList<Item> items) {
         StringBuilder itemDetails = new StringBuilder();
+        if (items == null) return "";
         for (Item item : items) {
             itemDetails.append(item.getName())
-                    .append(" - Quantity")
+                    .append(" - Quantity ")
                     .append(item.getQuantity())
-                    .append(" - Price:")
+                    .append(" - Price: ")
                     .append(item.getPrice())
                     .append("\n");
         }
@@ -232,38 +226,18 @@ public class EstimatePreviewActivity extends AppCompatActivity {
 
     private double calculateTotalAmount(ArrayList<Item> items) {
         double totalAmount = 0.0;
+        if (items == null) return 0.0;
         for (Item item : items) {
             totalAmount += item.getQuantity() * item.getPrice();
         }
         return totalAmount;
     }
+
     private void initializeUI() {
         int buttonBackgroundColor = Color.parseColor("#FFD700"); // Gold
         int buttonTextColor = Color.parseColor("#FFFFFF"); // White
-
-        binding.editInvoiceButton.setBackgroundColor(buttonBackgroundColor);
-        binding.editInvoiceButton.setTextColor(buttonTextColor);
-
         binding.previewInvoiceButton.setBackgroundColor(buttonBackgroundColor);
         binding.previewInvoiceButton.setTextColor(buttonTextColor);
-    }
-
-    private void setupBottomNavigation() {
-        BottomNavigationView bottomNavigationView = binding.bottomNavigationView;
-        bottomNavigationView.setSelectedItemId(R.id.nav_estimates);
-
-        bottomNavigationView.setOnItemSelectedListener(item -> {
-            int itemId = item.getItemId();
-            if (itemId == R.id.nav_home) {
-                startActivity(new Intent(EstimatePreviewActivity.this, MainActivity.class));
-                return true;
-
-            } else if (itemId == R.id.nav_settings) {
-                startActivity(new Intent(EstimatePreviewActivity.this, EditCompanyInfoActivity.class));
-                return true;
-            }
-            return false;
-        });
     }
 
     private void retrieveIntentData() {
@@ -282,7 +256,6 @@ public class EstimatePreviewActivity extends AppCompatActivity {
             Log.d(TAG, "retrieveIntentData: actionType = " + actionType);
         } else {
             items = new ArrayList<>();
-            customer = new Customer("", "", "");
         }
     }
 
@@ -291,25 +264,24 @@ public class EstimatePreviewActivity extends AppCompatActivity {
 
         if (items != null && !items.isEmpty()) {
             for (Item item : items) {
-                Log.d("InvoicePreview", "Item:" + item.getName() + ",Quantity:" + item.getQuantity() + ",Price:" + item.getPrice());
+                Log.d("EstimatePreview", "Item:" + item.getName() + ",Quantity:" + item.getQuantity() + ",Price:" + item.getPrice());
                 totalAmount += item.getQuantity() * item.getPrice();
 
-                // Create a new row for each item
                 TableRow row = new TableRow(this);
                 row.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-                // Item Name
+
                 TextView itemName = new TextView(this);
                 itemName.setText(item.getName());
                 row.addView(itemName);
-                // Item Quantity
+
                 TextView itemQuantity = new TextView(this);
                 itemQuantity.setText(String.valueOf(item.getQuantity()));
                 row.addView(itemQuantity);
-                // Item Price
+
                 TextView itemPrice = new TextView(this);
                 itemPrice.setText(String.format(Locale.getDefault(), "R%.2f", item.getPrice()));
                 row.addView(itemPrice);
-                // Add the row to the table
+
                 binding.estimateItemsTable.addView(row);
             }
         } else {
@@ -327,7 +299,7 @@ public class EstimatePreviewActivity extends AppCompatActivity {
             binding.estimateBillTo.setText(String.format(Locale.getDefault(), "Bill To: %s\n%s\n%s",
                     customer.getName(),
                     customer.getAddress(),
-                    customer.getContactInfo()));
+                    customer.getPhone()));
         } else {
             binding.estimateBillTo.setText(getString(R.string.bill_to_not_available));
         }
@@ -335,7 +307,10 @@ public class EstimatePreviewActivity extends AppCompatActivity {
 
     private File createEstimatePDF() {
         SharedPreferences preferences = getSharedPreferences("CompanyInfo", MODE_PRIVATE);
-        File pdfFile = new File(getExternalFilesDir(null), "Estimate.pdf");
+
+        // include invoice id in file name for traceability
+        String invoiceId = generateInvoiceID();
+        File pdfFile = new File(getExternalFilesDir(null), "Estimate_" + invoiceId + ".pdf");
 
         try {
             Rectangle customPageSize = new Rectangle(600f, 900f);
@@ -358,13 +333,6 @@ public class EstimatePreviewActivity extends AppCompatActivity {
             estimateNote.setSpacingAfter(10);
             document.add(estimateNote);
 
-            // Retrieve and log company details
-            String companyName = preferences.getString("CompanyName", "LESKARATSHEPO");
-            String companyAddress = preferences.getString("CompanyAddress", "");
-            String vatNumber = preferences.getString("VATNumber", "");
-            String regNumber = preferences.getString("RegistrationNumber", "");
-            Log.d("InvoiceGenerator", "Company Details: " + companyName + ", " + companyAddress + ", " + vatNumber + ", " + regNumber);
-
             // Header Table
             PdfPTable headerTable = new PdfPTable(2);
             headerTable.setWidthPercentage(100);
@@ -383,9 +351,9 @@ public class EstimatePreviewActivity extends AppCompatActivity {
                 Image logo = Image.getInstance(stream.toByteArray());
                 logo.scaleToFit(100, 100);
                 logoCell.addElement(logo);
-                Log.d("InvoiceGenerator", "Logo added successfully to PDF");
+                Log.d("EstimateGenerator", "Logo added successfully to PDF");
             } catch (Exception e) {
-                Log.e("InvoiceGenerator", "Logo not added to PDF", e);
+                Log.e("EstimateGenerator", "Logo not added to PDF", e);
             }
             headerTable.addCell(logoCell);
 
@@ -393,6 +361,10 @@ public class EstimatePreviewActivity extends AppCompatActivity {
             PdfPCell companyDetailsCell = new PdfPCell();
             companyDetailsCell.setBackgroundColor(new BaseColor(211, 211, 211)); // Light gray
             companyDetailsCell.setPadding(10);
+            String companyName = preferences.getString("CompanyName", "");
+            String companyAddress = preferences.getString("CompanyAddress", "");
+            String vatNumber = preferences.getString("VATNumber", "");
+            String regNumber = preferences.getString("RegistrationNumber", "");
             companyDetailsCell.addElement(new Phrase(companyName, headerFont));
             companyDetailsCell.addElement(new Phrase(companyAddress, contentFont));
             companyDetailsCell.addElement(new Phrase("VAT No: " + vatNumber, contentFont));
@@ -415,7 +387,8 @@ public class EstimatePreviewActivity extends AppCompatActivity {
                 customerDetails.setPadding(10);
                 customerDetails.addElement(new Phrase("Customer Name:  " + customer.getName(), contentFont));
                 customerDetails.addElement(new Phrase("Address:  " + customer.getAddress(), contentFont));
-                customerDetails.addElement(new Phrase("Contact No:  " + customer.getContactInfo(), contentFont));
+                customerDetails.addElement(new Phrase("Contact No:  " + customer.getPhone(), contentFont));
+                customerDetails.addElement(new Phrase("Email:  " + customer.getEmail(), contentFont));
                 billToTable.addCell(customerDetails);
             }
             document.add(billToTable);
@@ -440,28 +413,23 @@ public class EstimatePreviewActivity extends AppCompatActivity {
             // Table Content
             double totalAmount = 0.0;
             int rowsAdded = 0;
-            for (Item item : items) {
-                itemsTable.addCell(new PdfPCell(new Phrase(item.getName(), contentFont)));
-                itemsTable.addCell(new PdfPCell(new Phrase(String.valueOf(item.getQuantity()), contentFont)));
-                itemsTable.addCell(new PdfPCell(new Phrase(String.format(Locale.getDefault(), "R%.2f", item.getPrice()), contentFont)));
-                totalAmount += item.getQuantity() * item.getPrice();
-                rowsAdded++;
+            if (items != null) {
+                for (Item item : items) {
+                    itemsTable.addCell(new PdfPCell(new Phrase(item.getName(), contentFont)));
+                    itemsTable.addCell(new PdfPCell(new Phrase(String.valueOf(item.getQuantity()), contentFont)));
+                    itemsTable.addCell(new PdfPCell(new Phrase(String.format(Locale.getDefault(), "R%.2f", item.getPrice()), contentFont)));
+                    totalAmount += item.getQuantity() * item.getPrice();
+                    rowsAdded++;
+                }
             }
 
-            // Fill remaining rows to ensure table has 10 rows
             while (rowsAdded < 10) {
-                itemsTable.addCell(new PdfPCell(new Phrase(" "))); // Blank cell
+                itemsTable.addCell(new PdfPCell(new Phrase(" ")));
                 itemsTable.addCell(new PdfPCell(new Phrase(" ")));
                 itemsTable.addCell(new PdfPCell(new Phrase(" ")));
                 rowsAdded++;
             }
             document.add(itemsTable);
-
-            // Retrieve and log banking details
-            String bankName = preferences.getString("BankName", "");
-            String accountNumber = preferences.getString("AccountNumber", "");
-            String branchCode = preferences.getString("BranchCode", "");
-            Log.d("InvoiceGenerator", "Bank Details: " + bankName + ", " + accountNumber + ", " + branchCode);
 
             // Footer
             PdfPTable footerTable = new PdfPTable(2);
@@ -469,35 +437,33 @@ public class EstimatePreviewActivity extends AppCompatActivity {
             footerTable.setWidths(new int[]{2, 1});
             footerTable.setSpacingBefore(25);
 
-            // Bank Details
+            // Bank Details cell
             PdfPCell bankDetailsCell = new PdfPCell();
-            bankDetailsCell.setBackgroundColor(new BaseColor(211, 211, 211)); // Light gray
+            bankDetailsCell.setBackgroundColor(new BaseColor(211, 211, 211));
             bankDetailsCell.setPadding(10);
+            String bankName = preferences.getString("BankName", "");
+            String accountNumber = preferences.getString("AccountNumber", "");
+            String branchCode = preferences.getString("BranchCode", "");
             bankDetailsCell.addElement(new Phrase("Bank Details:", subHeaderFont));
             bankDetailsCell.addElement(new Phrase("Bank: " + bankName, contentFont));
             bankDetailsCell.addElement(new Phrase("Account No: " + accountNumber, contentFont));
             bankDetailsCell.addElement(new Phrase("Branch Code: " + branchCode, contentFont));
             footerTable.addCell(bankDetailsCell);
 
-            String invoiceID = generateInvoiceID();
             String currentDate = getCurrentDate();
-            Log.d("InvoiceGenerator", "Invoice ID: " + invoiceID);
-            Log.d("InvoiceGenerator", "Date of Print: " + currentDate);
-
 
             // Total and Additional Details
             PdfPCell totalCell = new PdfPCell();
-            totalCell.setBackgroundColor(new BaseColor(211, 211, 211)); // Light gray
+            totalCell.setBackgroundColor(new BaseColor(211, 211, 211));
             totalCell.setPadding(10);
             totalCell.addElement(new Phrase(String.format(Locale.getDefault(), "Total: R%.2f", totalAmount), subHeaderFont));
-            totalCell.addElement(new Phrase("Invoice ID: " + invoiceID, contentFont));
+            totalCell.addElement(new Phrase("Estimate ID: " + invoiceId, contentFont));
             totalCell.addElement(new Phrase("Date of Print: " + currentDate, contentFont));
             footerTable.addCell(totalCell);
 
             document.add(footerTable);
 
-            // Thank-You Note
-            Paragraph thankYou = new Paragraph("Thank you for your business!", contentFont);
+            Paragraph thankYou = new Paragraph("Thank you for considering our services!", contentFont);
             thankYou.setAlignment(Element.ALIGN_CENTER);
             thankYou.setSpacingBefore(10);
             document.add(thankYou);
@@ -505,21 +471,11 @@ public class EstimatePreviewActivity extends AppCompatActivity {
             document.close();
 
         } catch (Exception e) {
-            Log.e("InvoiceGenerator", "Error generating PDF", e);
+            Log.e("EstimateGenerator", "Error generating PDF", e);
+            return null;
         }
 
         return pdfFile;
-    }
-
-    private void setupButtonListeners() {
-        binding.editInvoiceButton.setOnClickListener(v -> navigateToCreateEstimate());
-    }
-
-    private void navigateToCreateEstimate() {
-        Intent intent = new Intent(EstimatePreviewActivity.this, CreateEstimateActivity.class);
-        intent.putExtra("customer",(Parcelable) customer);
-        intent.putParcelableArrayListExtra("items",items);
-        startActivity(intent);
     }
 
     private String getCurrentDate() {
@@ -529,11 +485,17 @@ public class EstimatePreviewActivity extends AppCompatActivity {
         return currentDate;
     }
 
-    private String generateInvoiceID() {
-        return "INV" + (int) (Math.random() * 10000);
+
+    private synchronized String generateInvoiceID() {
+        SharedPreferences sp = getSharedPreferences("invoice_prefs", MODE_PRIVATE);
+        int last = sp.getInt("last_invoice_number", 0);
+        int next = last + 1;
+        sp.edit().putInt("last_invoice_number", next).apply();
+        return String.format(Locale.getDefault(), "INV%04d", next);
     }
 
     private void previewEstimate(File pdfFile) {
+        if (pdfFile == null) return;
         Uri uri = FileProvider.getUriForFile(this, getPackageName() + ".provider", pdfFile);
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setDataAndType(uri, "application/pdf");

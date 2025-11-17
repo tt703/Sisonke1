@@ -8,6 +8,8 @@ public class Product {
     private int productQuantity;
     private String productDateCreated;
     private String getProductbyQRCode;
+    private Long categoryCId;
+
 
     // Getters and Setters
     public int getProductId() {
@@ -58,7 +60,8 @@ public class Product {
         this.productDateCreated = productDateCreated;
     }
 
-
+    public void setCategoryCId(Long id){ this.categoryCId = id; }
+    public Long getCategoryCId(){ return categoryCId; }
 
     public void setProductQRCode(String productQRCode) {
         this.getProductbyQRCode = productQRCode;

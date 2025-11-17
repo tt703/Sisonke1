@@ -12,11 +12,11 @@ import com.example.tlotlotau.Database.DatabaseHelper;
 import com.example.tlotlotau.R;
 
 import java.util.List;
-public class EstimatesFragment extends Fragment{
+public class  EstimatesFragment extends Fragment{
 
     private ListView estimatesListView;
     private EstimateAdapter estimateAdapter;
-    private List<CreateEstimateActivity.Estimate> estimates;
+    private List<Estimate> estimates;
     private DatabaseHelper dbHelper;
 
     public EstimatesFragment(){}

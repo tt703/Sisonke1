@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/createInvoiceLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    tools:context=".Documents.Invoice.CreateInvoiceActivity">
+    android:background="@color/white">
+
     <LinearLayout
         android:id="@+id/backHeader"
         android:layout_width="match_parent"
@@ -41,72 +39,33 @@
             android:textStyle="bold" />
     </LinearLayout>
 
-
-
-    <!-- ScrollView for main content -->
+    <!-- Main scrollable area -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="160dp"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        android:layout_marginTop="80dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginTop="100dp"
             android:padding="8dp">
 
-
-            <TextView
-                android:id="@+id/tvSubTitle"
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tabLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:background="@drawable/form_item_background"
-                android:gravity="left"
-                android:text="Add Customer Details"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                app:tabIndicatorColor="@color/gold"
+                app:tabSelectedTextColor="@color/black"
+                app:tabTextColor="@android:color/darker_gray" />
 
-            <LinearLayout
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/viewPager"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:background="@drawable/item_row_background"
-                android:padding="16dp">
-
-                <EditText
-                    android:id="@+id/editCustomerName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:hint="Customer Name"
-                    android:background="@drawable/item_row_background"
-                    android:inputType="textPersonName"
-                    android:padding="12dp" />
-
-                <EditText
-                    android:id="@+id/editCustomerAddress"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:hint="Customer Address"
-                    android:background="@drawable/item_row_background"
-                    android:inputType="textPostalAddress"
-                    android:padding="12dp" />
-
-                <EditText
-                    android:id="@+id/editCustomerContact"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:hint="Customer Contact"
-                    android:inputType="phone"
-                    android:background="@drawable/item_row_background"
-                    android:padding="12dp" />
-            </LinearLayout>
+                android:layout_marginTop="5dp" />
 
             <!-- Add Items Section -->
             <TextView
@@ -134,10 +93,7 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- Buttons Container -->
-
-    <!-- Bottom Navigation View -->
-
+    <!-- Buttons -->
     <LinearLayout
         android:id="@+id/buttonsContainer"
         android:layout_width="match_parent"
@@ -145,12 +101,8 @@
         android:layout_gravity="bottom"
         android:gravity="center"
         android:orientation="horizontal"
-        android:padding="8dp">
+        >
 
-        <!-- Add Item Button -->
-
-
-        <!-- Preview Button -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnAddItem"
             android:layout_width="0dp"
@@ -174,7 +126,6 @@
             android:textSize="17sp"
             app:backgroundTint="@color/black"
             app:cornerRadius="12dp" />
-
     </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

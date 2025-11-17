@@ -9,6 +9,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.tlotlotau.Documents.Estimate.CreateEstimateActivity;
 import com.example.tlotlotau.Documents.Invoice.CreateInvoiceActivity;
+import com.example.tlotlotau.Main.HomeActivity;
 import com.example.tlotlotau.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
@@ -48,8 +49,7 @@ public class DocumentsActivity extends AppCompatActivity {
             }
         }).attach();
 
-        // Set back button behavior: finish the activity
-        btnBack.setOnClickListener(v -> finish());
+        btnBack.setOnClickListener(v-> startActivity(new Intent(DocumentsActivity.this, HomeActivity.class)));
 
         // Floating action button creates a new document based on current tab
         fabCreate.setOnClickListener(v -> {

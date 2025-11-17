@@ -180,7 +180,7 @@
         app:layout_constraintHorizontal_bias="1.0">
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_manage_finance"
+            android:id="@+id/btn_manage_reports"
             android:layout_width="110dp"
             android:layout_height="110dp"
             android:layout_row="0"
@@ -203,7 +203,7 @@
             app:iconTint="@color/black" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_manage_customers"
+            android:id="@+id/btnManageCustomers"
             android:layout_width="110dp"
             android:layout_height="110dp"
             android:layout_row="0"

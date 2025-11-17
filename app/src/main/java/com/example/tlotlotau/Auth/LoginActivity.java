@@ -49,7 +49,6 @@ public class LoginActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-        // Do NOT auto sign out here. Keep any existing signed-in user so the verify button can work.
 
         email = findViewById(R.id.email);
         password = findViewById(R.id.password);

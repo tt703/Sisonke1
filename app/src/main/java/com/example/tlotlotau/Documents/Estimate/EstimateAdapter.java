@@ -17,13 +17,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class EstimateAdapter extends ArrayAdapter<CreateEstimateActivity.Estimate> {
+public class EstimateAdapter extends ArrayAdapter<Estimate> {
 
     private final LayoutInflater inflater;
-    private final List<CreateEstimateActivity.Estimate> estimates;
+    private final List<Estimate> estimates;
     private final Context context;
 
-    public EstimateAdapter(Context context, List<CreateEstimateActivity.Estimate> estimates) {
+    public EstimateAdapter(Context context, List<Estimate> estimates) {
         super(context, 0, estimates);
         this.inflater = LayoutInflater.from(context);
         this.estimates = estimates;
@@ -51,7 +51,7 @@ public class EstimateAdapter extends ArrayAdapter<CreateEstimateActivity.Estimat
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        CreateEstimateActivity.Estimate estimate = estimates.get(position);
+        Estimate estimate = estimates.get(position);
         viewHolder.customerNameTextView.setText(estimate.getCustomerName());
         viewHolder.totalAmountTextView.setText(String.format(Locale.getDefault(), "R%.2f", estimate.getTotalAmount()));
         viewHolder.timestampTextView.setText(formatTimestamp(estimate.getTimestamp()));

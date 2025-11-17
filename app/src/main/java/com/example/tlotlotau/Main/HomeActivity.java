@@ -19,11 +19,13 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.tlotlotau.Auth.ProfileActivity;
 import com.example.tlotlotau.R;
+import com.example.tlotlotau.Reports.ReportsActivity;
 import com.example.tlotlotau.Settings.EditCompanyInfoActivity;
 import com.example.tlotlotau.Settings.Settings;
 import com.example.tlotlotau.Documents.DocumentsActivity;
 import com.example.tlotlotau.Inventory.ManageProductsActivity;
 import com.example.tlotlotau.Sales.SellProductActivity;
+import com.example.tlotlotau.Customer.ManageCustomerActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -44,6 +46,9 @@ public class HomeActivity extends AppCompatActivity {
     private Button btnSellProduct;
     private Button btnManageProducts;
     private Button btnViewDocuments;
+    private Button btnManageCustomers;
+    private Button btn_manage_reports;
+
 
     private AlertDialog loadingDialog;
 
@@ -93,6 +98,10 @@ public class HomeActivity extends AppCompatActivity {
         btnViewDocuments.setOnClickListener(v -> startActivity(new Intent(HomeActivity.this, DocumentsActivity.class)));
         btnSellProduct.setOnClickListener(v -> startActivity(new Intent(HomeActivity.this, SellProductActivity.class)));
         btnManageProducts.setOnClickListener(v -> startActivity(new Intent(HomeActivity.this, ManageProductsActivity.class)));
+        btnManageCustomers.setOnClickListener(v-> startActivity(new Intent(HomeActivity.this,ManageCustomerActivity.class)));
+        btn_manage_reports.setOnClickListener(v -> startActivity(new Intent(HomeActivity.this, ReportsActivity.class)));
+
+
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnItemSelectedListener(item -> {
@@ -115,6 +124,8 @@ public class HomeActivity extends AppCompatActivity {
         btnViewDocuments = findViewById(R.id.btn_manage_documents);
         btnSellProduct = findViewById(R.id.btn_sell_product);
         btnManageProducts = findViewById(R.id.btn_manage_products);
+        btnManageCustomers = findViewById(R.id.btnManageCustomers);
+        btn_manage_reports = findViewById(R.id.btn_manage_reports);
     }
 
     private void initFirebase() {

@@ -58,13 +58,15 @@
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:layout_marginStart="16dp"
-                android:backgroundTint="@color/gold"/>
+                android:backgroundTint="@color/black"/>
 
             <Button
                 android:id="@+id/btnPrintQrCode"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="Print QR Code"/>
+                android:layout_height="wrap_content"
+                android:text="Print QR"
+                android:layout_marginStart="16dp"
+                android:backgroundTint="@color/grey"/>
         </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

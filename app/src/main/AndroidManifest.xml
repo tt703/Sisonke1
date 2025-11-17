@@ -42,13 +42,18 @@
         <activity android:name=".Auth.RegisterActivity" /> <!-- Register Activity -->
         <activity android:name=".Auth.ProfileActivity" /> <!-- User Profile Activity -->
         <activity android:name=".Settings.Settings"/><!-- Settings Activity -->
-        <activity android:name=".Settings.PaymentMethod" />
-        <activity android:name=".Employees.AddEmployeeActivity" />
-        <activity android:name=".Employees.EditEmployeeActivity" />
-        <activity android:name=".Employees.ManageEmployeesActivity"/>
-
-
-
+        <activity android:name=".Settings.PaymentMethod" /><!-- Payment Method Activity -->
+        <activity android:name=".Employees.AddEmployeeActivity" /><!-- Add Employee Activity -->
+        <activity android:name=".Employees.EditEmployeeActivity" /><!-- Edit Employee Activity -->
+        <activity android:name=".Employees.ManageEmployeesActivity"/><!-- Manage Employees Activity -->
+        <activity android:name=".Customer.ManageCustomerActivity"/><!-- Manage Customer Activity -->
+        <activity android:name=".Customer.AddCustomerActivity"/><!-- Add Customer Activity -->
+        <activity android:name=".Inventory.CategoryManagerActivity"/><!-- Category Manager Activity -->
+        <activity android:name=".Sales.PaymentSelectionActivity"/><!-- Payment Selection Activity -->
+        <activity android:name=".Sales.ReceiptActivity"/><!-- Receipt Activity -->
+        <activity android:name=".Sales.CardPaymentActivity"/><!-- Card Payment Activity -->
+        <activity android:name=".Sales.CashPaymentActivity"/><!-- Cash Payment Activity -->
+        <activity android:name=".Reports.ReportsActivity"/><!-- Reports Activity -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -59,6 +64,4 @@
                 android:resource="@xml/file_paths" />
         </provider>
     </application>
-
-
 </manifest>

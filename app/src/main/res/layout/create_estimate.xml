@@ -28,7 +28,7 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/back"
             android:src="@drawable/ic_arrow_back"
-            android:tint="@color/black" />
+            app:tint="@color/black" />
 
         <TextView
             android:id="@+id/titleText"
@@ -47,7 +47,6 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="160dp"
         android:fillViewport="true">
 
         <LinearLayout
@@ -58,56 +57,20 @@
             android:padding="8dp">
 
 
-            <TextView
-                android:id="@+id/tvSubTitle"
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tabLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:background="@drawable/form_item_background"
-                android:gravity="left"
-                android:text="Add Customer Details"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                app:tabIndicatorColor="@color/gold"
+                app:tabSelectedTextColor="@color/black"
+                app:tabTextColor="@android:color/darker_gray" />
 
-            <LinearLayout
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/viewPager"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:background="@drawable/item_row_background"
-                android:padding="16dp">
-
-                <EditText
-                    android:id="@+id/editCustomerName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:hint="Customer Name"
-                    android:background="@drawable/item_row_background"
-                    android:inputType="textPersonName"
-                    android:padding="12dp" />
-
-                <EditText
-                    android:id="@+id/editCustomerAddress"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:hint="Customer Address"
-                    android:background="@drawable/item_row_background"
-                    android:inputType="textPostalAddress"
-                    android:padding="12dp" />
-
-                <EditText
-                    android:id="@+id/editCustomerContact"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:hint="Customer Contact"
-                    android:inputType="phone"
-                    android:background="@drawable/item_row_background"
-                    android:padding="12dp" />
-            </LinearLayout>
-
+                android:layout_marginTop="5dp" />
             <!-- Add Items Section -->
             <TextView
                 android:id="@+id/itemHeading"
@@ -134,10 +97,6 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- Buttons Container -->
-
-    <!-- Bottom Navigation View -->
-
     <LinearLayout
         android:id="@+id/buttonsContainer"
         android:layout_width="match_parent"
@@ -145,12 +104,8 @@
         android:layout_gravity="bottom"
         android:gravity="center"
         android:orientation="horizontal"
-        android:padding="8dp">
+        >
 
-        <!-- Add Item Button -->
-
-
-        <!-- Preview Button -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnAddItem"
             android:layout_width="0dp"

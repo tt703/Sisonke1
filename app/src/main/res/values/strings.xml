@@ -1,6 +1,5 @@
 <resources>
-    <string name="app_name">Tlotlo Tau</string>
-    <string name="company_name">LESKARATSHEPO</string>
+    <string name="app_name">Sisonke</string>
     <string name="bank_details_format">Bank: %1$s\nAcc#: %2$s\nBranch: %3$s</string>
     <string name="total_amount_format">Total: R%1$s</string>
     <string name="item_price_format">R%.2f</string>
@@ -21,7 +20,6 @@
     <string name="search_invoices">Search Invoices</string>
     <string name="search_estimates">Search Estimates</string>
     <string name="company_logo">Company Logo</string>
-    <string name="lesekaratshepo_invoices">LESEKARATSHEPO INVOICES</string>
     <string name="back">Back</string>
     <string name="document_detail">document_detail</string>
     <string name="file_label">File:</string>

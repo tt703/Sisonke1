@@ -28,7 +28,7 @@ public class EditProductActivity extends AppCompatActivity {
         etEditProductDescription = findViewById(R.id.etEditProductDescription);
         btnUpdateProduct = findViewById(R.id.btnUpdateProduct);
 
-        productId = getIntent().getIntExtra("productId", -1);
+        productId = getIntent().getIntExtra("Name", -1);
         if (productId == -1) {
             Toast.makeText(this, "Invalid product ID", Toast.LENGTH_SHORT).show();
             finish();

@@ -16,57 +16,94 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.tlotlotau.Customer.Customer;
+import com.example.tlotlotau.Customer.CustomerPagerAdapter;
+import com.example.tlotlotau.Customer.CreateCustomerFragment;
+import com.example.tlotlotau.Customer.SelectCustomerFragment;
+import com.example.tlotlotau.Database.DatabaseHelper;
 import com.example.tlotlotau.Documents.Item;
 import com.example.tlotlotau.R;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.util.ArrayList;
 
-public class CreateInvoiceActivity extends AppCompatActivity {
+public class CreateInvoiceActivity extends AppCompatActivity
+        implements CreateCustomerFragment.OnCustomerCreatedListener, SelectCustomerFragment.OnCustomerSelectedListener{
     private InvoiceViewModel viewModel;
-    private EditText customerNameField, customerAddressField, customerContactField;
-    private Customer customer;
+    private LinearLayout itemsContainer;
+    private ViewPager2 viewPager;
+    private TabLayout tabLayout;
+    private final ArrayList<Customer> customerList = new ArrayList<>();
     private ArrayList<Item> items;
-    private TextView tvTitle;
+    private Customer customer,useCustomer;
+    private Customer selectedCustomer = null;
     private ViewGroup createInvoiceLayout;
     private ImageButton btnBack;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_invoice);
-        btnBack = findViewById(R.id.btnBack);
+        viewModel = new ViewModelProvider(this).get(InvoiceViewModel.class);
 
+
+
+        btnBack = findViewById(R.id.btnBack);
         btnBack.setOnClickListener(v -> finish());
 
 
-        // Initialize EditText fields
-        customerNameField = findViewById(R.id.editCustomerName);
-        customerAddressField = findViewById(R.id.editCustomerAddress);
-        customerContactField = findViewById(R.id.editCustomerContact);
+        retrieveIntentData();
+
+
+        viewPager = findViewById(R.id.viewPager);
+        tabLayout = findViewById(R.id.tabLayout);
 
         createInvoiceLayout = findViewById(R.id.createInvoiceLayout);
 
+        CustomerPagerAdapter pagerAdapter = new CustomerPagerAdapter(this, customerList);
+        viewPager.setAdapter(pagerAdapter);
 
+        new TabLayoutMediator(tabLayout, viewPager,
+                (tab, position)-> {
+                      if (position == 0) tab.setText("Add Customer");
+                      else tab.setText("Select Customer");
+                }).attach();
 
-        retrieveIntentData();
-        populateCustomerDetails();
-
-
-
-        // Initialize the ViewModel
-        viewModel = new ViewModelProvider(this).get(InvoiceViewModel.class);
+        DatabaseHelper db = new DatabaseHelper(this);
+        customerList.clear();
+        customerList.addAll(db.getAllCustomers());
+        CustomerPagerAdapter pagerAdapter1 = new CustomerPagerAdapter(this, customerList);
+        viewPager.setAdapter(pagerAdapter1);
+        
+        itemsContainer = findViewById(R.id.itemsContainer);
 
         Button addItemButton = findViewById(R.id.btnAddItem);
         Button previewButton = findViewById(R.id.btnPreviewInvoice);
-        LinearLayout itemsContainer = findViewById(R.id.itemsContainer);
+
 
         // Set up Add Item button listener
-        addItemButton.setOnClickListener(v -> addItemRow(itemsContainer));
+        // Set up Add Item button -> open dialog
+        addItemButton.setOnClickListener(v -> {
+            AddItemDialogFragment dlg = AddItemDialogFragment.newInstance();
+            // use activity as listener (CreateInvoiceActivity implements the listener)
+            dlg.setListener(selectedItems -> {
+                // called on UI thread
+                for (Item it : selectedItems) {
+                    addItemToContainer(itemsContainer, it);
+                }
+            });
+            dlg.show(getSupportFragmentManager(), "add_item");
+        });
+
 
         // Set up Preview button listener
         previewButton.setOnClickListener(v -> {
@@ -75,17 +112,12 @@ public class CreateInvoiceActivity extends AppCompatActivity {
             ArrayList<Item> items = extractItems(itemsContainer);
 
             if (!items.isEmpty()) {
-                Customer customer = new Customer(
-                        customerNameField.getText().toString().trim(),
-                        customerAddressField.getText().toString().trim(),
-                        customerContactField.getText().toString().trim()
-                );
+                Customer useCustomer = selectedCustomer;
 
-                viewModel.setCustomer(customer);
+                viewModel.setCustomer(useCustomer);
                 viewModel.getItems().setValue(items);
-
                 Intent previewIntent = new Intent(CreateInvoiceActivity.this, InvoicePreviewActivity.class);
-                previewIntent.putExtra("customer", (Parcelable) customer);
+                previewIntent.putExtra("customer", useCustomer);
                 previewIntent.putParcelableArrayListExtra("items", items);
                 startActivity(previewIntent);
             } else {
@@ -104,35 +136,41 @@ public class CreateInvoiceActivity extends AppCompatActivity {
 
     private void retrieveIntentData() {
         Intent intent = getIntent();
-        Bundle extras = intent.getExtras();
+        if (intent == null) return;
 
-        if (extras != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                items = extras.getParcelableArrayList("items", Item.class);
-                customer = extras.getParcelable("customer", Customer.class);
-            } else {
-                items = extras.getParcelableArrayList("items");
-                customer = extras.getParcelable("customer");
-            }
-            String actionType = extras.getString("actionType", "Create Invoice");
-            Log.d(TAG, "retrieveIntentData: actionType = " + actionType);
-        } else {
+        Bundle extras = intent.getExtras();
+        if (extras == null) {
             items = new ArrayList<>();
-            customer = new Customer("", "", "");
+            selectedCustomer = null;
+            return;
         }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            items = extras.getParcelableArrayList("items", Item.class);
+            selectedCustomer = extras.getParcelable("customer", Customer.class);
+        } else {
+            items = intent.getParcelableArrayListExtra("items");
+            selectedCustomer = intent.getParcelableExtra("customer");
+        }
+
+        if (items == null) items = new ArrayList<>();
+
+        if (selectedCustomer != null && viewPager != null) {
+            customerList.add(selectedCustomer);
+            viewPager.post(() -> viewPager.setCurrentItem(1, true));
+        }
+        Log.d(TAG, "InvoicePreview: received customer = " + (customer != null ? customer.getName() : "null"));
+        Log.d(TAG, "CreateInvoice: onCreate received selectedCustomer = " + (selectedCustomer != null ? selectedCustomer.getName() : "null"));
+
     }
 
-    private void populateCustomerDetails() {
-        if (customer != null) {
-            customerNameField.setText(customer.getName());
-            customerAddressField.setText(customer.getAddress());
-            customerContactField.setText(customer.getContactInfo());
-        }
 
-        LinearLayout itemsContainer = findViewById(R.id.itemsContainer);
-        for (Item item : items) {
-            addItemToContainer(itemsContainer, item);
+    private boolean ensureCustomerSelected(){
+        if (selectedCustomer == null){
+            displaySnackbar("Please add or select a customer first");
+            return false;
         }
+        return true;
     }
     private void addItemRow(LinearLayout itemsContainer) {
         LinearLayout itemLayout = new LinearLayout(this);
@@ -197,15 +235,28 @@ public class CreateInvoiceActivity extends AppCompatActivity {
     }
 
 
-    private boolean validateCustomerDetails() {
-        if (customerNameField.getText().toString().trim().isEmpty() ||
-                customerAddressField.getText().toString().trim().isEmpty() ||
-                customerContactField.getText().toString().trim().isEmpty()) {
-            displaySnackbar("Please fill in all customer details");
-            return false;
-        }
-        return true;
+    private boolean validateCustomerDetails(){
+        return ensureCustomerSelected();
+
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // restore selectedCustomer from ViewModel if present
+        Customer vmCustomer = viewModel.getCustomer().getValue();
+        if (vmCustomer != null) {
+            selectedCustomer = vmCustomer;
+            // update any UI if needed (e.g. move ViewPager to select tab)
+            if (viewPager != null) viewPager.setCurrentItem(1, true);
+        }
+        // restore items if any
+        ArrayList<Item> saved = viewModel.getItems().getValue();
+        if (saved != null && itemsContainer != null && itemsContainer.getChildCount() == 0) {
+            for (Item it : saved) addItemToContainer(itemsContainer, it);
+        }
+    }
+
+
     private ArrayList<Item> extractItems(LinearLayout itemsContainer) {
         ArrayList<Item> items = new ArrayList<>();
 
@@ -241,4 +292,20 @@ public class CreateInvoiceActivity extends AppCompatActivity {
         snackbar.setAction("OK", v -> snackbar.dismiss());
         snackbar.show();
     }
+
+    @Override
+    public void onCustomerCreated(@NonNull Customer customer) {
+        customerList.add(customer);
+        selectedCustomer = customer;
+        if (viewPager.getAdapter() != null){
+            viewPager.getAdapter().notifyItemChanged(1);
+        }
+
+    }
+    @Override
+    public void onCustomerSelected(@NonNull Customer customer) {
+        selectedCustomer = customer;
+    }
+
 }
+

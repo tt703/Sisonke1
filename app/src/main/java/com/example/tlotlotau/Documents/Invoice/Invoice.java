@@ -8,6 +8,7 @@ public class Invoice {
 
     private String customerContact;
     private String customerAddress;
+    private String customerEmail;
     private String itemDetails;
     private double totalAmount;
     private String filePath;
@@ -21,6 +22,7 @@ public class Invoice {
                 ", customerName='" + customerName + '\'' +
                 ", customerAddress='" + customerAddress + '\'' +
                 ", customerContact='" + customerContact + '\'' +
+                ", customerEmail='" + customerEmail + '\'' +
                 ", itemDetails='" + itemDetails + '\'' +
                 ", totalAmount=" + totalAmount +
                 ", filePath='" + filePath + '\'' +
@@ -44,4 +46,7 @@ public class Invoice {
     public String getTimestamp() { return timestamp; }
     public void setTimestamp(String timestamp) { this.timestamp = timestamp; }
     public void setCustomerContact(String customerContact) { this.customerContact = customerContact; }
+    public void setCustomerEmail(String customerEmail) { this.customerEmail = customerEmail; }
+    public String getCustomerEmail() { return customerEmail; }
+
 }

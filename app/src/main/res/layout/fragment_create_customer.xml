@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="12dp">
+
+    <EditText
+        android:id="@+id/etCustomerName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Customer Name"
+        android:background="@drawable/item_row_background"
+        />
+
+    <EditText
+        android:id="@+id/etCustomerEmail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Customer Email"
+        android:inputType="textEmailAddress"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/item_row_background"
+        />
+
+    <EditText
+        android:id="@+id/etCustomerPhone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Cell Phone"
+        android:inputType="phone"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/item_row_background"
+        />
+
+    <EditText
+        android:id="@+id/etCustomerAddress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Address"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/item_row_background"
+        />
+
+    <Button
+        android:id="@+id/btnSaveCustomer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Save Customer"
+        android:layout_marginTop="12dp"
+        android:backgroundTint="@color/gold"
+        />
+</LinearLayout>
