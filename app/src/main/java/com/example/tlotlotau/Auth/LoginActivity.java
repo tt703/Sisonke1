@@ -74,19 +74,16 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         verify_email.setOnClickListener(v -> {
-            // Only attempt to send verification if there is a signed-in user
             FirebaseUser cur = mAuth.getCurrentUser();
             if (cur == null) {
                 Toast.makeText(getApplicationContext(), "Please sign in first to request verification.", Toast.LENGTH_LONG).show();
                 return;
             }
 
-            // reload to ensure up-to-date state then send verification
             cur.reload().addOnCompleteListener(rt -> {
                 cur.sendEmailVerification().addOnCompleteListener(sendTask -> {
                     if (sendTask.isSuccessful()) {
                         Toast.makeText(getApplicationContext(), "Verification Email Sent. Please check your inbox.", Toast.LENGTH_LONG).show();
-                        // sign out so user must verify before continuing
                         mAuth.signOut();
                     } else {
                         String err = (sendTask.getException() != null) ? sendTask.getException().getMessage() : "Failed to send verification";

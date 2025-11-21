@@ -8,6 +8,7 @@ import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -28,6 +29,7 @@ public class CategoryManagerActivity extends AppCompatActivity {
     private RecyclerView rvCategories;
     private FloatingActionButton fabAddCategory;
     private CategoryManagerAdapter adapter;
+    private ImageButton btnBack;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -38,6 +40,8 @@ public class CategoryManagerActivity extends AppCompatActivity {
 
         rvCategories = findViewById(R.id.rvCategories);
         fabAddCategory = findViewById(R.id.fabAddCategory);
+        btnBack = findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(v -> finish());
 
         rvCategories.setLayoutManager(new LinearLayoutManager(this));
         load();
@@ -51,9 +55,7 @@ public class CategoryManagerActivity extends AppCompatActivity {
         rvCategories.setAdapter(adapter);
     }
 
-    /**
-     * Shows the "Add Category" dialog with app colors applied programmatically.
-     */
+
     private void showAddDialog() {
         final EditText input = new EditText(this);
         input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
@@ -112,9 +114,6 @@ public class CategoryManagerActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    /**
-     * Shows the "Edit Category" dialog, styled programmatically, with Delete option.
-     */
     private void showEditDialog(CategoryC c) {
         if (c == null) return;
 

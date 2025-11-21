@@ -10,6 +10,13 @@ public class SaleRecord {
     private double total;
     private String paymentMethod;
     private String timestamp;
+    private int localId;
+    private String cloudId;
+    private long localSaleId;
+
+
+
+
 
     // getters/setters
     public long getId() { return id; }
@@ -30,5 +37,12 @@ public class SaleRecord {
     public void setPaymentMethod(String paymentMethod) { this.paymentMethod = paymentMethod; }
     public String getTimestamp() { return timestamp; }
     public void setTimestamp(String timestamp) { this.timestamp = timestamp; }
+    public int getLocalId() { return localId; }
+    public void setLocalId(int localId) { this.localId = localId; }
+    public long getLocalSaleId() { return localSaleId; }
+
+
+    public String getCloudId() {return cloudId;}
+    public void setCloudId(String cloudId){this.cloudId= cloudId;}
 }
 

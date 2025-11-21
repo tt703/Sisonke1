@@ -18,6 +18,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.tlotlotau.Auth.ProfileActivity;
+import com.example.tlotlotau.Database.SyncManager;
 import com.example.tlotlotau.R;
 import com.example.tlotlotau.Reports.ReportsActivity;
 import com.example.tlotlotau.Settings.EditCompanyInfoActivity;
@@ -40,6 +41,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
+    private SyncManager syncManager;
 
     private TextView Welcome;
     private ImageButton btn_profile;
@@ -70,13 +72,15 @@ public class HomeActivity extends AppCompatActivity {
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null) {
-            // Not signed in -> go to login
             startActivity(new Intent(HomeActivity.this, com.example.tlotlotau.Auth.LoginActivity.class));
             finish();
             return;
         }
+        syncManager = new SyncManager(this);
+        syncManager.start();
 
         showLoading(true);
+
 
         currentUser.reload().addOnCompleteListener(task -> {
             FirebaseUser reloaded = mAuth.getCurrentUser();
@@ -109,7 +113,7 @@ public class HomeActivity extends AppCompatActivity {
             if (itemId == R.id.nav_home) return true;
             if (itemId == R.id.nav_settings) { startActivity(new Intent(this, Settings.class)); return true; }
             if (itemId == R.id.nav_invoices) { startActivity(new Intent(this, DocumentsActivity.class)); return true; }
-            if (itemId == R.id.nav_estimates) { startActivity(new Intent(this, DocumentsActivity.class)); return true; }
+            if (itemId == R.id.nav_estimates) { startActivity(new Intent(this, SellProductActivity.class)); return true; }
             return false;
         });
 
@@ -117,6 +121,17 @@ public class HomeActivity extends AppCompatActivity {
             @Override public void handleOnBackPressed() { finishAffinity(); }
         });
     }
+
+
+
+
+
+    // optionally stop in onDestroy:
+    @Override protected void onDestroy() {
+        super.onDestroy();
+        if (syncManager != null) syncManager.stop();
+    }
+
 
     private void initViews() {
         Welcome = findViewById(R.id.Welcome);

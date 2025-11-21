@@ -47,16 +47,52 @@ public class AddCustomerActivity extends AppCompatActivity {
         String customerEmail = etCustomerEmail.getText() == null ? "" : etCustomerEmail.getText().toString().trim();
         String customerAddress = etCustomerAddress.getText() == null ? "" : etCustomerAddress.getText().toString().trim();
 
-        // validate
-        if (TextUtils.isEmpty(customerName) ||
-                TextUtils.isEmpty(customerPhone) ||
-                TextUtils.isEmpty(customerEmail) ||
-                TextUtils.isEmpty(customerAddress)) {
-            Toast.makeText(this, "All fields are required", Toast.LENGTH_SHORT).show();
+
+        // 1. Check Customer Name
+        if (TextUtils.isEmpty(customerName)) {
+            etCustomerName.setError("Customer name is required");
+            etCustomerName.requestFocus(); // Move cursor to the problematic field
             return;
         }
 
-        // insert into DB
+        // 2. Check Customer Phone
+        if (TextUtils.isEmpty(customerPhone)) {
+            etCustomerPhone.setError("Phone number is required");
+            etCustomerPhone.requestFocus();
+            return;
+        }
+
+
+        String saPhonePattern = "^(0\\d{9})$";
+        if (!customerPhone.matches(saPhonePattern)) {
+            etCustomerPhone.setError("Please enter a valid 10-digit South African phone number (e.g., 0821234567)");
+            etCustomerPhone.requestFocus();
+            return;
+        }
+
+
+        // 4. Check Customer Email
+        if (TextUtils.isEmpty(customerEmail)) {
+            etCustomerEmail.setError("Email address is required");
+            etCustomerEmail.requestFocus();
+            return;
+        }
+
+        // 5. Optional but recommended: Validate email format
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(customerEmail).matches()) {
+            etCustomerEmail.setError("Please enter a valid email address");
+            etCustomerEmail.requestFocus();
+            return;
+        }
+
+        // 6. Check Customer Address
+        if (TextUtils.isEmpty(customerAddress)) {
+            etCustomerAddress.setError("Address is required");
+            etCustomerAddress.requestFocus();
+            return;
+        }
+
+
         DatabaseHelper db = new DatabaseHelper(this);
         long newId = -1;
         try {
@@ -74,12 +110,10 @@ public class AddCustomerActivity extends AppCompatActivity {
 
             Toast.makeText(this, "Customer created", Toast.LENGTH_SHORT).show();
 
-            // return created customer as result so calling activities/fragments can use it
             Intent result = new Intent();
             result.putExtra(EXTRA_CUSTOMER, newCustomer);
             setResult(RESULT_OK, result);
 
-            // clear inputs (optional) and finish
             etCustomerName.setText("");
             etCustomerPhone.setText("");
             etCustomerEmail.setText("");

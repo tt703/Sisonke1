@@ -299,6 +299,7 @@ public class EstimatePreviewActivity extends AppCompatActivity {
             binding.estimateBillTo.setText(String.format(Locale.getDefault(), "Bill To: %s\n%s\n%s",
                     customer.getName(),
                     customer.getAddress(),
+                    customer.getEmail(),
                     customer.getPhone()));
         } else {
             binding.estimateBillTo.setText(getString(R.string.bill_to_not_available));
@@ -386,9 +387,9 @@ public class EstimatePreviewActivity extends AppCompatActivity {
                 PdfPCell customerDetails = new PdfPCell();
                 customerDetails.setPadding(10);
                 customerDetails.addElement(new Phrase("Customer Name:  " + customer.getName(), contentFont));
-                customerDetails.addElement(new Phrase("Address:  " + customer.getAddress(), contentFont));
-                customerDetails.addElement(new Phrase("Contact No:  " + customer.getPhone(), contentFont));
-                customerDetails.addElement(new Phrase("Email:  " + customer.getEmail(), contentFont));
+                customerDetails.addElement(new Phrase("Cellphone:  " + customer.getAddress(), contentFont));
+                customerDetails.addElement(new Phrase("Email:  " + customer.getPhone(), contentFont));
+                customerDetails.addElement(new Phrase("Address  " + customer.getEmail(), contentFont));
                 billToTable.addCell(customerDetails);
             }
             document.add(billToTable);

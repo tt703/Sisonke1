@@ -38,6 +38,8 @@
     <string name="mastercard">Mastercard</string>
     <string name="payment">Visa_Payment</string>
     <string name="profile_picture">profile</string>
+    <string name="sell">Sell</string>
+    <string name="Sell">Sell</string>
     <string-array name="employee_role">
         <item>Sales</item>
         <item>Stock Control</item>

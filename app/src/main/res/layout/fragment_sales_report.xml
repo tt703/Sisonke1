@@ -71,7 +71,7 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Bar Chart -->
+            <!-- Trend Line Chart -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -89,16 +89,16 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Sales over time"
+                        android:text="Sales trend"
                         android:textColor="@color/black"
                         android:textStyle="bold"
                         android:textSize="14sp"
                         android:layout_marginBottom="8dp"/>
 
-                    <com.github.mikephil.charting.charts.BarChart
-                        android:id="@+id/barChart"
+                    <com.github.mikephil.charting.charts.LineChart
+                        android:id="@+id/lineChart"
                         android:layout_width="match_parent"
-                        android:layout_height="200dp"/>
+                        android:layout_height="220dp"/>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -128,17 +128,16 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Revenue"
+                            android:text="Top products"
                             android:textSize="12sp"
                             android:textColor="@android:color/white"/>
 
                         <TextView
-                            android:id="@+id/tvRevenue"
+                            android:id="@+id/tvTopProducts"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="R 0.00"
-                            android:textSize="16sp"
-                            android:textStyle="bold"
+                            android:text="No data"
+                            android:textSize="12sp"
                             android:textColor="@android:color/white"
                             android:layout_marginTop="6dp"/>
                     </LinearLayout>

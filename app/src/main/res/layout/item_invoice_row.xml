@@ -1,38 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <LinearLayout
-        android:orientation="horizontal"
-        android:padding="12dp"
-        android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp"
+    android:background="@android:color/white">
+
+    <!-- Customer Name (Left-aligned, Top) -->
+    <TextView
+        android:id="@+id/tvInvoiceCustomer"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/white"
-        >
+        android:layout_marginEnd="16dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/tvInvoiceTotal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="A Very Long Customer Name That Might Overflow" />
 
+    <!-- Invoice Date (Aligned under Customer Name) -->
+    <TextView
+        android:id="@+id/tvInvoiceDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:textColor="@color/grey"
+        android:textSize="12sp"
+        app:layout_constraintStart_toStartOf="@+id/tvInvoiceCustomer"
+        app:layout_constraintTop_toBottomOf="@+id/tvInvoiceCustomer"
+        tools:text="20 Nov 2025" />
 
-            <TextView
-                android:id="@+id/tvInvoiceCustomer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Customer"
-                android:textStyle="bold"
-                android:textColor="@color/black"/>
-            <TextView
-                android:id="@+id/tvInvoiceDate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="date"
-                android:textColor="@color/grey"
-                android:textSize="12sp"/>
-
-        <TextView
-            android:id="@+id/tvInvoiceTotal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="R 0.00"
-            android:textStyle="bold"
-            android:textColor="@color/black"/>
-    </LinearLayout>
+    <!-- Total Amount (Right-aligned, Centered Vertically) -->
+    <TextView
+        android:id="@+id/tvInvoiceTotal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="R 9,999.99" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

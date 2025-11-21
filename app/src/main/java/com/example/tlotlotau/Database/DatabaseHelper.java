@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import com.example.tlotlotau.Inventory.CategoryC;
 import com.example.tlotlotau.Customer.Customer;
@@ -19,19 +20,30 @@ import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    private static final String DATABASE_NAME = "invoices.db";
-    private static final int DATABASE_VERSION = 18;
+    private static final String DATABASE_NAME = "Sisonke.db";
+    private static final int DATABASE_VERSION = 27;
 
-    private static final String TABLE_CUSTOMERS = "customers";
-    private static final String COLUMN_CUSTOMER_ID = "_id";
+    public static final String TABLE_CUSTOMERS = "customers";
+    public static final String COLUMN_CUSTOMER_ID = "_id";
     private static final String COLUMN_CUSTOMER_NAME = "name";
     private static final String COLUMN_CUSTOMER_PHONE = "phone";
     private static final String COLUMN_CUSTOMER_EMAIL = "email";
     private static final String COLUMN_CUSTOMER_ADDRESS = "address";
     private static final String COLUMN_CUSTOMER_DATE_CREATED = "date_created";
-    private static final String COLUMN_NUM_ESTIMATES = "num_estimates";
-    private static final String COLUMN_NUM_INVOICES = "num_invoices";
-    private static final String COLUMN_TOTAL_AMOUNT = "total_amount";
+    private static final String COLUMN_CUSTOMER_NUM_ESTIMATES = "num_estimates";
+    private static final String COLUMN_CUSTOMER_NUM_INVOICES = "num_invoices";
+    private static final String COLUMN_CUSTOMER_TOTAL_AMOUNT = "total_amount";
+    private static final String COLUMN_CUSTOMER_CLOUD_ID = "cloud_id";
+    private static final String COLUMN_CUSTOMER_SYNCED = "synced";
+    private static final String COLUMN_CUSTOMER_UPDATED_AT = "updated_at";
+    private static final String COLUMN_CUSTOMER_DELETED = "deleted";
+    private static final String COLUMN_ESTIMATE_CLOUD_ID = "cloud_id";
+    private static final String COLUMN_ESTIMATE_SYNCED = "synced_at";
+    private static final String COLUMN_ESTIMATE_DELETED = "deleted";
+    private static final String COLUMN_ESTIMATE_DIRTY_AT = "dirty_at";
+
+
+
 
 
     private static final String TABLE_ESTIMATES = "estimates";
@@ -55,6 +67,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_INVOICE_TOTAL_AMOUNT = "totalAmount";
     private static final String COLUMN_INVOICE_FILE_PATH = "filePath";
     private static final String COLUMN_INVOICE_DATE_CREATED = "dateCreated";
+    private static final String COLUMN_INVOICE_CLOUD_ID = "cloud_id";
+    private static final String COLUMN_INVOICE_SYNCED = "synced_at";
+    private static final String COLUMN_INVOICE_DELETED = "deleted";
+    private static final String COLUMN_INVOICE_DIRTY_AT = "dirty_at";
 
     private static final String TABLE_PRODUCTS = "products";
     private static final String COLUMN_PRODUCT_ID = "_id";
@@ -65,6 +81,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_PRODUCT_DATE_CREATED = "date_created";
     private static final String COLUMN_PRODUCT_QR_CODE = "qr_code";
     private static final String  COLUNM_PRODUCT_CATEGORY_ID = "category_id";
+    private static final String COLUMN_PRODUCT_CLOUD_ID = "cloud_id";
+    private static final String COLUMN_PRODUCT_SYNCED = "synced";
+    private static final String COLUMN_PRODUCT_UPDATED_AT = "updated_at";
+    private static final String COLUMN_PRODUCT_DELETED = "deleted";
+
+
 
 
     private static final String TABLE_BUSINESSES= "business";
@@ -81,9 +103,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_BUSINESS_SYNCED = "synced";
 
     private static final String TABLE_CATEGORIES = "categories";
-    private static final String COLUMN_CATEGORY_ID = "_id";
-    private static final String COLUMN_CATEGORY_NAME = "name";
+    public static final String COLUMN_CATEGORY_ID = "_id";
+    public static final String COLUMN_CATEGORY_NAME = "name";
     private static final String COLUMN_CATEGORY_DATE_CREATED = "date_created";
+    private static final String COLUMN_CATEGORY_CLOUD_ID = "cloud_id";
+    private static final String COLUMN_CATEGORY_SYNCED = "synced_at";
+    private static final String COLUMN_CATEGORY_DELETED = "deleted";
+    private static final String COLUMN_CATEGORY_DIRTY_AT = "dirty_at";
+
     private static final String TABLE_SALES = "sales";
     private static final String COLUMN_SALE_ID = "_id";
     private static final String COLUMN_SALE_USER_ID = "user_id";
@@ -94,6 +121,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_SALE_TOTAL = "total";
     private static final String COLUMN_SALE_PAYMENT_METHOD = "payment_method";
     private static final String COLUMN_SALE_TIMESTAMP = "timestamp";
+    private static final String COLUMN_SALE_CLOUD_ID = "cloud_id";
+    private static final String COLUMN_SALE_SYNCED = "synced_at";
+    private static final String COLUMN_SALE_DELETED = "deleted";
+    private static final String COLUMN_SALE_DIRTY_AT = "dirty_at";
 
     private static final String TABLE_SALE_ITEMS = "sale_items";
     private static final String COLUMN_SALE_ITEM_ID = "_id";
@@ -103,12 +134,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_SALE_ITEM_QTY = "quantity";
     private static final String COLUMN_SALE_ITEM_UNIT_PRICE = "unit_price";
     private static final String COLUMN_SALE_ITEM_LINE_TOTAL = "line_total";
+    private static final String COLUMN_SALE_ITEM_CLOUD_ID = "cloud_id";
+    private static final String COLUMN_SALE_ITEM_SYNCED = "synced_at";
+    private static final String COLUMN_SALE_ITEM_DELETED = "deleted";
+    private static final String COLUMN_SALE_ITEM_DIRTY_AT = "dirty_at";
 
-    private static final String TABLE_USERS = "users";
-    private static final String COLUMN_USER_ID = "_id";
-    private static final String COLUMN_USER_NAME = "name";
-    private static final String COLUMN_USER_ROLE = "role";
-    private static final String COLUMN_USER_EMAIL = "email";
+
 
 
     private static final String CREATE_TABLE_INVOICES = "CREATE TABLE " + TABLE_INVOICES + " (" +
@@ -121,6 +152,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             COLUMN_INVOICE_TOTAL_AMOUNT + " REAL, " +
             COLUMN_INVOICE_FILE_PATH + " TEXT, " +
             COLUMN_INVOICE_DATE_CREATED + " TEXT, " +
+            COLUMN_INVOICE_CLOUD_ID + " TEXT, " +
+            COLUMN_INVOICE_SYNCED + " INTEGER DEFAULT 0, " +
+            COLUMN_INVOICE_DELETED + " INTEGER DEFAULT 0, " +
+            COLUMN_INVOICE_DIRTY_AT + " INTEGER DEFAULT 0, " +
             "paid INTEGER DEFAULT 0)";
 
     private static final String CREATE_TABLE_ESTIMATES = "CREATE TABLE " + TABLE_ESTIMATES + " (" +
@@ -132,7 +167,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             COLUMN_ESTIMATE_ITEM_DETAILS + " TEXT, " +
             COLUMN_ESTIMATE_TOTAL_AMOUNT + " REAL, " +
             COLUMN_ESTIMATE_FILE_PATH + " TEXT, " +
-            COLUMN_ESTIMATE_DATE_CREATED + " TEXT)";
+            COLUMN_ESTIMATE_CLOUD_ID + " TEXT, " +
+            COLUMN_ESTIMATE_SYNCED + " INTEGER DEFAULT 0, " +
+            COLUMN_ESTIMATE_DELETED + " INTEGER DEFAULT 0, " +
+            COLUMN_ESTIMATE_DIRTY_AT + " INTEGER DEFAULT 0, " +
+            COLUMN_ESTIMATE_DATE_CREATED + " TEXT)" ;
 
     private static final String CREATE_TABLE_PRODUCTS = "CREATE TABLE " + TABLE_PRODUCTS + " (" +
             COLUMN_PRODUCT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -142,7 +181,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             COLUMN_PRODUCT_QUANTITY + " INTEGER, " +
             COLUMN_PRODUCT_DATE_CREATED + " TEXT, " +
             COLUMN_PRODUCT_QR_CODE + " TEXT,"+
-            COLUNM_PRODUCT_CATEGORY_ID + " INTEGER DEFAULT NULL)";
+            COLUNM_PRODUCT_CATEGORY_ID + " INTEGER DEFAULT NULL, " +
+            COLUMN_PRODUCT_CLOUD_ID + " TEXT, " +
+            COLUMN_PRODUCT_SYNCED + " INTEGER DEFAULT 0, " +
+            COLUMN_PRODUCT_UPDATED_AT + " TEXT,"+
+            COLUMN_PRODUCT_DELETED + " INTEGER DEFAULT 0)";
 
 
     private static final String CREATE_TABLE_BUSINESSES = "CREATE TABLE " + TABLE_BUSINESSES + " (" +
@@ -165,14 +208,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             COLUMN_CUSTOMER_EMAIL + " TEXT, " +
             COLUMN_CUSTOMER_ADDRESS + " TEXT, " +
             COLUMN_CUSTOMER_DATE_CREATED + " TEXT," +
-            COLUMN_NUM_ESTIMATES + " INTEGER DEFAULT 0," +
-            COLUMN_NUM_INVOICES + " INTEGER DEFAULT 0," +
-            COLUMN_TOTAL_AMOUNT + " REAL DEFAULT 0)";
+            COLUMN_CUSTOMER_NUM_ESTIMATES + " INTEGER DEFAULT 0," +
+            COLUMN_CUSTOMER_NUM_INVOICES + " INTEGER DEFAULT 0," +
+            COLUMN_CUSTOMER_TOTAL_AMOUNT + " REAL DEFAULT 0,"+
+            COLUMN_CUSTOMER_CLOUD_ID + " TEXT, " +
+            COLUMN_CUSTOMER_SYNCED + " INTEGER DEFAULT 0, "+
+            COLUMN_CUSTOMER_UPDATED_AT + " TEXT,"+
+            COLUMN_CUSTOMER_DELETED + " INTEGER DEFAULT 0)";
 
     private static final String CREATE_TABLE_CATEGORIES = "CREATE TABLE " + TABLE_CATEGORIES + " (" +
             COLUMN_CATEGORY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
             COLUMN_CATEGORY_NAME + " TEXT, " +
-            COLUMN_CATEGORY_DATE_CREATED + " TEXT)";
+            COLUMN_CATEGORY_DATE_CREATED + " TEXT,"+
+            COLUMN_CATEGORY_CLOUD_ID + " TEXT, " +
+            COLUMN_CATEGORY_SYNCED + " INTEGER DEFAULT 0,"+
+            COLUMN_CATEGORY_DELETED + " INTEGER DEFAULT 0,"+
+            COLUMN_CATEGORY_DIRTY_AT + " INTEGER DEFAULT 0)";
     private static final String CREATE_TABLE_SALES = "CREATE TABLE " + TABLE_SALES + " (" +
             COLUMN_SALE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
             COLUMN_SALE_USER_ID + " TEXT, " +
@@ -182,7 +233,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             COLUMN_SALE_TAX + " REAL, " +
             COLUMN_SALE_TOTAL + " REAL, " +
             COLUMN_SALE_PAYMENT_METHOD + " TEXT, " +
-            COLUMN_SALE_TIMESTAMP + " TEXT)";
+            COLUMN_SALE_TIMESTAMP + " TEXT,"+
+            COLUMN_SALE_CLOUD_ID + " TEXT, " +
+            COLUMN_SALE_SYNCED + " INTEGER DEFAULT 0,"+
+            COLUMN_SALE_DIRTY_AT + " INTEGER DEFAULT 0,"+
+            COLUMN_SALE_DELETED + " INTEGER DEFAULT 0)";
+
 
     private static final String CREATE_TABLE_SALE_ITEMS = "CREATE TABLE " + TABLE_SALE_ITEMS + " (" +
             COLUMN_SALE_ITEM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -192,12 +248,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             COLUMN_SALE_ITEM_QTY + " INTEGER, " +
             COLUMN_SALE_ITEM_UNIT_PRICE + " REAL, " +
             COLUMN_SALE_ITEM_LINE_TOTAL + " REAL, " +
+            COLUMN_SALE_ITEM_CLOUD_ID + " TEXT, " +
+            COLUMN_SALE_ITEM_SYNCED + " INTEGER DEFAULT 0, " +
+            COLUMN_SALE_ITEM_DELETED + " INTEGER DEFAULT 0, " +
+            COLUMN_SALE_ITEM_DIRTY_AT + " INTEGER DEFAULT 0, " +
             "FOREIGN KEY(" + COLUMN_SALE_ITEM_SALE_ID + ") REFERENCES " + TABLE_SALES + "(" + COLUMN_SALE_ID + "))";
 
-    private static final String CREATE_TABLE_USERS = "CREATE TABLE " + TABLE_USERS + " (" +
-            COLUMN_USER_ID + " TEXT PRIMARY KEY, " +
-            COLUMN_USER_NAME + " TEXT, " +
-            COLUMN_USER_ROLE + " TEXT )" ;
+
 
 
 
@@ -218,7 +275,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_CATEGORIES);
         db.execSQL(CREATE_TABLE_SALES);
         db.execSQL(CREATE_TABLE_SALE_ITEMS);
-        db.execSQL(CREATE_TABLE_USERS);
+
     }
 
     @Override
@@ -231,7 +288,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CATEGORIES);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_SALES);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_SALE_ITEMS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
         onCreate(db);
 
 
@@ -490,8 +546,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 String phone = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CUSTOMER_PHONE));
                 String email = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CUSTOMER_EMAIL));
                 String address = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CUSTOMER_ADDRESS));
-                String totalAmount = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TOTAL_AMOUNT));
-                String numEstimates = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NUM_ESTIMATES));
+                String totalAmount = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CUSTOMER_TOTAL_AMOUNT));
+                String numEstimates = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CUSTOMER_NUM_ESTIMATES));
 
                 Customer customer = new Customer(id, name, phone, email, address);
                 customer.setAmountDue(totalAmount);
@@ -562,19 +618,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         return out;
     }
-    public boolean upsertUser(String userId, String name, String role, String email) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        try {
-            ContentValues values = new ContentValues();
-            values.put(COLUMN_USER_ID, userId);
-            values.put(COLUMN_USER_NAME, name);
-            values.put(COLUMN_USER_ROLE, role);
-            long res = db.insertWithOnConflict(TABLE_USERS, null, values, SQLiteDatabase.CONFLICT_REPLACE);
-            return res != -1;
-        } finally {
-            db.close();
-        }
-    }
+
     public boolean createSale(String userId, String userName, String userRole,
                               List<SaleItem> items, double subtotal, double tax, double total, String paymentMethod) {
         if (items == null || items.isEmpty()) return false;
@@ -762,5 +806,849 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             db.close();
         }
     }
+    // Update existing customer
+    public int updateCustomer(long id, String name, String phone, String email, String address) {
+        SQLiteDatabase db = null;
+        int rows = 0;
+        try {
+            db = this.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_CUSTOMER_NAME, name);
+            values.put(COLUMN_CUSTOMER_PHONE, phone);
+            values.put(COLUMN_CUSTOMER_EMAIL, email);
+            values.put(COLUMN_CUSTOMER_ADDRESS, address);
+
+            // Use transaction to make update atomic and safer
+            db.beginTransaction();
+            try {
+                rows = db.update(TABLE_CUSTOMERS, values, COLUMN_CUSTOMER_ID + " = ?", new String[]{String.valueOf(id)});
+                db.setTransactionSuccessful();
+            } finally {
+                db.endTransaction();
+            }
+        } catch (Exception ex) {
+            Log.w("DatabaseHelper", "updateCustomer failed for id=" + id, ex);
+        }
+        // do NOT close db here: the helper's close() should be used by the component that owns the helper
+        return rows;
+    }
+
+    public int deleteCustomer(long id) {
+        SQLiteDatabase db = null;
+        int rows = 0;
+        try {
+            db = this.getWritableDatabase();
+            db.beginTransaction();
+            try {
+                rows = db.delete(TABLE_CUSTOMERS, COLUMN_CUSTOMER_ID + " = ?", new String[]{String.valueOf(id)});
+                db.setTransactionSuccessful();
+            } finally {
+                db.endTransaction();
+            }
+        } catch (Exception ex) {
+            Log.w("DatabaseHelper", "deleteCustomer failed for id=" + id, ex);
+        }
+        // do NOT close db here
+        return rows;
+    }
+
+
+    public int getInvoiceCountForCustomer(String customerName) {
+        if (customerName == null) customerName = "";
+        int count = 0;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = null;
+        try {
+            String sql = "SELECT COUNT(*) FROM " + TABLE_INVOICES + " WHERE " + COLUMN_INVOICE_CUSTOMER_NAME + " = ?";
+            cursor = db.rawQuery(sql, new String[]{customerName});
+            if (cursor.moveToFirst()) count = cursor.getInt(0);
+        } finally {
+            if (cursor != null) cursor.close();
+            db.close();
+        }
+        return count;
+    }
+
+
+    public int getEstimateCountForCustomer(String customerName) {
+        if (customerName == null) customerName = "";
+        int count = 0;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = null;
+        try {
+            String sql = "SELECT COUNT(*) FROM " + TABLE_ESTIMATES + " WHERE " + COLUMN_ESTIMATE_CUSTOMER_NAME + " = ?";
+            cursor = db.rawQuery(sql, new String[]{customerName});
+            if (cursor.moveToFirst()) count = cursor.getInt(0);
+        } finally {
+            if (cursor != null) cursor.close();
+            db.close();
+        }
+        return count;
+    }
+
+
+    public double getInvoiceAmountForCustomer(String customerName) {
+        if (customerName == null) customerName = "";
+        double total = 0.0;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = null;
+        try {
+            String sql = "SELECT SUM(" + COLUMN_INVOICE_TOTAL_AMOUNT + ") FROM " + TABLE_INVOICES + " WHERE " + COLUMN_INVOICE_CUSTOMER_NAME + " = ?";
+            cursor = db.rawQuery(sql, new String[]{customerName});
+            if (cursor.moveToFirst()) {
+                // cursor.getDouble may return 0.0 if null; handle null explicitly:
+                if (!cursor.isNull(0)) total = cursor.getDouble(0);
+            }
+        } finally {
+            if (cursor != null) cursor.close();
+            db.close();
+        }
+        return total;
+    }
+
+    public Cursor getUnsyncedCustomersCursor() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.rawQuery("SELECT * FROM " + TABLE_CUSTOMERS + " WHERE synced = 0 OR synced IS NULL", null);
+    }
+
+
+
+
+
+    public Customer getCustomerByLocalId(long localId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.query(TABLE_CUSTOMERS, null, COLUMN_CUSTOMER_ID + " = ?", new String[]{String.valueOf(localId)}, null, null, null);
+        try {
+            if (c != null && c.moveToFirst()) {
+                Customer out = new Customer();
+                out.setId(c.getLong(c.getColumnIndexOrThrow(COLUMN_CUSTOMER_ID)));
+                out.setName(c.getString(c.getColumnIndexOrThrow(COLUMN_CUSTOMER_NAME)));
+                out.setPhone(c.getString(c.getColumnIndexOrThrow(COLUMN_CUSTOMER_PHONE)));
+                out.setEmail(c.getString(c.getColumnIndexOrThrow(COLUMN_CUSTOMER_EMAIL)));
+                out.setAddress(c.getString(c.getColumnIndexOrThrow(COLUMN_CUSTOMER_ADDRESS)));
+                int idx = c.getColumnIndex("cloud_id");
+                if (idx != -1) out.setCloudId(c.getString(idx));
+                return out;
+            }
+        } finally {
+            if (c != null) c.close();
+        }
+        return null;
+    }
+
+    public Customer getCustomerByCloudId(String cloudId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.query(TABLE_CUSTOMERS, null, "cloud_id = ?", new String[]{cloudId}, null, null, null);
+        try {
+            if (c != null && c.moveToFirst()) {
+                Customer out = new Customer();
+                out.setId(c.getLong(c.getColumnIndexOrThrow(COLUMN_CUSTOMER_ID)));
+                out.setName(c.getString(c.getColumnIndexOrThrow(COLUMN_CUSTOMER_NAME)));
+                out.setPhone(c.getString(c.getColumnIndexOrThrow(COLUMN_CUSTOMER_PHONE)));
+                out.setEmail(c.getString(c.getColumnIndexOrThrow(COLUMN_CUSTOMER_EMAIL)));
+                out.setAddress(c.getString(c.getColumnIndexOrThrow(COLUMN_CUSTOMER_ADDRESS)));
+                out.setCloudId(c.getString(c.getColumnIndexOrThrow("cloud_id")));
+                return out;
+            }
+        } finally {
+            if (c != null) c.close();
+        }
+        return null;
+    }
+
+    public long upsertCustomerFromCloud(String cloudId, String name, String phone, String email, String address, String cloudUpdatedAt, int totalAmount, int numEstimates, double dateCreated, long numInvoices) {
+        // insert or update local row matching cloud_id (or create new)
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor c = db.query(TABLE_CUSTOMERS, new String[]{COLUMN_CUSTOMER_ID, "updated_at"}, "cloud_id = ?", new String[]{cloudId}, null, null, null);
+        try {
+            ContentValues v = new ContentValues();
+            v.put(COLUMN_CUSTOMER_NAME, name);
+            v.put(COLUMN_CUSTOMER_PHONE, phone);
+            v.put(COLUMN_CUSTOMER_EMAIL, email);
+            v.put(COLUMN_CUSTOMER_ADDRESS, address);
+            v.put(COLUMN_CUSTOMER_TOTAL_AMOUNT, totalAmount);
+            v.put(COLUMN_CUSTOMER_NUM_ESTIMATES, numEstimates);
+            v.put(COLUMN_CUSTOMER_DATE_CREATED, dateCreated);
+            v.put(COLUMN_CUSTOMER_NUM_INVOICES, numInvoices);
+            v.put("cloud_id", cloudId);
+            v.put("updated_at", cloudUpdatedAt);
+            v.put("synced", 1);
+            v.put("deleted", 0);
+            if (c != null && c.moveToFirst()) {
+                long localId = c.getLong(c.getColumnIndexOrThrow(COLUMN_CUSTOMER_ID));
+                // optional: compare timestamps if you stored updated_at locally and want to avoid overwrite
+                db.update(TABLE_CUSTOMERS, v, COLUMN_CUSTOMER_ID + " = ?", new String[]{String.valueOf(localId)});
+                return localId;
+            } else {
+                v.put(COLUMN_CUSTOMER_DATE_CREATED, String.valueOf(System.currentTimeMillis()));
+                return db.insert(TABLE_CUSTOMERS, null, v);
+            }
+        } finally {
+            if (c != null) c.close();
+        }
+    }
+
+    public int markCustomerSyncedByLocalId(long localId, String cloudId, long updatedAt) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues v = new ContentValues();
+        if (cloudId != null) v.put("cloud_id", cloudId);
+        v.put("synced", 1);
+        v.put("updated_at", updatedAt);
+        return db.update(TABLE_CUSTOMERS, v, COLUMN_CUSTOMER_ID + " = ?", new String[]{String.valueOf(localId)});
+    }
+
+    public int markCustomerDirty(long localId, long updatedAt) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues v = new ContentValues();
+        v.put("synced", 0);
+        v.put("updated_at", updatedAt);
+        return db.update(TABLE_CUSTOMERS, v, COLUMN_CUSTOMER_ID + " = ?", new String[]{String.valueOf(localId)});
+    }
+
+    public int deleteCustomerByCloudId(String cloudId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.delete(TABLE_CUSTOMERS, "cloud_id = ?", new String[]{cloudId});
+    }
+
+
+    public Cursor getUnsyncedProductsCursor() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.rawQuery("SELECT * FROM " + TABLE_PRODUCTS + " WHERE synced = 0 OR synced IS NULL", null);
+    }
+
+    public long upsertProductFromCloud(String cloudId, String name, double price, int quantity, long cloudUpdatedAt) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor c = db.query(TABLE_PRODUCTS, new String[]{COLUMN_PRODUCT_ID}, "cloud_id = ?", new String[]{cloudId}, null, null, null);
+        try {
+            ContentValues v = new ContentValues();
+            v.put(COLUMN_PRODUCT_NAME, name);
+            v.put(COLUMN_PRODUCT_PRICE, price);
+            v.put(COLUMN_PRODUCT_QUANTITY, quantity);
+            v.put("cloud_id", cloudId);
+            v.put("synced", 1);
+            v.put("updated_at", cloudUpdatedAt);
+            v.put("deleted", 0);
+            if (c != null && c.moveToFirst()) {
+                int localId = c.getInt(c.getColumnIndexOrThrow(COLUMN_PRODUCT_ID));
+                db.update(TABLE_PRODUCTS, v, COLUMN_PRODUCT_ID + " = ?", new String[]{String.valueOf(localId)});
+                return localId;
+            } else {
+                v.put(COLUMN_PRODUCT_DATE_CREATED, String.valueOf(System.currentTimeMillis()));
+                return db.insert(TABLE_PRODUCTS, null, v);
+            }
+        } finally {
+            if (c != null) c.close();
+        }
+    }
+
+    public Product getProductById1(int productId){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM " + TABLE_PRODUCTS + " WHERE " + COLUMN_PRODUCT_ID + " = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(productId)});
+        try {
+            if(cursor.moveToFirst()){
+                Product product = new Product();
+                product.setProductId(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_ID)));
+                product.setProductName(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_NAME)));
+                product.setProductPrice(cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_PRICE)));
+                product.setProductQuantity(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_QUANTITY)));
+                // cloud id
+                int idx = cursor.getColumnIndex("cloud_id");
+                if (idx != -1) product.setCloudId(cursor.getString(idx));
+                return product;
+            }
+        } finally {
+            if (cursor != null) cursor.close();
+        }
+        return null;
+    }
+
+    public int markProductSyncedByLocalId(int localId, String cloudId, long updatedAt) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues v = new ContentValues();
+        if (cloudId != null) v.put("cloud_id", cloudId);
+        v.put("synced", 1);
+        v.put("updated_at", updatedAt);
+        return db.update(TABLE_PRODUCTS, v, COLUMN_PRODUCT_ID + " = ?", new String[]{String.valueOf(localId)});
+    }
+
+    public int markProductDirty(int localId, long updatedAt) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues v = new ContentValues();
+        v.put("synced", 0);
+        v.put("updated_at", updatedAt);
+        return db.update(TABLE_PRODUCTS, v, COLUMN_PRODUCT_ID + " = ?", new String[]{String.valueOf(localId)});
+    }
+
+    public int deleteProductByCloudId(String cloudId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.delete(TABLE_PRODUCTS, "cloud_id = ?", new String[]{cloudId});
+    }
+    // Cursor for unsynced categories
+    public Cursor getUnsyncedCategoriesCursor() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String q = "SELECT * FROM categories WHERE cloud_id IS NULL OR dirty_at > synced_at";
+        return db.rawQuery(q, null);
+    }
+
+    public void upsertCategoryFromCloud(String cloudId, String name, long updatedAt) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        try {
+            // try update by cloud_id
+            ContentValues cv = new ContentValues();
+            cv.put(COLUMN_CATEGORY_NAME, name);
+            cv.put("synced_at", updatedAt);
+            cv.put("dirty_at", 0);
+            cv.put("deleted", 0);
+            int rows = db.update(TABLE_CATEGORIES, cv, "cloud_id = ?", new String[]{cloudId});
+            if (rows == 0) {
+                cv.put("cloud_id", cloudId);
+                cv.put(COLUMN_CATEGORY_DATE_CREATED, String.valueOf(updatedAt));
+                db.insert(TABLE_CATEGORIES, null, cv);
+            }
+        } finally {
+            // keep DB open for caller
+        }
+    }
+
+    public void deleteCategoryByCloudId(String cloudId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_CATEGORIES, "cloud_id = ?", new String[]{cloudId});
+    }
+
+    public void markCategorySyncedByLocalId(long localId, String cloudId, long syncedAt) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("cloud_id", cloudId);
+        cv.put("synced_at", syncedAt);
+        cv.put("dirty_at", 0);
+        db.update(TABLE_CATEGORIES, cv, COLUMN_CATEGORY_ID + " = ?", new String[]{String.valueOf(localId)});
+    }
+
+    public void markCategoryDirty(long localId, long dirtyAt) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("dirty_at", dirtyAt);
+        db.update(TABLE_CATEGORIES, cv, COLUMN_CATEGORY_ID + " = ?", new String[]{String.valueOf(localId)});
+    }
+    // Cursor for unsynced sales
+    public Cursor getUnsyncedSalesCursor() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String q = "SELECT * FROM " + TABLE_SALES + " WHERE cloud_id IS NULL OR dirty_at > synced_at";
+        return db.rawQuery(q, null);
+    }
+
+    // Get sale by local id
+    public SaleRecord getSaleByLocalId(long localId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.query(TABLE_SALES, null, COLUMN_SALE_ID + " = ?", new String[]{String.valueOf(localId)}, null, null, null);
+        try {
+            if (c != null && c.moveToFirst()) {
+                SaleRecord s = new SaleRecord();
+                s.setId(c.getLong(c.getColumnIndexOrThrow(COLUMN_SALE_ID)));
+                s.setUserId(c.getString(c.getColumnIndexOrThrow(COLUMN_SALE_USER_ID)));
+                s.setUserName(c.getString(c.getColumnIndexOrThrow(COLUMN_SALE_USER_NAME)));
+                s.setSubtotal(c.getDouble(c.getColumnIndexOrThrow(COLUMN_SALE_SUBTOTAL)));
+                s.setTax(c.getDouble(c.getColumnIndexOrThrow(COLUMN_SALE_TAX)));
+                s.setTotal(c.getDouble(c.getColumnIndexOrThrow(COLUMN_SALE_TOTAL)));
+                s.setPaymentMethod(c.getString(c.getColumnIndexOrThrow(COLUMN_SALE_PAYMENT_METHOD)));
+                s.setTimestamp(c.getString(c.getColumnIndexOrThrow(COLUMN_SALE_TIMESTAMP)));
+                int idx = c.getColumnIndex("cloud_id");
+                if (idx != -1) s.setCloudId(c.getString(idx));
+                return s;
+            }
+        } finally { if (c != null) c.close(); }
+        return null;
+    }
+
+    // Get sale items for a sale (local sale_id)
+    public List<SaleItem> getSaleItemsForSale(long saleLocalId) {
+        List<SaleItem> out = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_SALE_ITEMS, null, COLUMN_SALE_ITEM_SALE_ID + " = ?", new String[]{String.valueOf(saleLocalId)}, null, null, null);
+        try {
+            while (cursor.moveToNext()) {
+                int productId = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_SALE_ITEM_PRODUCT_ID));
+                String pname = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_SALE_ITEM_PRODUCT_NAME));
+                int qty = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_SALE_ITEM_QTY));
+                double unitPrice = cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_SALE_ITEM_UNIT_PRICE));
+                SaleItem it = new SaleItem();
+                it.product = getProductById(productId); // or set minimal product
+                it.quantity = qty;
+                out.add(it);
+            }
+        } finally {
+            if (cursor != null) cursor.close();
+        }
+        return out;
+    }
+
+    public void markSaleSyncedByLocalId(long localId, String cloudId, long syncedAt) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("cloud_id", cloudId);
+        cv.put("synced_at", syncedAt);
+        cv.put("dirty_at", 0);
+        db.update(TABLE_SALES, cv, COLUMN_SALE_ID + " = ?", new String[]{String.valueOf(localId)});
+    }
+
+    public void markSaleItemSyncedByLocalId(long localId, String cloudId, long syncedAt) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("cloud_id", cloudId);
+        cv.put("synced_at", syncedAt);
+        cv.put("dirty_at", 0);
+        db.update(TABLE_SALE_ITEMS, cv, COLUMN_SALE_ITEM_ID + " = ?", new String[]{String.valueOf(localId)});
+    }
+    public void upsertSaleItemFromCloud(String itemCloudId, String saleCloudId, String productName, int qty, double unitPrice, double lineTotal, long updatedAt) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            // 1) Ensure sale header exists locally and obtain local sale id
+            long saleLocalId = -1;
+            Cursor c = db.query(TABLE_SALES, new String[]{COLUMN_SALE_ID},
+                    "cloud_id = ?", new String[]{saleCloudId}, null, null, null);
+            try {
+                if (c != null && c.moveToFirst()) {
+                    saleLocalId = c.getLong(c.getColumnIndexOrThrow(COLUMN_SALE_ID));
+                }
+            } finally {
+                if (c != null) c.close();
+            }
+
+            if (saleLocalId == -1) {
+                // Insert minimal sale header so we can attach items to it
+                ContentValues sh = new ContentValues();
+                sh.put("cloud_id", saleCloudId);
+                sh.put("synced_at", updatedAt);
+                sh.put("dirty_at", 0);
+                // leave other fields null/0; caller may later upsert full header
+                saleLocalId = db.insert(TABLE_SALES, null, sh);
+                // if insert failed, abort gracefully
+                if (saleLocalId == -1) {
+                    db.endTransaction();
+                    return;
+                }
+            }
+
+            // 2) Prepare item values
+            ContentValues iv = new ContentValues();
+            iv.put(COLUMN_SALE_ITEM_PRODUCT_NAME, productName);
+            iv.put(COLUMN_SALE_ITEM_QTY, qty);
+            iv.put(COLUMN_SALE_ITEM_UNIT_PRICE, unitPrice);
+            iv.put(COLUMN_SALE_ITEM_LINE_TOTAL, lineTotal);
+            iv.put("synced_at", updatedAt);
+            iv.put("dirty_at", 0);
+            iv.put("deleted", 0);
+
+            // 3) Try update by cloud id
+            int rows = db.update(TABLE_SALE_ITEMS, iv, "cloud_id = ?", new String[]{itemCloudId});
+            if (rows == 0) {
+                // Insert new item and set its sale foreign key and cloud id
+                iv.put("cloud_id", itemCloudId);
+                iv.put(COLUMN_SALE_ITEM_SALE_ID, saleLocalId);
+                db.insert(TABLE_SALE_ITEMS, null, iv);
+            }
+
+            db.setTransactionSuccessful();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            try { db.endTransaction(); } catch (Exception ignored) {}
+        }
+    }
+
+
+    public void deleteSaleByCloudId(String saleCloudId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            // find local sale id
+            long saleLocalId = -1;
+            Cursor c = db.query(TABLE_SALES, new String[]{COLUMN_SALE_ID},
+                    "cloud_id = ?", new String[]{saleCloudId}, null, null, null);
+            try {
+                if (c != null && c.moveToFirst()) {
+                    saleLocalId = c.getLong(c.getColumnIndexOrThrow(COLUMN_SALE_ID));
+                }
+            } finally {
+                if (c != null) c.close();
+            }
+
+            // delete items for the sale local id (if found)
+            if (saleLocalId != -1) {
+                db.delete(TABLE_SALE_ITEMS, COLUMN_SALE_ITEM_SALE_ID + " = ?", new String[]{String.valueOf(saleLocalId)});
+            }
+
+            // delete sale header row(s) by cloud id
+            db.delete(TABLE_SALES, "cloud_id = ?", new String[]{saleCloudId});
+
+            db.setTransactionSuccessful();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            try { db.endTransaction(); } catch (Exception ignored) {}
+        }
+    }
+    public long upsertSaleFromCloud(String saleCloudId, String userId, String userName, double subtotal, double tax, double total, String paymentMethod, Long timestamp, long updatedAt) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        long localSaleId = -1;
+        db.beginTransaction();
+        try {
+            // 1) Try find existing local sale by cloud_id
+            String[] cols = new String[]{COLUMN_SALE_ID};
+            String sel = "cloud_id = ?";
+            String[] selArgs = new String[]{saleCloudId};
+
+            Cursor c = null;
+            try {
+                c = db.query(TABLE_SALES, cols, sel, selArgs, null, null, null);
+                if (c != null && c.moveToFirst()) {
+                    localSaleId = c.getLong(c.getColumnIndexOrThrow(COLUMN_SALE_ID));
+                }
+            } finally {
+                if (c != null) c.close();
+            }
+
+            // 2) Prepare values
+            ContentValues vals = new ContentValues();
+            vals.put(COLUMN_SALE_USER_ID, userId);
+            vals.put(COLUMN_SALE_USER_NAME, userName);
+            // user role not available from cloud for this call; leave untouched
+            vals.put(COLUMN_SALE_SUBTOTAL, subtotal);
+            vals.put(COLUMN_SALE_TAX, tax);
+            vals.put(COLUMN_SALE_TOTAL, total);
+            vals.put(COLUMN_SALE_PAYMENT_METHOD, paymentMethod);
+            if (timestamp != null) vals.put(COLUMN_SALE_TIMESTAMP, String.valueOf(timestamp));
+            // sync metadata
+            vals.put("synced_at", updatedAt);
+            vals.put("dirty_at", 0);
+            vals.put("deleted", 0);
+
+            if (localSaleId != -1) {
+                // update existing row
+                db.update(TABLE_SALES, vals, COLUMN_SALE_ID + " = ?", new String[]{String.valueOf(localSaleId)});
+            } else {
+                // insert new row (ensure we set cloud_id)
+                vals.put("cloud_id", saleCloudId);
+                localSaleId = db.insert(TABLE_SALES, null, vals);
+            }
+
+            db.setTransactionSuccessful();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            localSaleId = -1;
+        } finally {
+            try { db.endTransaction(); } catch (Exception ignored) {}
+        }
+
+        return localSaleId;
+    }
+    /* ---------- INVOICE helpers ---------- */
+
+    /** Return a single Invoice model read from local DB by local id (you may have an Invoice class) */
+    public Invoice getInvoiceByLocalId(long localId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.query(TABLE_INVOICES, null, COLUMN_INVOICE_ID + " = ?", new String[]{String.valueOf(localId)}, null, null, null);
+        try {
+            if (c != null && c.moveToFirst()) {
+                Invoice out = new Invoice();
+                out.setId((int)(c.getLong(c.getColumnIndexOrThrow(COLUMN_INVOICE_ID))));
+                out.setCustomerName(c.getString(c.getColumnIndexOrThrow(COLUMN_INVOICE_CUSTOMER_NAME)));
+                out.setCustomerAddress(c.getString(c.getColumnIndexOrThrow(COLUMN_INVOICE_CUSTOMER_ADDRESS)));
+                out.setCustomerContact(c.getString(c.getColumnIndexOrThrow(COLUMN_INVOICE_CUSTOMER_CONTACT)));
+                out.setCustomerEmail(c.getString(c.getColumnIndexOrThrow(COLUMN_INVOICE_CUSTOMER_EMAIL)));
+                out.setItemDetails(c.getString(c.getColumnIndexOrThrow(COLUMN_INVOICE_ITEM_DETAILS)));
+                out.setTotalAmount(c.getDouble(c.getColumnIndexOrThrow(COLUMN_INVOICE_TOTAL_AMOUNT)));
+                out.setFilePath(c.getString(c.getColumnIndexOrThrow(COLUMN_INVOICE_FILE_PATH)));
+                out.setTimestamp(c.getString(c.getColumnIndexOrThrow(COLUMN_INVOICE_DATE_CREATED)));
+                int idx = c.getColumnIndex("cloud_id");
+                if (idx != -1) out.setCloudId(c.getString(idx));
+                return out;
+            }
+        } finally {
+            if (c != null) c.close();
+        }
+        return null;
+    }
+
+    /** Find invoice row by cloud id */
+    public Invoice getInvoiceByCloudId(String cloudId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.query(TABLE_INVOICES, null, "cloud_id = ?", new String[]{cloudId}, null, null, null);
+        try {
+            if (c != null && c.moveToFirst()) {
+                Invoice out = new Invoice();
+                out.setId((int) c.getLong(c.getColumnIndexOrThrow(COLUMN_INVOICE_ID)));
+                out.setCustomerName(c.getString(c.getColumnIndexOrThrow(COLUMN_INVOICE_CUSTOMER_NAME)));
+                out.setCustomerAddress(c.getString(c.getColumnIndexOrThrow(COLUMN_INVOICE_CUSTOMER_ADDRESS)));
+                out.setCustomerContact(c.getString(c.getColumnIndexOrThrow(COLUMN_INVOICE_CUSTOMER_CONTACT)));
+                out.setCustomerEmail(c.getString(c.getColumnIndexOrThrow(COLUMN_INVOICE_CUSTOMER_EMAIL)));
+                out.setItemDetails(c.getString(c.getColumnIndexOrThrow(COLUMN_INVOICE_ITEM_DETAILS)));
+                out.setTotalAmount(c.getDouble(c.getColumnIndexOrThrow(COLUMN_INVOICE_TOTAL_AMOUNT)));
+                out.setFilePath(c.getString(c.getColumnIndexOrThrow(COLUMN_INVOICE_FILE_PATH)));
+                out.setTimestamp(c.getString(c.getColumnIndexOrThrow(COLUMN_INVOICE_DATE_CREATED)));
+                out.setCloudId(c.getString(c.getColumnIndexOrThrow("cloud_id")));
+                return out;
+            }
+        } finally {
+            if (c != null) c.close();
+        }
+        return null;
+    }
+
+    /** Mark invoice as synced (set cloud_id + synced_at, clear dirty flag) */
+    public int markInvoiceSyncedByLocalId(long localId, String cloudId, long syncedAt) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues v = new ContentValues();
+        if (cloudId != null) v.put("cloud_id", cloudId);
+        v.put("synced_at", syncedAt);
+        v.put("dirty_at", 0);
+        v.put("deleted", 0);
+        return db.update(TABLE_INVOICES, v, COLUMN_INVOICE_ID + " = ?", new String[]{String.valueOf(localId)});
+    }
+
+    /** Cursor of local invoices that need to be pushed (new or dirty) */
+    public Cursor getUnsyncedInvoicesCursor() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        // rows where no cloud_id (new) OR dirty_at > synced_at (updated locally)
+        String where = "cloud_id IS NULL OR dirty_at > IFNULL(synced_at,0)";
+        return db.query(TABLE_INVOICES, null, where, null, null, null, COLUMN_INVOICE_DATE_CREATED + " DESC");
+    }
+
+    /** Create or update a local invoice from cloud data */
+    public long upsertInvoiceFromCloud(String cloudId,
+                                       String customerName,
+                                       String customerAddress,
+                                       String customerContact,
+                                       String customerEmail,
+                                       String itemDetails,
+                                       double totalAmount,
+                                       String filePath,
+                                       Long timestamp,
+                                       long updatedAt) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        long localId = -1;
+        db.beginTransaction();
+        try {
+            // try find existing by cloud_id
+            Cursor c = db.query(TABLE_INVOICES, new String[]{COLUMN_INVOICE_ID}, "cloud_id = ?", new String[]{cloudId}, null, null, null);
+            try {
+                if (c != null && c.moveToFirst()) {
+                    localId = c.getLong(c.getColumnIndexOrThrow(COLUMN_INVOICE_ID));
+                }
+            } finally {
+                if (c != null) c.close();
+            }
+
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_INVOICE_CUSTOMER_NAME, customerName);
+            values.put(COLUMN_INVOICE_CUSTOMER_ADDRESS, customerAddress);
+            values.put(COLUMN_INVOICE_CUSTOMER_CONTACT, customerContact);
+            values.put(COLUMN_INVOICE_CUSTOMER_EMAIL, customerEmail);
+            values.put(COLUMN_INVOICE_ITEM_DETAILS, itemDetails);
+            values.put(COLUMN_INVOICE_TOTAL_AMOUNT, totalAmount);
+            values.put(COLUMN_INVOICE_FILE_PATH, filePath);
+            if (timestamp != null) values.put(COLUMN_INVOICE_DATE_CREATED, String.valueOf(timestamp));
+            // sync metadata
+            values.put("synced_at", updatedAt);
+            values.put("dirty_at", 0);
+            values.put("deleted", 0);
+            if (localId != -1) {
+                db.update(TABLE_INVOICES, values, COLUMN_INVOICE_ID + " = ?", new String[]{String.valueOf(localId)});
+            } else {
+                values.put("cloud_id", cloudId);
+                localId = db.insert(TABLE_INVOICES, null, values);
+            }
+            db.setTransactionSuccessful();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            localId = -1;
+        } finally {
+            try { db.endTransaction(); } catch (Exception ignore) {}
+        }
+        return localId;
+    }
+
+    /** Soft-delete invoice by cloud id (mark deleted flag) */
+    public int deleteInvoiceByCloudId(String cloudId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues v = new ContentValues();
+        v.put("deleted", 1);
+        v.put("dirty_at", System.currentTimeMillis());
+        return db.update(TABLE_INVOICES, v, "cloud_id = ?", new String[]{cloudId});
+    }
+
+    /** Mark a local invoice as dirty (local change) */
+    public int markInvoiceDirty(long localId, long now) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues v = new ContentValues();
+        v.put("dirty_at", now);
+        return db.update(TABLE_INVOICES, v, COLUMN_INVOICE_ID + " = ?", new String[]{String.valueOf(localId)});
+    }
+    /* ---------- ESTIMATE helpers ---------- */
+
+    public Estimate getEstimateByLocalId(long localId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.query(TABLE_ESTIMATES, null, COLUMN_ESTIMATE_ID + " = ?", new String[]{String.valueOf(localId)}, null, null, null);
+        try {
+            if (c != null && c.moveToFirst()) {
+                Estimate out = new Estimate();
+                out.setId((int)c.getLong(c.getColumnIndexOrThrow(COLUMN_ESTIMATE_ID)));
+                out.setCustomerName(c.getString(c.getColumnIndexOrThrow(COLUMN_ESTIMATE_CUSTOMER_NAME)));
+                out.setCustomerAddress(c.getString(c.getColumnIndexOrThrow(COLUMN_ESTIMATE_CUSTOMER_ADDRESS)));
+                out.setCustomerContact(c.getString(c.getColumnIndexOrThrow(COLUMN_ESTIMATE_CUSTOMER_CONTACT)));
+                out.setCustomerEmail(c.getString(c.getColumnIndexOrThrow(COLUMN_ESTIMATE_CUSTOMER_EMAIL)));
+                out.setItemDetails(c.getString(c.getColumnIndexOrThrow(COLUMN_ESTIMATE_ITEM_DETAILS)));
+                out.setTotalAmount(c.getDouble(c.getColumnIndexOrThrow(COLUMN_ESTIMATE_TOTAL_AMOUNT)));
+                out.setFilePath(c.getString(c.getColumnIndexOrThrow(COLUMN_ESTIMATE_FILE_PATH)));
+                out.setTimestamp(c.getString(c.getColumnIndexOrThrow(COLUMN_ESTIMATE_DATE_CREATED)));
+                int idx = c.getColumnIndex("cloud_id");
+                if (idx != -1) out.setCloudId(c.getString(idx));
+                return out;
+            }
+        } finally {
+            if (c != null) c.close();
+        }
+        return null;
+    }
+
+    public Estimate getEstimateByCloudId(String cloudId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.query(TABLE_ESTIMATES, null, "cloud_id = ?", new String[]{cloudId}, null, null, null);
+        try {
+            if (c != null && c.moveToFirst()) {
+                Estimate out = new Estimate();
+                out.setId((int)(c.getLong(c.getColumnIndexOrThrow(COLUMN_ESTIMATE_ID))));
+                out.setCustomerName(c.getString(c.getColumnIndexOrThrow(COLUMN_ESTIMATE_CUSTOMER_NAME)));
+                out.setCustomerAddress(c.getString(c.getColumnIndexOrThrow(COLUMN_ESTIMATE_CUSTOMER_ADDRESS)));
+                out.setCustomerContact(c.getString(c.getColumnIndexOrThrow(COLUMN_ESTIMATE_CUSTOMER_CONTACT)));
+                out.setCustomerEmail(c.getString(c.getColumnIndexOrThrow(COLUMN_ESTIMATE_CUSTOMER_EMAIL)));
+                out.setItemDetails(c.getString(c.getColumnIndexOrThrow(COLUMN_ESTIMATE_ITEM_DETAILS)));
+                out.setTotalAmount(c.getDouble(c.getColumnIndexOrThrow(COLUMN_ESTIMATE_TOTAL_AMOUNT)));
+                out.setFilePath(c.getString(c.getColumnIndexOrThrow(COLUMN_ESTIMATE_FILE_PATH)));
+                out.setTimestamp(c.getString(c.getColumnIndexOrThrow(COLUMN_ESTIMATE_DATE_CREATED)));
+                out.setCloudId(c.getString(c.getColumnIndexOrThrow("cloud_id")));
+                return out;
+            }
+        } finally {
+            if (c != null) c.close();
+        }
+        return null;
+    }
+
+    public int markEstimateSyncedByLocalId(long localId, String cloudId, long syncedAt) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues v = new ContentValues();
+        if (cloudId != null) v.put("cloud_id", cloudId);
+        v.put("synced_at", syncedAt);
+        v.put("dirty_at", 0);
+        v.put("deleted", 0);
+        return db.update(TABLE_ESTIMATES, v, COLUMN_ESTIMATE_ID + " = ?", new String[]{String.valueOf(localId)});
+    }
+
+    public Cursor getUnsyncedEstimatesCursor() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String where = "cloud_id IS NULL OR dirty_at > IFNULL(synced_at,0)";
+        return db.query(TABLE_ESTIMATES, null, where, null, null, null, COLUMN_ESTIMATE_DATE_CREATED + " DESC");
+    }
+
+    public long upsertEstimateFromCloud(String cloudId,
+                                        String customerName,
+                                        String customerAddress,
+                                        String customerContact,
+                                        String customerEmail,
+                                        String itemDetails,
+                                        double totalAmount,
+                                        String filePath,
+                                        Long timestamp,
+                                        long updatedAt) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        long localId = -1;
+        db.beginTransaction();
+        try {
+            Cursor c = db.query(TABLE_ESTIMATES, new String[]{COLUMN_ESTIMATE_ID}, "cloud_id = ?", new String[]{cloudId}, null, null, null);
+            try {
+                if (c != null && c.moveToFirst()) {
+                    localId = c.getLong(c.getColumnIndexOrThrow(COLUMN_ESTIMATE_ID));
+                }
+            } finally {
+                if (c != null) c.close();
+            }
+
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_ESTIMATE_CUSTOMER_NAME, customerName);
+            values.put(COLUMN_ESTIMATE_CUSTOMER_ADDRESS, customerAddress);
+            values.put(COLUMN_ESTIMATE_CUSTOMER_CONTACT, customerContact);
+            values.put(COLUMN_ESTIMATE_CUSTOMER_EMAIL, customerEmail);
+            values.put(COLUMN_ESTIMATE_ITEM_DETAILS, itemDetails);
+            values.put(COLUMN_ESTIMATE_TOTAL_AMOUNT, totalAmount);
+            values.put(COLUMN_ESTIMATE_FILE_PATH, filePath);
+            if (timestamp != null) values.put(COLUMN_ESTIMATE_DATE_CREATED, String.valueOf(timestamp));
+            values.put("synced_at", updatedAt);
+            values.put("dirty_at", 0);
+            values.put("deleted", 0);
+
+            if (localId != -1) {
+                db.update(TABLE_ESTIMATES, values, COLUMN_ESTIMATE_ID + " = ?", new String[]{String.valueOf(localId)});
+            } else {
+                values.put("cloud_id", cloudId);
+                localId = db.insert(TABLE_ESTIMATES, null, values);
+            }
+            db.setTransactionSuccessful();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            localId = -1;
+        } finally {
+            try { db.endTransaction(); } catch (Exception ignored) {}
+        }
+        return localId;
+    }
+
+    public int deleteEstimateByCloudId(String cloudId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues v = new ContentValues();
+        v.put("deleted", 1);
+        v.put("dirty_at", System.currentTimeMillis());
+        return db.update(TABLE_ESTIMATES, v, "cloud_id = ?", new String[]{cloudId});
+    }
+
+    public int markEstimateDirty(long localId, long now) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues v = new ContentValues();
+        v.put("dirty_at", now);
+        return db.update(TABLE_ESTIMATES, v, COLUMN_ESTIMATE_ID + " = ?", new String[]{String.valueOf(localId)});
+    }
+
+
+
+
+    public int deleteSaleItemByCloudId(String cloudId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues v = new ContentValues();
+        v.put("deleted", 1);
+        v.put("dirty_at", System.currentTimeMillis());
+        return db.update(TABLE_SALE_ITEMS, v, "cloud_id = ?", new String[]{cloudId});
+    }
+
+
+
+    public Cursor getUnsyncedSaleItemsCursorForSale(long saleLocalId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String q = "SELECT * FROM " + TABLE_SALE_ITEMS + " WHERE " + COLUMN_SALE_ITEM_SALE_ID + " = ? AND (cloud_id IS NULL OR dirty_at > synced_at)";
+        return db.rawQuery(q, new String[]{String.valueOf(saleLocalId)});
+    }
+
+
+
+
+
+
+
+
+
+
+
 
 }

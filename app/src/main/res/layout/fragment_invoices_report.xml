@@ -1,55 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <LinearLayout
-        android:orientation="vertical"
-        android:padding="12dp"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white">
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".Reports.InvoicesReportFragment">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:orientation="vertical"
-            android:padding="8dp"
-            android:background="@color/white">
-            <TextView
-                android:id="@+id/tvInvoicesCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0 invoices"
-                android:textStyle="bold"
-                android:textSize="18sp"
-                android:textColor="@color/black"/>
-            <TextView
-                android:id="@+id/tvInvoicesTotal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Total: R 0.00"
-                android:textColor="@color/grey"/>
-        </LinearLayout>
+    <!-- Pie Chart remains at the top -->
+    <com.github.mikephil.charting.charts.PieChart
+        android:id="@+id/pieChartInvoices"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:layout_margin="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <com.github.mikephil.charting.charts.PieChart
-            android:id="@+id/pieChartInvoices"
-            android:layout_width="match_parent"
-            android:layout_height="160dp"
-            android:layout_marginTop="8dp"/>
+    <!-- Summary TextViews are below the chart -->
+    <TextView
+        android:id="@+id/tvInvoicesCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/pieChartInvoices"
+        tools:text="15 invoices" />
 
-        <TextView
-            android:layout_marginTop="8dp"
-            android:text="Invoices"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:textStyle="bold"
-            android:textColor="@color/black"/>
+    <TextView
+        android:id="@+id/tvInvoicesTotal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tvInvoicesCount"
+        tools:text="Total: R 2,500.00" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerInvoices"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
-    </LinearLayout>
+    <!-- Title for the list, now correctly positioned -->
+    <TextView
+        android:id="@+id/textViewEstimatesTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:text="Recent Invoices"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvInvoicesCount" />
+
+    <!-- RecyclerView now constrained to the title, which is the fix -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerInvoices"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewEstimatesTitle"
+        tools:listitem="@layout/item_invoice_row" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

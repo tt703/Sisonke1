@@ -58,13 +58,42 @@ public class CreateCustomerFragment extends Fragment {
             String name = etName.getText().toString().trim();
             String email = etEmail.getText().toString().trim();
             String phone = etPhone.getText().toString().trim();
-            String address = etAddress.getText().toString().trim();
+            String address = etAddress.getText().toString().trim();// 1. Check Customer Name
 
-            if (TextUtils.isEmpty(name) || TextUtils.isEmpty(email)
-                    || TextUtils.isEmpty(phone) || TextUtils.isEmpty(address)) {
-                Toast.makeText(getContext(), "All fields are required", Toast.LENGTH_SHORT).show();
+            if (TextUtils.isEmpty(name)) {
+                etName.setError("Customer name is required");
+                etName.requestFocus(); // Move cursor to the problematic field
                 return;
             }
+
+
+
+            // 5. Optional but recommended: Validate email format
+            if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                etEmail.setError("Please enter a valid email address");
+                etEmail.requestFocus();
+                return;
+            }
+            // 2. Check Customer Phone
+            if (TextUtils.isEmpty(phone)) {
+                etPhone.setError("Phone number is required");
+                etPhone.requestFocus();
+                return;
+            }
+            String saPhonePattern = "^(0\\d{9})$";
+            if (!phone.matches(saPhonePattern)) {
+                etPhone.setError("Please enter a valid 10-digit South African phone number (e.g., 0821234567)");
+                etPhone.requestFocus();
+                return;
+            }
+
+            // 6. Check Customer Address
+            if (TextUtils.isEmpty(address)) {
+                etAddress.setError("Address is required");
+                etAddress.requestFocus();
+                return;
+            }
+
 
             Context context = getContext();
             if (context == null) {

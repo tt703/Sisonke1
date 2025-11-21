@@ -50,14 +50,14 @@
         android:orientation="vertical"
         android:paddingTop="12dp"
         android:paddingBottom="12dp">
-        <!-- placesharedpreference business name here -->
         <TextView
             android:id="@+id/tvCompanyName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="My Business"
+            android:text="BuildersTown Hyper Midrand"
             android:textStyle="bold"
             android:textSize="18sp"
+            android:gravity="center"
             android:textColor="@color/black" />
 
         <TextView
@@ -66,10 +66,10 @@
             android:layout_height="wrap_content"
             android:text="Date • Invoice #"
             android:textSize="12sp"
+            android:gravity="center"
             android:textColor="#88000000"/>
     </LinearLayout>
 
-    <!-- Items header -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

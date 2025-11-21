@@ -9,7 +9,8 @@ public  class Estimate {
     private double totalAmount;
     private String timestamp;
     private String status;
-    private String filePath; // Add this line
+    private String filePath;
+    private String CloudId;
 
     @Override
     public String toString() {
@@ -65,6 +66,8 @@ public  class Estimate {
     public String getCustomerContact() {return customerContact;}
     public String getItemDetails() {return itemDetails;}
     public String getStatus() {return status;}
+    public void setCloudId(String cloudId) {this.CloudId = cloudId;}
+    public String getCloudId() {return CloudId;}
 
     public void setCustomerContact(String customerContact) {
         this.customerContact = customerContact;

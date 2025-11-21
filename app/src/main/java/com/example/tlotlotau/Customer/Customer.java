@@ -3,6 +3,14 @@ package com.example.tlotlotau.Customer;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.Exclude;
+import com.google.firebase.firestore.ServerTimestamp;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 
 public class Customer implements Parcelable {
     public long id;
@@ -13,6 +21,15 @@ public class Customer implements Parcelable {
 
     private String amountDue;
     private String numEstimatesSent;
+    private String lastInvoiceTs;
+    private String cloudId;
+    private String dateCreated;
+    private String NumEstimates;
+    private String NumInvoices;
+    private String TotalAmount;
+
+
+
 
 
     public Customer(long id,String name, String address, String phone, String email) {
@@ -43,9 +60,20 @@ public class Customer implements Parcelable {
         }
     };
 
+    public Customer() {
+
+    }
+
+
     public String getName() {
         return name;
     }
+    public long getId() {return id;}
+
+    public void setName(String name) {this.name = name;}
+    public void setAddress(String address) {this.address = address;}
+    public void setPhone(String phone) {this.phone = phone;}
+    public void setEmail(String email) {this.email = email;}
 
     public String getAddress() {
         return address;
@@ -64,6 +92,22 @@ public class Customer implements Parcelable {
     public void setAmountDue(String amountDue){this.amountDue = amountDue;}
     public void setNumEstimateSent(String numEstimatesSent){this.numEstimatesSent = numEstimatesSent;}
     public void setId(long id){this.id = id;}
+    public void setLastInvoiceTs(String lastInvoiceTs){this.lastInvoiceTs = lastInvoiceTs;}
+    public String getLastInvoiceTs(){return lastInvoiceTs;}
+    public String getCloudId() { return cloudId; }
+    public void setCloudId(String cloudId) { this.cloudId = cloudId; }
+    public String getDateCreated() {return dateCreated;}
+    public String getNumEstimates(){return NumEstimates;}
+    public String getNumInvoices(){return NumInvoices;}
+    public String getTotalAmount(){return TotalAmount;}
+
+
+
+
+
+
+
+
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
@@ -77,4 +121,6 @@ public class Customer implements Parcelable {
     public int describeContents() {
         return 0;
     }
+
+
 }

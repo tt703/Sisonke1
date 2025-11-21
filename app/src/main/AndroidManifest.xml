@@ -54,6 +54,8 @@
         <activity android:name=".Sales.CardPaymentActivity"/><!-- Card Payment Activity -->
         <activity android:name=".Sales.CashPaymentActivity"/><!-- Cash Payment Activity -->
         <activity android:name=".Reports.ReportsActivity"/><!-- Reports Activity -->
+        <activity android:name=".Customer.EditCustomerActivity"/><!-- Edit Customer Activity -->
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"

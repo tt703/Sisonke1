@@ -14,9 +14,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tlotlotau.Database.DatabaseHelper;
+import com.example.tlotlotau.Documents.DocumentsActivity;
 import com.example.tlotlotau.Inventory.CategoryC;
 import com.example.tlotlotau.Inventory.Product;
 import com.example.tlotlotau.Inventory.CategoryAdapter2;
+import com.example.tlotlotau.Main.HomeActivity;
 import com.example.tlotlotau.R;
 import com.google.android.material.tabs.TabLayout;
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -66,12 +68,11 @@ public class SellProductActivity extends AppCompatActivity {
 
         btnProceedPayment = findViewById(R.id.btnProceedPayment);
         btnBack = findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(v-> startActivity(new Intent(SellProductActivity.this, HomeActivity.class)));
         btnScanQRCode = findViewById(R.id.btnScanQRCode);
 
-        // header buttons
-        btnBack.setOnClickListener(v -> finish());
 
-        // Tab setup
+
         tabLayout.addTab(tabLayout.newTab().setText("Select"));
         tabLayout.addTab(tabLayout.newTab().setText("Scan"));
         TabLayout.Tab first = tabLayout.getTabAt(0);

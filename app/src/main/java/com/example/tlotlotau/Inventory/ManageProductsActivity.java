@@ -11,6 +11,8 @@ import androidx.print.PrintHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.tlotlotau.Database.DatabaseHelper;
+import com.example.tlotlotau.Documents.DocumentsActivity;
+import com.example.tlotlotau.Main.HomeActivity;
 import com.example.tlotlotau.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.zxing.BarcodeFormat;
@@ -40,6 +42,8 @@ public class ManageProductsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_products);
 
+
+
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setTitle("Manage Products");
@@ -53,6 +57,7 @@ public class ManageProductsActivity extends AppCompatActivity {
         rvManageProducts = findViewById(R.id.rvManageProducts);
         fabAddProduct = findViewById(R.id.fabAddProduct);
         btnBack = findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(v-> startActivity(new Intent(ManageProductsActivity.this, HomeActivity.class)));
 
         // set layout managers
         rvCategories.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
@@ -60,9 +65,8 @@ public class ManageProductsActivity extends AppCompatActivity {
         rvManageProducts.setLayoutManager(new LinearLayoutManager(this));
         rvManageProducts.setHasFixedSize(true);
 
-        btnBack.setOnClickListener(v -> finish());
 
-        // IMPORTANT: create adapter first (with an empty mutable list) and attach it
+
         categoryAdapter2 = new CategoryAdapter2(new ArrayList<>(), c -> {
             // category clicked
             currentCategoryFilter = (c == null) ? -1L : c.getId();
@@ -92,7 +96,6 @@ public class ManageProductsActivity extends AppCompatActivity {
     }
 
     private void loadCategories() {
-        // defensive: if adapter somehow null, create & attach to avoid NPE
         if (categoryAdapter2 == null) {
             categoryAdapter2 = new CategoryAdapter2(new ArrayList<>(), c -> {
                 currentCategoryFilter = (c == null) ? -1L : c.getId();
@@ -183,7 +186,6 @@ public class ManageProductsActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        // reload categories and products in case manager changed anything
         loadCategories();
         loadProducts();
     }

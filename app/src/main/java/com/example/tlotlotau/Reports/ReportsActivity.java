@@ -1,7 +1,11 @@
 package com.example.tlotlotau.Reports;
 
 import android.os.Bundle;
+import android.widget.ImageButton;
+
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.tlotlotau.Main.HomeActivity;
 import com.example.tlotlotau.R;
 import com.example.tlotlotau.Reports.ReportsPagerAdapter;
 import com.google.android.material.tabs.TabLayoutMediator;
@@ -13,6 +17,7 @@ public class ReportsActivity extends AppCompatActivity {
     private ViewPager2 viewPager;
     private TabLayout tabLayout;
     private ReportsPagerAdapter adapter;
+    private ImageButton btnback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +26,9 @@ public class ReportsActivity extends AppCompatActivity {
 
         viewPager = findViewById(R.id.viewPager);
         tabLayout = findViewById(R.id.tabLayout);
+        btnback = findViewById(R.id.btnBack);
+        btnback.setOnClickListener(v -> finish());
+
 
         adapter = new ReportsPagerAdapter(this);
         viewPager.setAdapter(adapter);

@@ -1,56 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <LinearLayout
-        android:orientation="vertical"
-        android:padding="12dp"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white">
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".Reports.EstimatesReportFragment">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:orientation="vertical"
-            android:padding="8dp"
-            android:background="@color/white">
-            <TextView
-                android:id="@+id/tvEstimatesCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0 estimates"
-                android:textStyle="bold"
-                android:textSize="18sp"
-                android:textColor="@color/black"/>
-            <TextView
-                android:id="@+id/tvEstimatesTotal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Total: R 0.00"
-                android:textColor="@color/grey"/>
-        </LinearLayout>
+    <!-- Bar Chart at the top -->
+    <com.github.mikephil.charting.charts.BarChart
+        android:id="@+id/barChartEstimates"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:layout_margin="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <com.github.mikephil.charting.charts.BarChart
-            android:id="@+id/barChartEstimates"
-            android:layout_width="match_parent"
-            android:layout_height="160dp"
-            android:layout_marginTop="8dp"/>
+    <!-- Summary TextViews below the chart -->
+    <TextView
+        android:id="@+id/tvEstimatesCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/barChartEstimates"
+        tools:text="15 estimates" />
 
-        <TextView
-            android:layout_marginTop="8dp"
-            android:text="Estimates"
-            android:textStyle="bold"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/black"/>
+    <TextView
+        android:id="@+id/tvEstimatesTotal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:gravity="end"
+        android:textColor="@color/grey"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tvEstimatesCount"
+        app:layout_constraintTop_toTopOf="@+id/tvEstimatesCount"
+        tools:text="Total: R 15,300.50" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerEstimates"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
-    </LinearLayout>
+    <!-- Title for the list -->
+    <TextView
+        android:id="@+id/textViewEstimatesTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:text="Recent Estimates"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvEstimatesCount" />
 
+    <!-- RecyclerView takes up the remaining space and handles its own scrolling -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerEstimates"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewEstimatesTitle"
+        tools:listitem="@layout/item_invoice_row" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

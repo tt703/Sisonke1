@@ -30,7 +30,6 @@ public class RegisterActivity extends AppCompatActivity {
     Button btnRegisterUser;
     ImageButton btnBack;
     TextView login;
-    // Regular expressions for email and password validation
     String EmailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
     String PasswordPattern = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{4,}$";
 

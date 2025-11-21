@@ -68,7 +68,7 @@
         android:layout_height="65dp"
         android:backgroundTint="@color/black"
         android:text="Login"
-        android:layout_marginStart="35dp"
+        android:layout_marginStart="25dp"
         android:textSize="28sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.065"

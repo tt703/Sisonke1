@@ -7,6 +7,10 @@ public class CategoryC implements Parcelable {
     private long id;
     private String name;
     private String dateCreated;
+    private long localId;
+    public CategoryC() {
+    }
+
 
     public CategoryC(long id, String name, String dateCreated) {
         this.id = id;
@@ -40,6 +44,10 @@ public class CategoryC implements Parcelable {
     public void setId(long id) { this.id = id; }
     public void setName(String name) { this.name = name; }
     public void setDateCreated(String dateCreated) { this.dateCreated = dateCreated; }
+    public static Creator<CategoryC> getCREATOR() { return CREATOR; }
+    public long getLocalId() { return localId; }
+
+
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {

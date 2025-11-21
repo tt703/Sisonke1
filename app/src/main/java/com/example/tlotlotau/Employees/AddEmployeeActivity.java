@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -42,9 +43,7 @@ public class AddEmployeeActivity extends AppCompatActivity {
     private FirebaseAuth primaryAuth;
     private FirebaseFirestore db;
     private String businessId;
-    private AlertDialog loadingDialog;
-
-
+    private AlertDialog loadingDialog; // <— loading dialog field
 
     private static final long LOCK_TIMEOUT_MS = 60_000L; // 60s lock timeout
     private static final String LOCK_DOC_ID = "employee_creation";
@@ -81,6 +80,9 @@ public class AddEmployeeActivity extends AppCompatActivity {
         businessId = prefs.getString("businessId", primaryAuth.getUid());
         if (businessId == null) businessId = primaryAuth.getUid();
 
+        // initialize loading dialog (added)
+        initLoadingDialog(); // <— loading
+
         btnSaveEmployee.setOnClickListener(v -> saveEmployee());
     }
 
@@ -107,14 +109,19 @@ public class AddEmployeeActivity extends AppCompatActivity {
             return;
         }
 
+        // show loading while acquire lock + create user runs
+        showLoading(true); // <— loading
+
         // this function acquire's a  lock, then run's the create auth user creation function
         acquireCreationLock(primaryAuth.getUid(), (acquired, message) -> {
             if (!acquired) {
+                // failed to acquire -> hide loading and show message
+                showLoading(false); // <— loading
                 Toast.makeText(AddEmployeeActivity.this, "Failed to acquire lock: " + message, Toast.LENGTH_LONG).show();
                 return;
             }
 
-            // this functions Proceeds to create auth user with secondary app and it pass the strings below
+            // proceed to create auth user with secondary app
             createAuthUserWithSecondaryApp(employeeName, employeePhone, employeeEmail, employeePass, employeeRole);
         });
     }
@@ -265,6 +272,9 @@ public class AddEmployeeActivity extends AppCompatActivity {
 
     private void shareCredentialsAndCleanup(String email, String tempPassword,
                                             FirebaseAuth secondaryAuth, FirebaseApp secondaryApp) {
+        // hide loading before opening chooser
+        showLoading(false); // <— loading
+
         String company = getSharedPreferences("CompanyInfo", MODE_PRIVATE).getString("CompanyName", "Company");
         String message = "You have been added to " + company + ".\n\nEmail: " + email + "\nTemporary password: " + tempPassword +
                 "\n\nPlease change your password after logging in.";
@@ -286,6 +296,9 @@ public class AddEmployeeActivity extends AppCompatActivity {
         FirebaseUser toDelete = secondaryAuth.getCurrentUser();
         if (toDelete != null) {
             toDelete.delete().addOnCompleteListener(task -> {
+                // hide loading and release lock regardless of delete result
+                showLoading(false); // <— loading
+
                 if (task.isSuccessful()) {
                     releaseLock();
                     Toast.makeText(AddEmployeeActivity.this, ownerMessage + " — created auth user deleted.", Toast.LENGTH_LONG).show();
@@ -297,6 +310,8 @@ public class AddEmployeeActivity extends AppCompatActivity {
                 try { secondaryApp.delete(); } catch (Exception ignored) {}
             });
         } else {
+            // No created auth user — still hide loading and release lock
+            showLoading(false); // <— loading
             releaseLock();
             try { secondaryAuth.signOut(); } catch (Exception ignored) {}
             try { secondaryApp.delete(); } catch (Exception ignored) {}
@@ -307,11 +322,35 @@ public class AddEmployeeActivity extends AppCompatActivity {
     private void releaseLock() {
         DocumentReference lockRef = db.collection("businesses").document(businessId)
                 .collection("locks").document(LOCK_DOC_ID);
-        lockRef.delete();
+        lockRef.delete().addOnCompleteListener(task -> {
+            // ensure loading is hidden after lock removal
+            showLoading(false); // <— loading
+        });
     }
 
     private void releaseLockAndShowError(String message) {
+        // hide loading and remove lock (best effort), then show message
+        showLoading(false); // <— loading
         releaseLock();
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+    }
+
+    // ----------- Loading dialog helpers (added) -------------
+    private void initLoadingDialog() {
+        ProgressBar pb = new ProgressBar(this);
+        pb.setIndeterminate(true);
+        AlertDialog.Builder b = new AlertDialog.Builder(this)
+                .setView(pb)
+                .setCancelable(false);
+        loadingDialog = b.create();
+    }
+
+    private void showLoading(boolean show) {
+        if (loadingDialog == null) return;
+        if (show) {
+            if (!loadingDialog.isShowing()) loadingDialog.show();
+        } else {
+            if (loadingDialog.isShowing()) loadingDialog.dismiss();
+        }
     }
 }

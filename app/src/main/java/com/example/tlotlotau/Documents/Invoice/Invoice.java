@@ -4,6 +4,7 @@ public class Invoice {
     private int id;
 
 
+
     private String customerName;
 
     private String customerContact;
@@ -14,6 +15,13 @@ public class Invoice {
     private String filePath;
     private String timestamp;
     private String status;
+    private boolean paid;
+    private String CloudId;
+
+
+
+
+
 
     @Override
     public String toString() {
@@ -48,5 +56,15 @@ public class Invoice {
     public void setCustomerContact(String customerContact) { this.customerContact = customerContact; }
     public void setCustomerEmail(String customerEmail) { this.customerEmail = customerEmail; }
     public String getCustomerEmail() { return customerEmail; }
+    public String getCustomerContact() { return customerContact; }
+    public String getCustomerAddress() { return customerAddress; }
+    public String getItemDetails() { return itemDetails; }
 
+    public void setCloudId(String CloudId) {this.CloudId = CloudId;}
+    public String setPaid(boolean paid) {
+        this.paid = paid;
+        return paid ? "Paid" : "Unpaid";
+    }
+    public String getCloudId() { return CloudId;
+    }
 }

@@ -9,6 +9,8 @@ public class Product {
     private String productDateCreated;
     private String getProductbyQRCode;
     private Long categoryCId;
+    private String cloudId;
+
 
 
     // Getters and Setters
@@ -70,4 +72,6 @@ public class Product {
     public String getQrCodeByHelper() {
         return getProductbyQRCode;
     }
+    public String getCloudId() { return cloudId; }
+    public void setCloudId(String cloudId) { this.cloudId = cloudId; }
 }
