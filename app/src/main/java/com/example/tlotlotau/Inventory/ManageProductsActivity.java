@@ -1,5 +1,6 @@
 package com.example.tlotlotau.Inventory;
 
+import android.app.AlertDialog; // Import added
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -11,7 +12,6 @@ import androidx.print.PrintHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.tlotlotau.Database.DatabaseHelper;
-import com.example.tlotlotau.Documents.DocumentsActivity;
 import com.example.tlotlotau.Main.HomeActivity;
 import com.example.tlotlotau.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -42,40 +42,28 @@ public class ManageProductsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_products);
 
-
-
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle("Manage Products");
-        }
-
         dbHelper = new DatabaseHelper(this);
 
-        // find views
         rvCategories = findViewById(R.id.rvCategories);
         btnManageCategories = findViewById(R.id.btnManageCategories);
         rvManageProducts = findViewById(R.id.rvManageProducts);
         fabAddProduct = findViewById(R.id.fabAddProduct);
         btnBack = findViewById(R.id.btnBack);
+
         btnBack.setOnClickListener(v-> startActivity(new Intent(ManageProductsActivity.this, HomeActivity.class)));
 
-        // set layout managers
         rvCategories.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         rvCategories.setHasFixedSize(true);
         rvManageProducts.setLayoutManager(new LinearLayoutManager(this));
         rvManageProducts.setHasFixedSize(true);
 
-
-
         categoryAdapter2 = new CategoryAdapter2(new ArrayList<>(), c -> {
-            // category clicked
             currentCategoryFilter = (c == null) ? -1L : c.getId();
             categoryAdapter2.setSelectedCategoryId(currentCategoryFilter);
             loadProducts();
         });
         rvCategories.setAdapter(categoryAdapter2);
 
-        // now load data into adapter and products
         loadCategories();
         loadProducts();
 
@@ -112,7 +100,6 @@ public class ManageProductsActivity extends AppCompatActivity {
         displayList.add(allCategory);
         if (categories != null) displayList.addAll(categories);
 
-        // update adapter data (CategoryAdapter2 must implement updateData)
         categoryAdapter2.updateData(displayList);
         categoryAdapter2.setSelectedCategoryId(currentCategoryFilter);
     }
@@ -132,16 +119,26 @@ public class ManageProductsActivity extends AppCompatActivity {
                 intent.putExtra("product", product.getProductId());
                 startActivity(intent);
             }
+
             @Override
             public void onDeleteProduct(Product product) {
-                int rowsAffected = dbHelper.deleteProduct(product.getProductId());
-                if (rowsAffected > 0) {
-                    Toast.makeText(ManageProductsActivity.this, "Product deleted successfully", Toast.LENGTH_SHORT).show();
-                    loadProducts();
-                } else {
-                    Toast.makeText(ManageProductsActivity.this, "Failed to delete product", Toast.LENGTH_SHORT).show();
-                }
+                // FIX: Added Confirmation Dialog
+                new AlertDialog.Builder(ManageProductsActivity.this)
+                        .setTitle("Delete Product")
+                        .setMessage("Are you sure you want to delete " + product.getProductName() + "?")
+                        .setPositiveButton("Yes", (dialog, which) -> {
+                            int rowsAffected = dbHelper.deleteProduct(product.getProductId());
+                            if (rowsAffected > 0) {
+                                Toast.makeText(ManageProductsActivity.this, "Product deleted successfully", Toast.LENGTH_SHORT).show();
+                                loadProducts(); // Refresh list
+                            } else {
+                                Toast.makeText(ManageProductsActivity.this, "Failed to delete product", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setNegativeButton("No", null)
+                        .show();
             }
+
             @Override
             public void onPrintQrCode(Product product) {
                 printQrCode(ManageProductsActivity.this, product.getQrCodeByHelper());
@@ -151,6 +148,7 @@ public class ManageProductsActivity extends AppCompatActivity {
         rvManageProducts.setAdapter(productAdapter);
     }
 
+    // ... (keep existing printQrCode, onResume, etc.)
     public void printQrCode(Context context, String qrCodeContent) {
         Product product = dbHelper.getProductByQRCode(qrCodeContent);
         if (product == null) {
@@ -188,11 +186,5 @@ public class ManageProductsActivity extends AppCompatActivity {
         super.onResume();
         loadCategories();
         loadProducts();
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        finish();
-        return true;
     }
 }

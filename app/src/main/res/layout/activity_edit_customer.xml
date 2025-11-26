@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:background="#F5F5F5">
+
     <LinearLayout
         android:id="@+id/backHeader"
         android:layout_width="0dp"
@@ -11,197 +14,236 @@
         android:gravity="center_vertical"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        android:paddingTop="20dp"
+        android:paddingTop="40dp"
         android:paddingBottom="12dp"
         android:background="#F9F9F9"
-        android:elevation="2dp"
+        android:elevation="4dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
         <ImageButton
             android:id="@+id/btnBack"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/back"
             android:src="@drawable/ic_arrow_back"
+            android:contentDescription="@string/back"
             app:tint="@color/black" />
 
         <TextView
             android:id="@+id/titleText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
+            android:layout_marginStart="16dp"
             android:text="Edit Customer"
             android:textColor="@color/black"
             android:textSize="20sp"
             android:textStyle="bold" />
     </LinearLayout>
+
     <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:id="@+id/scrollView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:fillViewport="true"
-        android:layout_marginTop="85dp"
-        android:background="#F5F5F5">
+        app:layout_constraintTop_toBottomOf="@id/backHeader"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            >
-            <!-- CUSTOMER DETAILS CARD -->
-            <LinearLayout
+            android:padding="16dp">
+
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@android:color/white"
-                android:padding="16dp"
-                android:elevation="4dp"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp">
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@android:color/white"
+                android:layout_marginBottom="16dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Customer Details"
-                    android:textStyle="bold"
-                    android:textColor="#000"
-                    android:textSize="18sp"
-                    android:paddingBottom="10dp" />
-
-                <EditText
-                    android:id="@+id/etCustomerName"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Full Name"
-                    android:padding="12dp"
-                    android:background="@drawable/item_row_background"
-                  />
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
-                <EditText
-                    android:id="@+id/etCustomerEmail"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Email"
-                    android:padding="12dp"
-                    android:layout_marginTop="10dp"
-                    android:inputType="textEmailAddress"
-                    android:background="@drawable/item_row_background"
-                    />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Customer Details"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:textSize="18sp"
+                        android:layout_marginBottom="16dp" />
 
-                <EditText
-                    android:id="@+id/etCustomerPhone"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Phone Number"
-                    android:padding="12dp"
-                    android:layout_marginTop="10dp"
-                    android:inputType="phone"
-                    android:background="@drawable/item_row_background"
-                    />
+                    <EditText
+                        android:id="@+id/etCustomerName"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:hint="Full Name"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp"
+                        android:background="@drawable/item_row_background"
+                        android:layout_marginBottom="12dp"/>
 
-                <EditText
-                    android:id="@+id/etCustomerAddress"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Address"
-                    android:padding="12dp"
-                    android:layout_marginTop="10dp"
-                    android:gravity="top"
-                    android:background="@drawable/item_row_background"
-                    />
+                    <EditText
+                        android:id="@+id/etCustomerEmail"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:hint="Email"
+                        android:inputType="textEmailAddress"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp"
+                        android:background="@drawable/item_row_background"
+                        android:layout_marginBottom="12dp"/>
 
-                <!-- SAVE BUTTON -->
-                <Button
-                    android:id="@+id/btnSaveCustomer"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:text="Save Customer"
-                    android:textColor="@color/black"
-                    android:backgroundTint="#FFD700"
-                    android:layout_marginTop="10dp"
-                    android:textStyle="bold"/>
+                    <EditText
+                        android:id="@+id/etCustomerPhone"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:hint="Phone Number"
+                        android:inputType="phone"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp"
+                        android:background="@drawable/item_row_background"
+                        android:layout_marginBottom="12dp"/>
 
+                    <EditText
+                        android:id="@+id/etCustomerAddress"
+                        android:layout_width="match_parent"
+                        android:layout_height="80dp"
+                        android:hint="Address"
+                        android:gravity="top|start"
+                        android:padding="12dp"
+                        android:background="@drawable/item_row_background"
+                        android:layout_marginBottom="16dp"/>
 
-            </LinearLayout>
+                    <Button
+                        android:id="@+id/btnSaveCustomer"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:text="Save Changes"
+                        android:textColor="@color/black"
+                        android:backgroundTint="@color/gold"
+                        android:textStyle="bold"
+                        app:cornerRadius="8dp"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
-
-            <!-- SUMMARY INFO CARD -->
-            <LinearLayout
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@android:color/white"
-                android:padding="10dp"
-                android:elevation="4dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:layout_marginBottom="8dp">
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@android:color/white"
+                android:layout_marginBottom="24dp">
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Customer Overview"
-                    android:textStyle="bold"
-                    android:textColor="#000"
-                    android:textSize="18sp"
-                    android:paddingBottom="10dp" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Amount Due:"
-                    android:textSize="16sp"
-                    android:paddingTop="6dp" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Overview"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:textSize="18sp"
+                        android:layout_marginBottom="12dp" />
 
-                <TextView
-                    android:id="@+id/tvAmountDue"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="16sp"
-                    android:paddingTop="6dp" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Estimates Sent:"
-                    android:textSize="16sp"
-                    android:paddingTop="6dp" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingTop="4dp"
+                        android:paddingBottom="4dp">
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Amount Due"
+                            android:textColor="@color/grey"
+                            android:textSize="16sp"/>
+                        <TextView
+                            android:id="@+id/tvAmountDue"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="R 0.00"
+                            android:textStyle="bold"
+                            android:textColor="@color/black"
+                            android:textSize="16sp"/>
+                    </LinearLayout>
 
-                <TextView
-                    android:id="@+id/tvEstimatesMade"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="16sp"
-                    android:paddingTop="6dp" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Invoices Paid: "
-                    android:textSize="16sp"
-                    android:paddingTop="6dp" />
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#EEE" android:layout_marginTop="4dp" android:layout_marginBottom="4dp"/>
 
-                <TextView
-                    android:id="@+id/tvInvoicesMade"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="16sp"
-                    android:paddingTop="6dp" />
-            </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingTop="4dp"
+                        android:paddingBottom="4dp">
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Estimates Sent"
+                            android:textColor="@color/grey"
+                            android:textSize="16sp"/>
+                        <TextView
+                            android:id="@+id/tvEstimatesMade"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textStyle="bold"
+                            android:textColor="@color/black"
+                            android:textSize="16sp"/>
+                    </LinearLayout>
+
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#EEE" android:layout_marginTop="4dp" android:layout_marginBottom="4dp"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingTop="4dp"
+                        android:paddingBottom="4dp">
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Invoices Generated"
+                            android:textColor="@color/grey"
+                            android:textSize="16sp"/>
+                        <TextView
+                            android:id="@+id/tvInvoicesMade"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textStyle="bold"
+                            android:textColor="@color/black"
+                            android:textSize="16sp"/>
+                    </LinearLayout>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
             <Button
                 android:id="@+id/btnDeleteCustomer"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:text="Delete Customer"
                 android:backgroundTint="@color/black"
-                android:textColor="@android:color/white"
-                android:padding="3dp"
-                />
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                app:cornerRadius="8dp"/>
 
         </LinearLayout>
-
     </ScrollView>
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

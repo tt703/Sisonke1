@@ -3,9 +3,9 @@ package com.example.tlotlotau.Inventory;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton; // Added missing import
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.example.tlotlotau.Database.DatabaseHelper;
 import com.example.tlotlotau.R;
 
@@ -13,6 +13,7 @@ public class EditProductActivity extends AppCompatActivity {
 
     private EditText etEditProductName, etEditProductPrice, etEditProductQuantity, etEditProductDescription;
     private Button btnUpdateProduct;
+    private ImageButton btnBack; // Added missing view reference
     private DatabaseHelper dbHelper;
     private int productId;
 
@@ -20,20 +21,34 @@ public class EditProductActivity extends AppCompatActivity {
     protected void onCreate(Bundle saveInstanceState) {
         super.onCreate(saveInstanceState);
         setContentView(R.layout.activity_edit_product);
+
         dbHelper = new DatabaseHelper(this);
 
+        // Initialize Views
         etEditProductName = findViewById(R.id.etEditProductName);
         etEditProductPrice = findViewById(R.id.etEditProductPrice);
         etEditProductQuantity = findViewById(R.id.etEditProductQuantity);
         etEditProductDescription = findViewById(R.id.etEditProductDescription);
         btnUpdateProduct = findViewById(R.id.btnUpdateProduct);
+        btnBack = findViewById(R.id.btnBack);
 
-        productId = getIntent().getIntExtra("Name", -1);
+        btnBack.setOnClickListener(v -> finish());
+
+        // FIX: Changed key from "Name" to "product" to match the Intent sender
+        productId = getIntent().getIntExtra("product", -1);
+
         if (productId == -1) {
             Toast.makeText(this, "Invalid product ID", Toast.LENGTH_SHORT).show();
             finish();
+            return;
         }
 
+        loadProductData(); // Extracted loading logic for cleaner code
+
+        btnUpdateProduct.setOnClickListener(v -> updateProduct());
+    }
+
+    private void loadProductData() {
         Product product = dbHelper.getProductById(productId);
         if (product != null) {
             etEditProductName.setText(product.getProductName());
@@ -44,7 +59,6 @@ public class EditProductActivity extends AppCompatActivity {
             Toast.makeText(this, "Product not found", Toast.LENGTH_SHORT).show();
             finish();
         }
-        btnUpdateProduct.setOnClickListener(v -> updateProduct());
     }
 
     private void updateProduct() {
@@ -58,8 +72,9 @@ public class EditProductActivity extends AppCompatActivity {
             return;
         }
         try {
-            double priceValue = Double.parseDouble(priceStr); // renamed variable
+            double priceValue = Double.parseDouble(priceStr);
             int quantity = Integer.parseInt(quantityStr);
+
             int rowsAffected = dbHelper.updateProduct(productId, name, priceValue, quantity, description);
             if (rowsAffected > 0) {
                 Toast.makeText(this, "Product updated successfully", Toast.LENGTH_SHORT).show();

@@ -21,6 +21,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.MetadataChanges;
 import com.google.firebase.firestore.SetOptions;
+import com.google.android.gms.tasks.OnCompleteListener; // Added import
+import com.google.android.gms.tasks.Task; // Added import
 
 import java.util.HashMap;
 import java.util.List;
@@ -117,8 +119,8 @@ public class SyncManager {
             return;
         }
         listenCustomers();
-        listenProducts();
         listenCategories();
+        listenProducts();
         listenSales();
         listenInvoices();
         listenEstimates();
@@ -131,6 +133,8 @@ public class SyncManager {
         pushUnsyncedEstimates();
     }
 
+    // ... existing code ...
+
     public void stop() {
         try { if (customersListener != null) customersListener.remove(); } catch (Exception ignored) {}
         try { if (productsListener != null) productsListener.remove(); } catch (Exception ignored) {}
@@ -138,8 +142,18 @@ public class SyncManager {
         try { if (salesListener != null) salesListener.remove(); } catch (Exception ignored) {}
         try { if (invoicesListener != null) invoicesListener.remove(); } catch (Exception ignored) {}
         try { if (estimatesListener != null) estimatesListener.remove(); } catch (Exception ignored) {}
-        try { localDb.close(); } catch (Exception ignored) {}
+
+        // FIX: Explicitly close the database helper owned by this SyncManager
+        try {
+            if (localDb != null) {
+                localDb.close();
+            }
+        } catch (Exception ignored) {
+            Log.w(TAG, "Error closing localDb in SyncManager", ignored);
+        }
     }
+
+    // ... rest of the file ...
 
     // ---------------------------
     // Firestore --> Local
@@ -180,12 +194,13 @@ public class SyncManager {
                                     String phone = ds.getString("phone");
                                     String email = ds.getString("email");
                                     String address = ds.getString("address");
+                                    // Use safe reading methods
                                     String dateCreated = ds.contains("dateCreated") ? String.valueOf(ds.get("dateCreated")) : null;
                                     int numEstimates = readIntFlexible(ds, "numEstimates", 0);
                                     int numInvoices = readIntFlexible(ds, "numInvoices", 0);
                                     double totalAmount = readDoubleFlexible(ds, "totalAmount", 0.0);
 
-                                    // call existing DB helper (should be idempotent)
+                                    // call existing DB helper (should be idempotent) - DatabaseHelper has null check now
                                     localDb.upsertCustomerFromCloud(
                                             cloudId, name, phone, email, address,
                                             dateCreated, numEstimates, numInvoices, totalAmount, cloudUpdated
@@ -470,44 +485,58 @@ public class SyncManager {
     public void pushLocalCustomerToCloud(long localId) {
         final String lockKey = "customer:" + localId;
         if (inProgressPushes.putIfAbsent(lockKey, true) != null) return; // already in progress
+
+        Customer c;
         try {
-            Customer c = localDb.getCustomerByLocalId(localId);
-            if (c == null) return;
-
-            Map<String,Object> doc = new HashMap<>();
-            doc.put("name", c.getName());
-            doc.put("phone", c.getPhone());
-            doc.put("email", c.getEmail());
-            doc.put("address", c.getAddress());
-            doc.put("dateCreated", c.getDateCreated());
-            doc.put("numEstimates", c.getNumEstimates());
-            doc.put("numInvoices", c.getNumInvoices());
-            doc.put("totalAmount", c.getTotalAmount());
-            long now = System.currentTimeMillis();
-            doc.put("updatedAt", now);
-            doc.put("lastModifiedBy", clientId); // tag write
-            doc.put("deleted", 0);
-
-            final String existingCloudId = c.getCloudId();
-            CollectionReference ref = db.collection("businesses").document(businessId).collection("customers");
-
-            if (existingCloudId == null || existingCloudId.trim().isEmpty()) {
-                DocumentReference docRef = ref.document();
-                final String newCloudId = docRef.getId();
-                docRef.set(doc, SetOptions.merge()).addOnSuccessListener(aVoid -> {
-                    try { localDb.markCustomerSyncedByLocalId(localId, newCloudId, now); } catch (Exception ex) { Log.w(TAG, "markCustomerSyncedByLocalId failed", ex); }
-                }).addOnFailureListener(e -> Log.w(TAG, "pushLocalCustomerToCloud failed", e));
-            } else {
-                final String cloudIdFinal = existingCloudId;
-                ref.document(cloudIdFinal).set(doc, SetOptions.merge()).addOnSuccessListener(aVoid -> {
-                    try { localDb.markCustomerSyncedByLocalId(localId, cloudIdFinal, now); } catch (Exception ex) { Log.w(TAG, "markCustomerSyncedByLocalId failed", ex); }
-                }).addOnFailureListener(e -> Log.w(TAG, "pushLocalCustomerToCloud failed", e));
+            c = localDb.getCustomerByLocalId(localId);
+            if (c == null) {
+                inProgressPushes.remove(lockKey);
+                return;
             }
         } catch (Exception ex) {
-            Log.w(TAG, "pushLocalCustomerToCloud exception", ex);
-        } finally {
+            Log.w(TAG, "pushLocalCustomerToCloud: failed to get local customer", ex);
             inProgressPushes.remove(lockKey);
+            return;
         }
+
+        Map<String,Object> doc = new HashMap<>();
+        doc.put("name", c.getName());
+        doc.put("phone", c.getPhone());
+        doc.put("email", c.getEmail());
+        doc.put("address", c.getAddress());
+        doc.put("dateCreated", c.getDateCreated());
+        doc.put("numEstimates", c.getNumEstimates());
+        doc.put("numInvoices", c.getNumInvoices());
+        doc.put("totalAmount", c.getTotalAmount());
+        long now = System.currentTimeMillis();
+        doc.put("updatedAt", now);
+        doc.put("lastModifiedBy", clientId); // tag write
+        doc.put("deleted", 0);
+
+        final String existingCloudId = c.getCloudId();
+        CollectionReference ref = db.collection("businesses").document(businessId).collection("customers");
+
+        com.google.android.gms.tasks.Task<Void> setTask;
+        final long finalLocalId = localId; // capture final localId for use inside closure
+
+        // Common OnCompleteListener to release the lock regardless of success or failure
+        OnCompleteListener<Void> onComplete = task -> inProgressPushes.remove(lockKey);
+
+        if (existingCloudId == null || existingCloudId.trim().isEmpty()) {
+            DocumentReference docRef = ref.document();
+            final String newCloudId = docRef.getId();
+            setTask = docRef.set(doc, SetOptions.merge()).addOnSuccessListener(aVoid -> {
+                try { localDb.markCustomerSyncedByLocalId(finalLocalId, newCloudId, now); } catch (Exception ex) { Log.w(TAG, "markCustomerSyncedByLocalId failed", ex); }
+            });
+        } else {
+            final String cloudIdFinal = existingCloudId;
+            setTask = ref.document(cloudIdFinal).set(doc, SetOptions.merge()).addOnSuccessListener(aVoid -> {
+                try { localDb.markCustomerSyncedByLocalId(finalLocalId, cloudIdFinal, now); } catch (Exception ex) { Log.w(TAG, "markCustomerSyncedByLocalId failed", ex); }
+            });
+        }
+
+        // Attach the lock-releasing listener to the final task
+        setTask.addOnCompleteListener(onComplete);
     }
 
     private void pushUnsyncedCustomers() {
@@ -528,7 +557,10 @@ public class SyncManager {
         if (inProgressPushes.putIfAbsent(lockKey, true) != null) return;
         try {
             Product p = localDb.getProductById(localId);
-            if (p == null) return;
+            if (p == null) {
+                inProgressPushes.remove(lockKey);
+                return;
+            }
 
             Map<String,Object> doc = new HashMap<>();
             doc.put("name", p.getProductName());
@@ -543,21 +575,27 @@ public class SyncManager {
             final String existingCloudId = p.getCloudId();
             CollectionReference ref = db.collection("businesses").document(businessId).collection("products");
 
+            com.google.android.gms.tasks.Task<Void> setTask;
+
+            // Common OnCompleteListener to release the lock
+            OnCompleteListener<Void> onComplete = task -> inProgressPushes.remove(lockKey);
+
+
             if (existingCloudId == null || existingCloudId.trim().isEmpty()) {
                 DocumentReference docRef = ref.document();
                 final String newCloudId = docRef.getId();
-                docRef.set(doc, SetOptions.merge()).addOnSuccessListener(aVoid -> {
+                setTask = docRef.set(doc, SetOptions.merge()).addOnSuccessListener(aVoid -> {
                     try { localDb.markProductSyncedByLocalId(localId, newCloudId, now); } catch (Exception ex) { Log.w(TAG, "markProductSyncedByLocalId failed", ex); }
-                }).addOnFailureListener(e -> Log.w(TAG, "pushLocalProductToCloud failed", e));
+                });
             } else {
                 final String cloudIdFinal = existingCloudId;
-                ref.document(cloudIdFinal).set(doc, SetOptions.merge()).addOnSuccessListener(aVoid -> {
+                setTask = ref.document(cloudIdFinal).set(doc, SetOptions.merge()).addOnSuccessListener(aVoid -> {
                     try { localDb.markProductSyncedByLocalId(localId, cloudIdFinal, now); } catch (Exception ex) { Log.w(TAG, "markProductSyncedByLocalId failed", ex); }
-                }).addOnFailureListener(e -> Log.w(TAG, "pushLocalProductToCloud failed", e));
+                });
             }
+            setTask.addOnCompleteListener(onComplete);
         } catch (Exception ex) {
             Log.w(TAG, "pushLocalProductToCloud exception", ex);
-        } finally {
             inProgressPushes.remove(lockKey);
         }
     }
@@ -580,9 +618,15 @@ public class SyncManager {
         if (inProgressPushes.putIfAbsent(lockKey, true) != null) return;
         try {
             Cursor c = localDb.getReadableDatabase().query("categories", null, "_id = ?", new String[]{String.valueOf(localId)}, null, null, null);
-            if (c == null) return;
+            if (c == null) {
+                inProgressPushes.remove(lockKey);
+                return;
+            }
             try {
-                if (!c.moveToFirst()) return;
+                if (!c.moveToFirst()) {
+                    inProgressPushes.remove(lockKey);
+                    return;
+                }
                 String name = c.getString(c.getColumnIndexOrThrow("name"));
                 long now = System.currentTimeMillis();
                 Map<String, Object> doc = new HashMap<>();
@@ -593,23 +637,28 @@ public class SyncManager {
 
                 String cloudId = c.getString(c.getColumnIndexOrThrow("cloud_id"));
                 CollectionReference ref = db.collection("businesses").document(businessId).collection("categories");
+
+                com.google.android.gms.tasks.Task<Void> setTask;
+                final long finalLocalId = localId; // capture final localId for use inside closure
+
+                // Common OnCompleteListener to release the lock
+                OnCompleteListener<Void> onComplete = task -> inProgressPushes.remove(lockKey);
+
                 if (cloudId == null || cloudId.trim().isEmpty()) {
                     DocumentReference docRef = ref.document();
                     String newCloudId = docRef.getId();
-                    docRef.set(doc, SetOptions.merge())
-                            .addOnSuccessListener(aVoid -> localDb.markCategorySyncedByLocalId(localId, newCloudId, now))
-                            .addOnFailureListener(e -> Log.w(TAG, "pushLocalCategoryToCloud failed", e));
+                    setTask = docRef.set(doc, SetOptions.merge())
+                            .addOnSuccessListener(aVoid -> localDb.markCategorySyncedByLocalId(finalLocalId, newCloudId, now));
                 } else {
-                    ref.document(cloudId).set(doc, SetOptions.merge())
-                            .addOnSuccessListener(aVoid -> localDb.markCategorySyncedByLocalId(localId, cloudId, now))
-                            .addOnFailureListener(e -> Log.w(TAG, "pushLocalCategoryToCloud failed", e));
+                    setTask = ref.document(cloudId).set(doc, SetOptions.merge())
+                            .addOnSuccessListener(aVoid -> localDb.markCategorySyncedByLocalId(finalLocalId, cloudId, now));
                 }
+                setTask.addOnCompleteListener(onComplete);
             } finally {
                 c.close();
             }
         } catch (Exception ex) {
             Log.w(TAG, "pushLocalCategoryToCloud exception", ex);
-        } finally {
             inProgressPushes.remove(lockKey);
         }
     }
@@ -626,13 +675,15 @@ public class SyncManager {
         }
     }
 
-    // Sales (header + items)
     public void pushLocalSaleToCloud(long localSaleId) {
         final String lockKey = "sale:" + localSaleId;
         if (inProgressPushes.putIfAbsent(lockKey, true) != null) return;
         try {
             SaleRecord sale = localDb.getSaleByLocalId(localSaleId);
-            if (sale == null) return;
+            if (sale == null) {
+                inProgressPushes.remove(lockKey);
+                return;
+            }
             long now = System.currentTimeMillis();
 
             Map<String,Object> saleDoc = new HashMap<>();
@@ -658,9 +709,11 @@ public class SyncManager {
             }
 
             final String finalCloudId = cloudId;
-            saleDocRef.set(saleDoc, SetOptions.merge()).addOnSuccessListener(aVoid -> {
-                // push items
-                List<SaleItem> items = localDb.getSaleItemsForSale(localSaleId);
+            final long finalLocalSaleId = localSaleId;
+
+            // Define the items push task as a Runnable
+            Runnable pushItemsTask = () -> {
+                List<SaleItem> items = localDb.getSaleItemsForSale(finalLocalSaleId);
                 for (SaleItem it : items) {
                     Map<String,Object> itemDoc = new HashMap<>();
                     itemDoc.put("productId", it.product != null ? String.valueOf(it.product.getProductId()) : null);
@@ -683,17 +736,23 @@ public class SyncManager {
 
                     final String finalItemCloudId = itemCloudId;
                     long finalNow = now;
+                    // Note: Item sync is also asynchronous, but since sale push won't proceed until this is done, we don't need a lock
                     itemDocRef.set(itemDoc, SetOptions.merge()).addOnSuccessListener(aVoid2 -> {
                         try { localDb.markSaleItemSyncedByLocalId(it.getLocalId(), finalItemCloudId, finalNow); } catch (Exception ex) { Log.w(TAG, "markSaleItemSyncedByLocalId failed", ex); }
                     }).addOnFailureListener(e -> Log.w(TAG, "pushLocalSaleItemToCloud failed", e));
                 }
+            };
 
-                // mark sale synced
-                try { localDb.markSaleSyncedByLocalId(localSaleId, finalCloudId, now); } catch (Exception ex) { Log.w(TAG, "markSaleSyncedByLocalId failed", ex); }
-            }).addOnFailureListener(e -> Log.w(TAG, "pushLocalSaleToCloud failed", e));
+
+            // Main sale header push task
+            saleDocRef.set(saleDoc, SetOptions.merge()).addOnSuccessListener(aVoid -> {
+                        pushItemsTask.run(); // Run item push on success
+                        // mark sale synced
+                        try { localDb.markSaleSyncedByLocalId(finalLocalSaleId, finalCloudId, now); } catch (Exception ex) { Log.w(TAG, "markSaleSyncedByLocalId failed", ex); }
+                    }).addOnFailureListener(e -> Log.w(TAG, "pushLocalSaleToCloud failed", e))
+                    .addOnCompleteListener(task -> inProgressPushes.remove(lockKey)); // Release lock on completion
         } catch (Exception ex) {
             Log.w(TAG, "pushLocalSaleToCloud exception", ex);
-        } finally {
             inProgressPushes.remove(lockKey);
         }
     }
@@ -716,7 +775,10 @@ public class SyncManager {
         if (inProgressPushes.putIfAbsent(lockKey, true) != null) return;
         try {
             Invoice inv = localDb.getInvoiceByLocalId(localId);
-            if (inv == null) return;
+            if (inv == null) {
+                inProgressPushes.remove(lockKey);
+                return;
+            }
 
             Map<String,Object> doc = new HashMap<>();
             doc.put("customerName", inv.getCustomerName());
@@ -736,21 +798,29 @@ public class SyncManager {
 
             final String existingCloudId = inv.getCloudId();
             CollectionReference ref = db.collection("businesses").document(businessId).collection("invoices");
+
+            com.google.android.gms.tasks.Task<Void> setTask;
+            final long finalLocalId = localId; // capture final localId for use inside closure
+
+            // Common OnCompleteListener to release the lock
+            OnCompleteListener<Void> onComplete = task -> inProgressPushes.remove(lockKey);
+
             if (existingCloudId == null || existingCloudId.trim().isEmpty()) {
                 DocumentReference docRef = ref.document();
                 final String newCloudId = docRef.getId();
-                docRef.set(doc, SetOptions.merge()).addOnSuccessListener(aVoid -> {
-                    try { localDb.markInvoiceSyncedByLocalId(localId, newCloudId, now); } catch (Exception ex) { Log.w(TAG, "markInvoiceSyncedByLocalId failed", ex); }
-                }).addOnFailureListener(e -> Log.w(TAG, "pushLocalInvoiceToCloud failed", e));
+                setTask = docRef.set(doc, SetOptions.merge()).addOnSuccessListener(aVoid -> {
+                    try { localDb.markInvoiceSyncedByLocalId(finalLocalId, newCloudId, now); } catch (Exception ex) { Log.w(TAG, "markInvoiceSyncedByLocalId failed", ex); }
+                });
             } else {
                 final String cloudIdFinal = existingCloudId;
-                ref.document(cloudIdFinal).set(doc, SetOptions.merge()).addOnSuccessListener(aVoid -> {
-                    try { localDb.markInvoiceSyncedByLocalId(localId, cloudIdFinal, now); } catch (Exception ex) { Log.w(TAG, "markInvoiceSyncedByLocalId failed", ex); }
-                }).addOnFailureListener(e -> Log.w(TAG, "pushLocalInvoiceToCloud failed", e));
+                setTask = ref.document(cloudIdFinal).set(doc, SetOptions.merge()).addOnSuccessListener(aVoid -> {
+                    try { localDb.markInvoiceSyncedByLocalId(finalLocalId, cloudIdFinal, now); } catch (Exception ex) { Log.w(TAG, "markInvoiceSyncedByLocalId failed", ex); }
+                });
             }
+            setTask.addOnCompleteListener(onComplete);
+
         } catch (Exception ex) {
             Log.w(TAG, "pushLocalInvoiceToCloud exception", ex);
-        } finally {
             inProgressPushes.remove(lockKey);
         }
     }
@@ -773,7 +843,10 @@ public class SyncManager {
         if (inProgressPushes.putIfAbsent(lockKey, true) != null) return;
         try {
             Estimate est = localDb.getEstimateByLocalId(localId);
-            if (est == null) return;
+            if (est == null) {
+                inProgressPushes.remove(lockKey);
+                return;
+            }
 
             Map<String,Object> doc = new HashMap<>();
             doc.put("customerName", est.getCustomerName());
@@ -793,21 +866,29 @@ public class SyncManager {
 
             final String existingCloudId = est.getCloudId();
             CollectionReference ref = db.collection("businesses").document(businessId).collection("estimates");
+
+            com.google.android.gms.tasks.Task<Void> setTask;
+            final long finalLocalId = localId; // capture final localId for use inside closure
+
+            // Common OnCompleteListener to release the lock
+            OnCompleteListener<Void> onComplete = task -> inProgressPushes.remove(lockKey);
+
             if (existingCloudId == null || existingCloudId.trim().isEmpty()) {
                 DocumentReference docRef = ref.document();
                 final String newCloudId = docRef.getId();
-                docRef.set(doc, SetOptions.merge()).addOnSuccessListener(aVoid -> {
-                    try { localDb.markEstimateSyncedByLocalId(localId, newCloudId, now); } catch (Exception ex) { Log.w(TAG, "markEstimateSyncedByLocalId failed", ex); }
-                }).addOnFailureListener(e -> Log.w(TAG, "pushLocalEstimateToCloud failed", e));
+                setTask = docRef.set(doc, SetOptions.merge()).addOnSuccessListener(aVoid -> {
+                    try { localDb.markEstimateSyncedByLocalId(finalLocalId, newCloudId, now); } catch (Exception ex) { Log.w(TAG, "markEstimateSyncedByLocalId failed", ex); }
+                });
             } else {
                 final String cloudIdFinal = existingCloudId;
-                ref.document(cloudIdFinal).set(doc, SetOptions.merge()).addOnSuccessListener(aVoid -> {
-                    try { localDb.markEstimateSyncedByLocalId(localId, cloudIdFinal, now); } catch (Exception ex) { Log.w(TAG, "markEstimateSyncedByLocalId failed", ex); }
-                }).addOnFailureListener(e -> Log.w(TAG, "pushLocalEstimateToCloud failed", e));
+                setTask = ref.document(cloudIdFinal).set(doc, SetOptions.merge()).addOnSuccessListener(aVoid -> {
+                    try { localDb.markEstimateSyncedByLocalId(finalLocalId, cloudIdFinal, now); } catch (Exception ex) { Log.w(TAG, "markEstimateSyncedByLocalId failed", ex); }
+                });
             }
+            setTask.addOnCompleteListener(onComplete);
+
         } catch (Exception ex) {
             Log.w(TAG, "pushLocalEstimateToCloud exception", ex);
-        } finally {
             inProgressPushes.remove(lockKey);
         }
     }

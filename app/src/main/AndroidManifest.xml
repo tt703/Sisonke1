@@ -55,6 +55,10 @@
         <activity android:name=".Sales.CashPaymentActivity"/><!-- Cash Payment Activity -->
         <activity android:name=".Reports.ReportsActivity"/><!-- Reports Activity -->
         <activity android:name=".Customer.EditCustomerActivity"/><!-- Edit Customer Activity -->
+        <activity
+            android:name=".Sales.YocoPaymentActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

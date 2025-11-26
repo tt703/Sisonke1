@@ -21,7 +21,8 @@ import java.util.List;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "Sisonke.db";
-    private static final int DATABASE_VERSION = 27;
+    // Bump up version if you want to trigger onUpgrade during development/testing.
+    private static final int DATABASE_VERSION = 28;
 
     public static final String TABLE_CUSTOMERS = "customers";
     public static final String COLUMN_CUSTOMER_ID = "_id";
@@ -181,11 +182,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             COLUMN_PRODUCT_QUANTITY + " INTEGER, " +
             COLUMN_PRODUCT_DATE_CREATED + " TEXT, " +
             COLUMN_PRODUCT_QR_CODE + " TEXT,"+
-            COLUNM_PRODUCT_CATEGORY_ID + " INTEGER DEFAULT NULL, " +
+            COLUNM_PRODUCT_CATEGORY_ID + " INTEGER , " +
             COLUMN_PRODUCT_CLOUD_ID + " TEXT, " +
             COLUMN_PRODUCT_SYNCED + " INTEGER DEFAULT 0, " +
             COLUMN_PRODUCT_UPDATED_AT + " TEXT,"+
-            COLUMN_PRODUCT_DELETED + " INTEGER DEFAULT 0)";
+            COLUMN_PRODUCT_DELETED + " INTEGER DEFAULT 0,"+
+            "FOREIGN KEY(" + COLUNM_PRODUCT_CATEGORY_ID + ") REFERENCES " + TABLE_CATEGORIES + "(" + COLUMN_CATEGORY_ID + ") ON DELETE RESTRICT)";
+
 
 
     private static final String CREATE_TABLE_BUSINESSES = "CREATE TABLE " + TABLE_BUSINESSES + " (" +
@@ -295,7 +298,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     public boolean insertInvoice(String customerName, String customerAddress, String customerContact,String customerEmail, String itemDetails, double totalAmount, String filePath) {
-        try (SQLiteDatabase db = this.getWritableDatabase()) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        try {
             db.beginTransaction();
             try {
                 ContentValues values = new ContentValues();
@@ -314,6 +318,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             } finally {
                 db.endTransaction();
             }
+        } finally {
+            // db.close(); // REMOVED FOR PERFORMANCE
         }
     }
 
@@ -322,20 +328,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         String orderBy = COLUMN_INVOICE_DATE_CREATED + " DESC";
         Cursor cursor = db.query(TABLE_INVOICES, null, null, null, null, null, orderBy);
-        while (cursor.moveToNext()) {
-            Invoice invoice = new Invoice();
-            invoice.setId(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_INVOICE_ID)));
-            invoice.setCustomerName(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_INVOICE_CUSTOMER_NAME)));
-            invoice.setCustomerAddress(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_INVOICE_CUSTOMER_ADDRESS)));
-            invoice.setCustomerContact(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_INVOICE_CUSTOMER_CONTACT)));
-            invoice.setCustomerEmail(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_INVOICE_CUSTOMER_EMAIL)));
-            invoice.setItemDetails(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_INVOICE_ITEM_DETAILS)));
-            invoice.setTotalAmount(cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_INVOICE_TOTAL_AMOUNT)));
-            invoice.setFilePath(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_INVOICE_FILE_PATH)));
-            invoice.setTimestamp(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_INVOICE_DATE_CREATED)));
-            invoices.add(invoice);
+        try {
+            while (cursor.moveToNext()) {
+                Invoice invoice = new Invoice();
+                invoice.setId(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_INVOICE_ID)));
+                invoice.setCustomerName(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_INVOICE_CUSTOMER_NAME)));
+                invoice.setCustomerAddress(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_INVOICE_CUSTOMER_ADDRESS)));
+                invoice.setCustomerContact(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_INVOICE_CUSTOMER_CONTACT)));
+                invoice.setCustomerEmail(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_INVOICE_CUSTOMER_EMAIL)));
+                invoice.setItemDetails(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_INVOICE_ITEM_DETAILS)));
+                invoice.setTotalAmount(cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_INVOICE_TOTAL_AMOUNT)));
+                invoice.setFilePath(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_INVOICE_FILE_PATH)));
+                invoice.setTimestamp(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_INVOICE_DATE_CREATED)));
+                invoices.add(invoice);
+            }
+            cursor.close();
+        } finally {
+            // db.close(); // REMOVED FOR PERFORMANCE
         }
-        cursor.close();
         return invoices;
     }
     public List<Estimate> getAllEstimates() {
@@ -343,20 +353,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         String orderBy = COLUMN_ESTIMATE_DATE_CREATED + " DESC";
         Cursor cursor = db.query(TABLE_ESTIMATES, null, null, null, null, null, orderBy);
-        while (cursor.moveToNext()) {
-            Estimate estimate = new Estimate();
-            estimate.setId(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_INVOICE_ID)));
-            estimate.setCustomerName(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_INVOICE_CUSTOMER_NAME)));
-            estimate.setCustomerAddress(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_INVOICE_CUSTOMER_ADDRESS)));
-            estimate.setCustomerContact(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_INVOICE_CUSTOMER_CONTACT)));
-            estimate.setCustomerEmail(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_INVOICE_CUSTOMER_EMAIL)));
-            estimate.setItemDetails(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_INVOICE_ITEM_DETAILS)));
-            estimate.setTotalAmount(cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_INVOICE_TOTAL_AMOUNT)));
-            estimate.setFilePath(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_INVOICE_FILE_PATH)));
-            estimate.setTimestamp(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_INVOICE_DATE_CREATED)));
-            estimates.add(estimate);
+        try {
+            while (cursor.moveToNext()) {
+                Estimate estimate = new Estimate();
+                estimate.setId(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_INVOICE_ID)));
+                estimate.setCustomerName(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_INVOICE_CUSTOMER_NAME)));
+                estimate.setCustomerAddress(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_INVOICE_CUSTOMER_ADDRESS)));
+                estimate.setCustomerContact(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_INVOICE_CUSTOMER_CONTACT)));
+                estimate.setCustomerEmail(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_INVOICE_CUSTOMER_EMAIL)));
+                estimate.setItemDetails(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_INVOICE_ITEM_DETAILS)));
+                estimate.setTotalAmount(cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_INVOICE_TOTAL_AMOUNT)));
+                estimate.setFilePath(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_INVOICE_FILE_PATH)));
+                estimate.setTimestamp(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_INVOICE_DATE_CREATED)));
+                estimates.add(estimate);
+            }
+            cursor.close();
+        } finally {
+            // db.close(); // REMOVED FOR PERFORMANCE
         }
-        cursor.close();
         return estimates;
     }
 
@@ -371,7 +385,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_PRODUCT_QR_CODE, qrCode);
         if (categoryId != null) values.put(COLUNM_PRODUCT_CATEGORY_ID, categoryId);
         long result = db.insert(TABLE_PRODUCTS, null, values);
-        db.close();
+        // db.close(); // REMOVED FOR PERFORMANCE
         return result;
     }
     public List<Product> getProductsByCategory(Long categoryId) {
@@ -380,12 +394,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String selection = categoryId == null ? COLUNM_PRODUCT_CATEGORY_ID + " IS NULL" : COLUNM_PRODUCT_CATEGORY_ID + " = ?";
         String[] selArgs = categoryId == null ? null : new String[]{String.valueOf(categoryId)};
         Cursor cursor = db.query(TABLE_PRODUCTS, null, selection, selArgs, null, null, COLUMN_PRODUCT_NAME);
-        while (cursor.moveToNext()) {
-            Product product = readProductFromCursor(cursor);
-            products.add(product);
+        try {
+            while (cursor.moveToNext()) {
+                Product product = readProductFromCursor(cursor);
+                products.add(product);
+            }
+            cursor.close();
+        } finally {
+            // db.close(); // REMOVED FOR PERFORMANCE
         }
-        cursor.close();
-        db.close();
         return products;
     }
 
@@ -417,7 +434,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_ESTIMATE_FILE_PATH, filePath);
         values.put(COLUMN_ESTIMATE_DATE_CREATED, String.valueOf(System.currentTimeMillis()));
         long result = db.insert(TABLE_ESTIMATES, null, values);
-        db.close();
+        // db.close(); // REMOVED FOR PERFORMANCE
         return result != -1;
     }
 
@@ -426,18 +443,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String query = "SELECT * FROM " + TABLE_PRODUCTS + " WHERE " + COLUMN_PRODUCT_QR_CODE + " = ?";
         Cursor cursor = db.rawQuery(query, new String[]{qrCodeContent});
         Product product = null;
-        if (cursor.moveToFirst()) {
-            product = new Product();
-            product.setProductId(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_ID)));
-            product.setProductName(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_NAME)));
-            product.setProductPrice(cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_PRICE)));
-            product.setProductDescription(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_DESCRIPTION)));
-            product.setProductQuantity(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_QUANTITY)));
-            product.setProductDateCreated(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_DATE_CREATED)));
-            product.setProductQRCode(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_QR_CODE)));
+        try {
+            if (cursor.moveToFirst()) {
+                product = new Product();
+                product.setProductId(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_ID)));
+                product.setProductName(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_NAME)));
+                product.setProductPrice(cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_PRICE)));
+                product.setProductDescription(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_DESCRIPTION)));
+                product.setProductQuantity(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_QUANTITY)));
+                product.setProductDateCreated(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_DATE_CREATED)));
+                product.setProductQRCode(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_QR_CODE)));
+            }
+            cursor.close();
+        } finally {
+            // db.close(); // REMOVED FOR PERFORMANCE
         }
-        cursor.close();
-        db.close();
         return product;
     }
 
@@ -446,25 +466,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(COLUMN_PRODUCT_QUANTITY, newQuantity);
-        return db.update(TABLE_PRODUCTS, values, COLUMN_PRODUCT_ID + " = ?", new String[]{String.valueOf(productId)});
+        int rows = db.update(TABLE_PRODUCTS, values, COLUMN_PRODUCT_ID + " = ?", new String[]{String.valueOf(productId)});
+        // db.close(); // REMOVED FOR PERFORMANCE
+        return rows;
     }
 
     public List<Product> getAllProducts() {
         List<Product> products = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(TABLE_PRODUCTS, null, null, null, null, null, null);
-        while (cursor.moveToNext()) {
-            Product product = new Product();
-            product.setProductId(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_ID)));
-            product.setProductName(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_NAME)));
-            product.setProductPrice(cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_PRICE)));
-            product.setProductDescription(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_DESCRIPTION)));
-            product.setProductQuantity(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_QUANTITY)));
-            product.setProductDateCreated(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_DATE_CREATED)));
-            product.setProductQRCode(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_QR_CODE)));
-            products.add(product);
+        try {
+            while (cursor.moveToNext()) {
+                Product product = new Product();
+                product.setProductId(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_ID)));
+                product.setProductName(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_NAME)));
+                product.setProductPrice(cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_PRICE)));
+                product.setProductDescription(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_DESCRIPTION)));
+                product.setProductQuantity(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_QUANTITY)));
+                product.setProductDateCreated(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_DATE_CREATED)));
+                product.setProductQRCode(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_QR_CODE)));
+                products.add(product);
+            }
+            cursor.close();
+        } finally {
+            // db.close(); // REMOVED FOR PERFORMANCE
         }
-        cursor.close();
         return products;
     }
     public Product getProductById(int productId){
@@ -472,18 +498,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String query = "SELECT * FROM " + TABLE_PRODUCTS + " WHERE " + COLUMN_PRODUCT_ID + " = ?";
         Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(productId)});
         Product product = null;
-        if(cursor.moveToFirst()){
-            product = new Product();
-            product.setProductId(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_ID)));
-            product.setProductName(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_NAME)));
-            product.setProductPrice(cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_PRICE)));
-            product.setProductQuantity(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_QUANTITY)));
-            product.setProductDescription(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_DESCRIPTION)));
-            product.setProductDateCreated(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_DATE_CREATED)));
-            product.setProductQRCode(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_QR_CODE)));
-            cursor.close();
+        try {
+            if(cursor.moveToFirst()){
+                product = new Product();
+                product.setProductId(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_ID)));
+                product.setProductName(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_NAME)));
+                product.setProductPrice(cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_PRICE)));
+                product.setProductQuantity(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_QUANTITY)));
+                product.setProductDescription(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_DESCRIPTION)));
+                product.setProductDateCreated(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_DATE_CREATED)));
+                product.setProductQRCode(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_QR_CODE)));
+                cursor.close();
+            }
+        } finally {
+            // db.close(); // REMOVED FOR PERFORMANCE
         }
-        db.close();
         return product;
     }
 
@@ -495,16 +524,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_PRODUCT_QUANTITY, quantity);
         values.put(COLUMN_PRODUCT_DESCRIPTION, description);
         int rowsAffected = db.update(TABLE_PRODUCTS, values, COLUMN_PRODUCT_ID + " = ?", new String[]{String.valueOf(productId)});
-        db.close();
+        // db.close(); // REMOVED FOR PERFORMANCE
         return rowsAffected;
     }
 
     public int deleteProduct(int productId) {
         SQLiteDatabase db = this.getWritableDatabase();
-        return db.delete(TABLE_PRODUCTS, COLUMN_PRODUCT_ID + " = ?", new String[]{String.valueOf(productId)});
+        int rows = db.delete(TABLE_PRODUCTS, COLUMN_PRODUCT_ID + " = ?", new String[]{String.valueOf(productId)});
+        // db.close(); // REMOVED FOR PERFORMANCE
+        return rows;
     }
     public boolean upsertBusinessLocal(String businessId, String name, String address, String vatNumber, String registrationNumber,
-                                        String bankName, String accountNumber, String branchCode, String ownerUid, long updatedAt, int synced) {
+                                       String bankName, String accountNumber, String branchCode, String ownerUid, long updatedAt, int synced) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(COLUMN_BUSINESS_ID, businessId);
@@ -520,7 +551,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_BUSINESS_SYNCED, synced);
 
         long result = db.insertWithOnConflict(TABLE_BUSINESSES, null, values, SQLiteDatabase.CONFLICT_REPLACE);
-        db.close();
+        // db.close(); // REMOVED FOR PERFORMANCE
         return result != -1;
     }
     public long insertCustomer(String name, String phone, String email, String address, String dateCreated){
@@ -532,34 +563,34 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_CUSTOMER_ADDRESS, address);
         values.put(COLUMN_CUSTOMER_DATE_CREATED, dateCreated);
         long id =  db.insert(TABLE_CUSTOMERS, null, values);
-        db.close();
+        // db.close(); // REMOVED FOR PERFORMANCE
         return id;
     }
     public List<Customer> getAllCustomers(){
         List<Customer> customers = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(TABLE_CUSTOMERS, null, null, null, null, null, COLUMN_CUSTOMER_ID );
-        try{if (cursor != null && cursor.moveToFirst()){
-            do {
-                long id = cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_CUSTOMER_ID));
-                String name = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CUSTOMER_NAME));
-                String phone = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CUSTOMER_PHONE));
-                String email = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CUSTOMER_EMAIL));
-                String address = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CUSTOMER_ADDRESS));
-                String totalAmount = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CUSTOMER_TOTAL_AMOUNT));
-                String numEstimates = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CUSTOMER_NUM_ESTIMATES));
+        try{
+            if (cursor != null && cursor.moveToFirst()){
+                do {
+                    long id = cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_CUSTOMER_ID));
+                    String name = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CUSTOMER_NAME));
+                    String phone = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CUSTOMER_PHONE));
+                    String email = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CUSTOMER_EMAIL));
+                    String address = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CUSTOMER_ADDRESS));
+                    String totalAmount = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CUSTOMER_TOTAL_AMOUNT));
+                    String numEstimates = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CUSTOMER_NUM_ESTIMATES));
 
-                Customer customer = new Customer(id, name, phone, email, address);
-                customer.setAmountDue(totalAmount);
-                customer.setNumEstimateSent(numEstimates);
-                customers.add(customer);
+                    Customer customer = new Customer(id, name, phone, email, address);
+                    customer.setAmountDue(totalAmount);
+                    customer.setNumEstimateSent(numEstimates);
+                    customers.add(customer);
 
-            }while (cursor.moveToNext());
+                }while (cursor.moveToNext());
 
             }
         }finally {
-            if(cursor != null) cursor.close();
-            db.close();
+            // db.close(); // REMOVED FOR PERFORMANCE
         }
         return customers;
     }
@@ -574,7 +605,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             long id = db.insert(TABLE_CATEGORIES, null, values);
             return id;
         } finally {
-            db.close();
+            // db.close(); // REMOVED FOR PERFORMANCE
         }
     }
 
@@ -585,7 +616,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             values.put(COLUMN_CATEGORY_NAME, newName);
             return db.update(TABLE_CATEGORIES, values, COLUMN_CATEGORY_ID + " = ?", new String[]{String.valueOf(id)});
         } finally {
-            db.close();
+            // db.close(); // REMOVED FOR PERFORMANCE
         }
     }
 
@@ -594,7 +625,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         try {
             return db.delete(TABLE_CATEGORIES, COLUMN_CATEGORY_ID + " = ?", new String[]{String.valueOf(id)});
         } finally {
-            db.close();
+            // db.close(); // REMOVED FOR PERFORMANCE
         }
     }
 
@@ -614,7 +645,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
         } finally {
             if (cursor != null) cursor.close();
-            db.close();
+            // db.close(); // REMOVED FOR PERFORMANCE
         }
         return out;
     }
@@ -681,7 +712,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return false;
         } finally {
             db.endTransaction();
-            db.close();
+            // db.close(); // REMOVED FOR PERFORMANCE
         }
     }
     public List<SaleRecord> getAllSales() {
@@ -705,7 +736,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
         } finally {
             if (cursor != null) cursor.close();
-            db.close();
+            // db.close(); // REMOVED FOR PERFORMANCE
         }
         return out;
     }
@@ -732,7 +763,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
         } finally {
             if (cursor != null) cursor.close();
-            db.close();
+            // db.close(); // REMOVED FOR PERFORMANCE
         }
         return out;
     }
@@ -745,7 +776,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             int rows = db.update(TABLE_INVOICES, values, COLUMN_INVOICE_ID + " = ?", new String[]{String.valueOf(invoiceId)});
             return rows > 0;
         } finally {
-            db.close();
+            // db.close(); // REMOVED FOR PERFORMANCE
         }
     }
 
@@ -770,7 +801,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return null;
         } finally {
             if (cursor != null) cursor.close();
-            db.close();
+            // db.close(); // REMOVED FOR PERFORMANCE
         }
     }
 
@@ -803,54 +834,45 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return -1L;
         } finally {
             db.endTransaction();
-            db.close();
+            // db.close(); // REMOVED FOR PERFORMANCE
         }
     }
-    // Update existing customer
-    public int updateCustomer(long id, String name, String phone, String email, String address) {
-        SQLiteDatabase db = null;
-        int rows = 0;
-        try {
-            db = this.getWritableDatabase();
-            ContentValues values = new ContentValues();
-            values.put(COLUMN_CUSTOMER_NAME, name);
-            values.put(COLUMN_CUSTOMER_PHONE, phone);
-            values.put(COLUMN_CUSTOMER_EMAIL, email);
-            values.put(COLUMN_CUSTOMER_ADDRESS, address);
+    // ... inside DatabaseHelper class ...
 
-            // Use transaction to make update atomic and safer
-            db.beginTransaction();
-            try {
-                rows = db.update(TABLE_CUSTOMERS, values, COLUMN_CUSTOMER_ID + " = ?", new String[]{String.valueOf(id)});
-                db.setTransactionSuccessful();
-            } finally {
-                db.endTransaction();
-            }
-        } catch (Exception ex) {
-            Log.w("DatabaseHelper", "updateCustomer failed for id=" + id, ex);
-        }
-        // do NOT close db here: the helper's close() should be used by the component that owns the helper
+    public int updateCustomer(long id, String name, String phone, String email, String address) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("name", name);
+        values.put("phone", phone);
+        values.put("email", email);
+        values.put("address", address);
+
+        // Mark as unsynced so SyncManager picks it up
+        values.put("synced", 0);
+        values.put("updated_at", System.currentTimeMillis());
+
+        // Update where _id matches
+        int rows = db.update(TABLE_CUSTOMERS, values, COLUMN_CUSTOMER_ID + " = ?", new String[]{String.valueOf(id)});
+
+        // Do NOT close db here if you want speed, relying on the Activity to close it
         return rows;
     }
 
     public int deleteCustomer(long id) {
-        SQLiteDatabase db = null;
-        int rows = 0;
-        try {
-            db = this.getWritableDatabase();
-            db.beginTransaction();
-            try {
-                rows = db.delete(TABLE_CUSTOMERS, COLUMN_CUSTOMER_ID + " = ?", new String[]{String.valueOf(id)});
-                db.setTransactionSuccessful();
-            } finally {
-                db.endTransaction();
-            }
-        } catch (Exception ex) {
-            Log.w("DatabaseHelper", "deleteCustomer failed for id=" + id, ex);
-        }
-        // do NOT close db here
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // SOFT DELETE: Don't actually remove the row, just mark it deleted.
+        // This allows SyncManager to see the deletion and delete it from the Cloud too.
+        ContentValues values = new ContentValues();
+        values.put("deleted", 1);
+        values.put("synced", 0); // Mark dirty
+        values.put("updated_at", System.currentTimeMillis());
+
+        int rows = db.update(TABLE_CUSTOMERS, values, COLUMN_CUSTOMER_ID + " = ?", new String[]{String.valueOf(id)});
         return rows;
     }
+
+    // ...
 
 
     public int getInvoiceCountForCustomer(String customerName) {
@@ -864,7 +886,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             if (cursor.moveToFirst()) count = cursor.getInt(0);
         } finally {
             if (cursor != null) cursor.close();
-            db.close();
+            // db.close(); // REMOVED FOR PERFORMANCE
         }
         return count;
     }
@@ -881,7 +903,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             if (cursor.moveToFirst()) count = cursor.getInt(0);
         } finally {
             if (cursor != null) cursor.close();
-            db.close();
+            // db.close(); // REMOVED FOR PERFORMANCE
         }
         return count;
     }
@@ -901,7 +923,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
         } finally {
             if (cursor != null) cursor.close();
-            db.close();
+            // db.close(); // REMOVED FOR PERFORMANCE
         }
         return total;
     }
@@ -962,10 +984,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor c = db.query(TABLE_CUSTOMERS, new String[]{COLUMN_CUSTOMER_ID, "updated_at"}, "cloud_id = ?", new String[]{cloudId}, null, null, null);
         try {
             ContentValues v = new ContentValues();
-            v.put(COLUMN_CUSTOMER_NAME, name);
-            v.put(COLUMN_CUSTOMER_PHONE, phone);
-            v.put(COLUMN_CUSTOMER_EMAIL, email);
-            v.put(COLUMN_CUSTOMER_ADDRESS, address);
+            // IMPORTANT: Null safety check implemented here
+            v.put(COLUMN_CUSTOMER_NAME, name == null ? "" : name);
+            v.put(COLUMN_CUSTOMER_PHONE, phone == null ? "" : phone);
+            v.put(COLUMN_CUSTOMER_EMAIL, email == null ? "" : email);
+            v.put(COLUMN_CUSTOMER_ADDRESS, address == null ? "" : address);
             v.put(COLUMN_CUSTOMER_TOTAL_AMOUNT, totalAmount);
             v.put(COLUMN_CUSTOMER_NUM_ESTIMATES, numEstimates);
             v.put(COLUMN_CUSTOMER_DATE_CREATED, dateCreated);
@@ -1021,7 +1044,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor c = db.query(TABLE_PRODUCTS, new String[]{COLUMN_PRODUCT_ID}, "cloud_id = ?", new String[]{cloudId}, null, null, null);
         try {
             ContentValues v = new ContentValues();
-            v.put(COLUMN_PRODUCT_NAME, name);
+            v.put(COLUMN_PRODUCT_NAME, name == null ? "" : name); // Null safety
             v.put(COLUMN_PRODUCT_PRICE, price);
             v.put(COLUMN_PRODUCT_QUANTITY, quantity);
             v.put("cloud_id", cloudId);
@@ -1096,7 +1119,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         try {
             // try update by cloud_id
             ContentValues cv = new ContentValues();
-            cv.put(COLUMN_CATEGORY_NAME, name);
+            cv.put(COLUMN_CATEGORY_NAME, name == null ? "" : name); // Null safety
             cv.put("synced_at", updatedAt);
             cv.put("dirty_at", 0);
             cv.put("deleted", 0);
@@ -1233,7 +1256,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
             // 2) Prepare item values
             ContentValues iv = new ContentValues();
-            iv.put(COLUMN_SALE_ITEM_PRODUCT_NAME, productName);
+            iv.put(COLUMN_SALE_ITEM_PRODUCT_NAME, productName == null ? "" : productName); // Null safety
             iv.put(COLUMN_SALE_ITEM_QTY, qty);
             iv.put(COLUMN_SALE_ITEM_UNIT_PRICE, unitPrice);
             iv.put(COLUMN_SALE_ITEM_LINE_TOTAL, lineTotal);
@@ -1313,13 +1336,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
             // 2) Prepare values
             ContentValues vals = new ContentValues();
-            vals.put(COLUMN_SALE_USER_ID, userId);
-            vals.put(COLUMN_SALE_USER_NAME, userName);
+            vals.put(COLUMN_SALE_USER_ID, userId == null ? "" : userId); // Null safety
+            vals.put(COLUMN_SALE_USER_NAME, userName == null ? "" : userName); // Null safety
             // user role not available from cloud for this call; leave untouched
             vals.put(COLUMN_SALE_SUBTOTAL, subtotal);
             vals.put(COLUMN_SALE_TAX, tax);
             vals.put(COLUMN_SALE_TOTAL, total);
-            vals.put(COLUMN_SALE_PAYMENT_METHOD, paymentMethod);
+            vals.put(COLUMN_SALE_PAYMENT_METHOD, paymentMethod == null ? "" : paymentMethod); // Null safety
             if (timestamp != null) vals.put(COLUMN_SALE_TIMESTAMP, String.valueOf(timestamp));
             // sync metadata
             vals.put("synced_at", updatedAt);
@@ -1443,13 +1466,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
 
             ContentValues values = new ContentValues();
-            values.put(COLUMN_INVOICE_CUSTOMER_NAME, customerName);
-            values.put(COLUMN_INVOICE_CUSTOMER_ADDRESS, customerAddress);
-            values.put(COLUMN_INVOICE_CUSTOMER_CONTACT, customerContact);
-            values.put(COLUMN_INVOICE_CUSTOMER_EMAIL, customerEmail);
-            values.put(COLUMN_INVOICE_ITEM_DETAILS, itemDetails);
+            values.put(COLUMN_INVOICE_CUSTOMER_NAME, customerName == null ? "" : customerName); // Null safety
+            values.put(COLUMN_INVOICE_CUSTOMER_ADDRESS, customerAddress == null ? "" : customerAddress); // Null safety
+            values.put(COLUMN_INVOICE_CUSTOMER_CONTACT, customerContact == null ? "" : customerContact); // Null safety
+            values.put(COLUMN_INVOICE_CUSTOMER_EMAIL, customerEmail == null ? "" : customerEmail); // Null safety
+            values.put(COLUMN_INVOICE_ITEM_DETAILS, itemDetails == null ? "" : itemDetails); // Null safety
             values.put(COLUMN_INVOICE_TOTAL_AMOUNT, totalAmount);
-            values.put(COLUMN_INVOICE_FILE_PATH, filePath);
+            values.put(COLUMN_INVOICE_FILE_PATH, filePath == null ? "" : filePath); // Null safety
             if (timestamp != null) values.put(COLUMN_INVOICE_DATE_CREATED, String.valueOf(timestamp));
             // sync metadata
             values.put("synced_at", updatedAt);
@@ -1578,13 +1601,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
 
             ContentValues values = new ContentValues();
-            values.put(COLUMN_ESTIMATE_CUSTOMER_NAME, customerName);
-            values.put(COLUMN_ESTIMATE_CUSTOMER_ADDRESS, customerAddress);
-            values.put(COLUMN_ESTIMATE_CUSTOMER_CONTACT, customerContact);
-            values.put(COLUMN_ESTIMATE_CUSTOMER_EMAIL, customerEmail);
-            values.put(COLUMN_ESTIMATE_ITEM_DETAILS, itemDetails);
+            values.put(COLUMN_ESTIMATE_CUSTOMER_NAME, customerName == null ? "" : customerName); // Null safety
+            values.put(COLUMN_ESTIMATE_CUSTOMER_ADDRESS, customerAddress == null ? "" : customerAddress); // Null safety
+            values.put(COLUMN_ESTIMATE_CUSTOMER_CONTACT, customerContact == null ? "" : customerContact); // Null safety
+            values.put(COLUMN_ESTIMATE_CUSTOMER_EMAIL, customerEmail == null ? "" : customerEmail); // Null safety
+            values.put(COLUMN_ESTIMATE_ITEM_DETAILS, itemDetails == null ? "" : itemDetails); // Null safety
             values.put(COLUMN_ESTIMATE_TOTAL_AMOUNT, totalAmount);
-            values.put(COLUMN_ESTIMATE_FILE_PATH, filePath);
+            values.put(COLUMN_ESTIMATE_FILE_PATH, filePath == null ? "" : filePath); // Null safety
             if (timestamp != null) values.put(COLUMN_ESTIMATE_DATE_CREATED, String.valueOf(timestamp));
             values.put("synced_at", updatedAt);
             values.put("dirty_at", 0);
@@ -1639,16 +1662,5 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String q = "SELECT * FROM " + TABLE_SALE_ITEMS + " WHERE " + COLUMN_SALE_ITEM_SALE_ID + " = ? AND (cloud_id IS NULL OR dirty_at > synced_at)";
         return db.rawQuery(q, new String[]{String.valueOf(saleLocalId)});
     }
-
-
-
-
-
-
-
-
-
-
-
 
 }

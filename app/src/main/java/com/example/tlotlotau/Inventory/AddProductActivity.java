@@ -98,18 +98,21 @@ public class AddProductActivity extends AppCompatActivity {
         btnSaveProduct.setEnabled(true);
     }
 
+
     private boolean validateInput() {
         if (etProductName.getText().toString().trim().isEmpty() ||
                 etProductPrice.getText().toString().trim().isEmpty() ||
-                etProductQuantity.getText().toString().trim().isEmpty() ||
-                etProductDescription.getText().toString().trim().isEmpty()) {
+                etProductQuantity.getText().toString().trim().isEmpty()) {
             Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
             return false;
         }
+
+        // STRICT CHECK: Ensure a category object is actually selected
         if (selectedCategory == null) {
-            Toast.makeText(this, "Please select a category", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "You must select a Category before adding a product.", Toast.LENGTH_LONG).show();
             return false;
         }
+
         return true;
     }
 
