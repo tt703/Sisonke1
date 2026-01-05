@@ -43,6 +43,7 @@
 - **Database:** SQLite (Custom `DatabaseHelper`)
 - **Payment Integration:** Yoco SDK
 - **Data Sync:** Custom SyncManager for data persistence
+- **Cloud:** Firebase(Auth,Firestore)
 
 ---
 
